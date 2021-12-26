@@ -20,7 +20,7 @@ class RecipeViewWrapper extends StatefulWidget {
 class _RecipeViewWrapperState extends State<RecipeViewWrapper> {
   @override
   Widget build(BuildContext context) {
-    saveRecipeRealization(RecipeRealization(0, AvailableRecipes.redWine), context);
+    saveRecipeRealization(const RecipeRealization(0, AvailableRecipes.redWine), context);
     var _recipeRealization = getRecipeRealizationById(widget.realizationId, context);
 
     return FutureBuilder<RecipeRealization>(

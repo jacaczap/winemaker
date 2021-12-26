@@ -1,15 +1,11 @@
-class IngredientList {
-  final Ingredients requiredIngredients;
-  final Ingredients addedIngredients;
-
-  IngredientList(this.requiredIngredients, this.addedIngredients);
-}
+import 'package:winemaker/src/common_models/litres.dart';
+import 'package:winemaker/src/common_models/sugar.dart';
 
 class Ingredients {
-  final double sugar;
-  final double water;
+  final Kilograms sugar;
+  final Litres water;
   final bool yeast;
   final bool nutrients;
 
-  Ingredients(this.sugar, this.water, this.yeast, this.nutrients);
+  const Ingredients(this.sugar, this.water, this.yeast, this.nutrients);
 }

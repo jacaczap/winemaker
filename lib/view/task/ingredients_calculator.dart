@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:winemaker/src/calculator/ingredients_calculator.dart';
 import 'package:winemaker/src/desired_wine/desired_wine.dart';
 import 'package:winemaker/src/desired_wine/desired_wine_service.dart';
 import 'package:winemaker/src/future/future_mapper.dart';
+import 'package:winemaker/src/ingredients/ingredients_service.dart';
 import 'package:winemaker/src/must/must_measurements.dart';
 import 'package:winemaker/src/must/must_service.dart';
 import 'package:winemaker/view/constants.dart';
@@ -17,7 +17,7 @@ class MustParametersDisplay extends StatelessWidget {
 
     var _desiredWineParameters = getDesiredWineById(1, context);
 
-    final List<Widget> mustParameters = getMustParameterDisplay(_desiredWineParameters, _must);
+    final List<Widget> mustParameters = _getMustParameterDisplay(_desiredWineParameters, _must);
 
     return Scaffold(
         appBar: AppBar(
@@ -28,14 +28,14 @@ class MustParametersDisplay extends StatelessWidget {
           ElevatedButton(
             child: const Text("Calculate required ingredients"),
             onPressed: () {
-              calculateAndSaveIngredients(context);
+              calculateAndSaveIngredients(_desiredWineParameters, _must, context);
               Navigator.pop(context, true);
             },
           ),
         ]));
   }
 
-  List<Widget> getMustParameterDisplay(Future<DesiredWine> _desiredWineParameters, Future<MustMeasurements> _must) {
+  List<Widget> _getMustParameterDisplay(Future<DesiredWine> _desiredWineParameters, Future<MustMeasurements> _must) {
     var _volume = _must.map((must) => must.volume.toString());
     var _sugar = _must.map((must) => must.sugar.toString());
     var _desiredAlcohol = _desiredWineParameters.map((desiredWine) => desiredWine.alcohol.toString());

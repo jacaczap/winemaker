@@ -1,49 +1,78 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/widgets.dart';
+import 'package:winemaker/src/common_models/litres.dart';
+import 'package:winemaker/src/common_models/sugar.dart';
 import 'package:winemaker/src/database/database.dart';
 import 'package:winemaker/src/database/moor_value_extension.dart';
+import 'package:winemaker/src/desired_wine/desired_wine.dart';
 import 'package:winemaker/src/future/future_mapper.dart';
+import 'package:winemaker/src/must/must_measurements.dart';
 
+import '_ingredients_calculator.dart';
 import 'ingredients.dart';
+
+Future<void> calculateAndSaveIngredients(
+  Future<DesiredWine> _desiredWine,
+  Future<MustMeasurements> _must,
+  BuildContext context,
+) async {
+  var desiredWine = await _desiredWine;
+  var must = await _must;
+  var ingredients = calculateIngredients(desiredWine, must);
+  _saveInitialIngredients(ingredients, context);
+}
 
 void saveAddedIngredients(int id, Ingredients addedIngredients, BuildContext context) {
   var database = getDatabase(context);
   database.ingredientsDao.updateIngredients(
     id,
-    IngredientsEntityCompanion(
-      addedSugar: addedIngredients.sugar.toMoorValue(),
-      addedWater: addedIngredients.water.toMoorValue(),
-      addedYeast: addedIngredients.yeast.toMoorValue(),
-      addedNutrients: addedIngredients.nutrients.toMoorValue(),
-    ),
+    addedIngredients.toEntityCompanion(),
   );
-}
-
-void saveInitialIngredients(Ingredients requiredIngredients, BuildContext context) {
-  const initialZero = 0.0;
-  const initialFalse = false;
-
-  var database = getDatabase(context);
-  database.ingredientsDao.addIngredients(
-    IngredientsEntityData(
-      id: 1,
-      requiredSugar: requiredIngredients.sugar,
-      addedSugar: initialZero,
-      requiredWater: requiredIngredients.water,
-      addedWater: initialZero,
-      requiredYeast: requiredIngredients.yeast,
-      addedYeast: initialFalse,
-      requiredNutrients: requiredIngredients.nutrients,
-      addedNutrients: initialFalse,
-    ),
-  );
-
-  developer.log("Initial ingredients saved!");
 }
 
 Future<Ingredients> getRemainingIngredients(int id, BuildContext context) {
   var database = getDatabase(context);
-  return database.ingredientsDao.ingredientsById(id).map((data) => Ingredients(data.requiredSugar - data.addedSugar,
-      data.requiredWater - data.addedWater, data.requiredYeast != data.addedYeast, data.requiredNutrients != data.addedNutrients));
+  return database.ingredientsDao.ingredientsById(id).map((data) => data.toRemainingIngredients());
+}
+
+void _saveInitialIngredients(Ingredients requiredIngredients, BuildContext context) {
+  var database = getDatabase(context);
+  database.ingredientsDao.addIngredients(requiredIngredients.toInitialEntityData());
+  developer.log("Initial ingredients saved!");
+}
+
+extension _IngredientsExtension on Ingredients {
+  IngredientsEntityCompanion toEntityCompanion() => IngredientsEntityCompanion(
+        addedSugar: sugar.value.toMoorValue(),
+        addedWater: water.value.toMoorValue(),
+        addedYeast: yeast.toMoorValue(),
+        addedNutrients: nutrients.toMoorValue(),
+      );
+
+  IngredientsEntityData toInitialEntityData() {
+    const initialZero = 0.0;
+    const initialFalse = false;
+
+    return IngredientsEntityData(
+      id: 1,
+      requiredSugar: sugar.value,
+      addedSugar: initialZero,
+      requiredWater: water.value,
+      addedWater: initialZero,
+      requiredYeast: yeast,
+      addedYeast: initialFalse,
+      requiredNutrients: nutrients,
+      addedNutrients: initialFalse,
+    );
+  }
+}
+
+extension _IngredientsEntityDataExtension on IngredientsEntityData {
+  Ingredients toRemainingIngredients() => Ingredients(
+        Kilograms(requiredSugar - addedSugar),
+        Litres(requiredWater - addedWater),
+        requiredYeast != addedYeast,
+        requiredNutrients != addedNutrients,
+      );
 }

@@ -10,10 +10,10 @@ class RequiredIngredientsDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     var _ingredients = getRemainingIngredients(1, context);
 
-    return getIngredientsFutureBuilder(_ingredients);
+    return _getIngredientsFutureBuilder(_ingredients);
   }
 
-  FutureBuilder<Ingredients> getIngredientsFutureBuilder(_value) {
+  FutureBuilder<Ingredients> _getIngredientsFutureBuilder(_value) {
     return FutureBuilder<Ingredients>(
         future: _value,
         builder: (context, snapshot) {
