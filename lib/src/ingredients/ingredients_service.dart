@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:winemaker/src/common_models/litres.dart';
 import 'package:winemaker/src/common_models/sugar.dart';
 import 'package:winemaker/src/database/database.dart';
-import 'package:winemaker/src/database/moor_value_extension.dart';
+import 'package:winemaker/src/database/drift_value_extension.dart';
 import 'package:winemaker/src/desired_wine/desired_wine.dart';
 import 'package:winemaker/src/future/future_mapper.dart';
 import 'package:winemaker/src/must/must_measurements.dart';
@@ -44,10 +44,10 @@ void _saveInitialIngredients(Ingredients requiredIngredients, BuildContext conte
 
 extension _IngredientsExtension on Ingredients {
   IngredientsEntityCompanion toEntityCompanion() => IngredientsEntityCompanion(
-        addedSugar: sugar.value.toMoorValue(),
-        addedWater: water.value.toMoorValue(),
-        addedYeast: yeast.toMoorValue(),
-        addedNutrients: nutrients.toMoorValue(),
+        addedSugar: sugar.value.toDriftValue(),
+        addedWater: water.value.toDriftValue(),
+        addedYeast: yeast.toDriftValue(),
+        addedNutrients: nutrients.toDriftValue(),
       );
 
   IngredientsEntityData toInitialEntityData() {

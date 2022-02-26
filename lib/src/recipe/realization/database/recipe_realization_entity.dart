@@ -1,4 +1,4 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 import 'package:winemaker/src/constants/recipes.dart';
 
 class RecipeRealizationEntity extends Table {

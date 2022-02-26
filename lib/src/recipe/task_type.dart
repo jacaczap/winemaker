@@ -4,7 +4,14 @@ import 'package:winemaker/view/task/desired_wine_form.dart';
 import 'package:winemaker/view/task/ingredients_calculator.dart';
 import 'package:winemaker/view/task/measurements_form.dart';
 
-enum TaskType { description, desiredWineForm, measurementForm, addingIngredients, timeNotification, calculations }
+enum TaskType {
+  description,
+  desiredWineForm,
+  measurementForm,
+  addingIngredients,
+  timeNotification,
+  calculations
+}
 
 extension TaskTypeExtension on TaskType {
   Widget getTaskWidget({Map<String, Object>? args}) {

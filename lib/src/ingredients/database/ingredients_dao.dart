@@ -1,11 +1,11 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 import 'package:winemaker/src/database/database.dart';
 
 import 'ingredients_entity.dart';
 
 part 'ingredients_dao.g.dart';
 
-@UseDao(tables: [IngredientsEntity])
+@DriftAccessor(tables: [IngredientsEntity])
 class IngredientsDao extends DatabaseAccessor<MyDatabase>
     with _$IngredientsDaoMixin {
   IngredientsDao(MyDatabase db) : super(db);

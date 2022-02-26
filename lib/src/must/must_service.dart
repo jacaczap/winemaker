@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:winemaker/src/common_models/litres.dart';
 import 'package:winemaker/src/common_models/sugar.dart';
 import 'package:winemaker/src/database/database.dart';
-import 'package:winemaker/src/database/moor_value_extension.dart';
+import 'package:winemaker/src/database/drift_value_extension.dart';
 import 'package:winemaker/src/future/future_mapper.dart';
 
 import 'must_measurements.dart';
@@ -30,8 +30,8 @@ extension _MustMeasurementsExtension on MustMeasurements {
       );
 
   MustEntityCompanion toEntityCompanion() => MustEntityCompanion(
-        volume: volume.value.toMoorValue(),
-        sugar: sugar.value.toMoorValue(),
+        volume: volume.value.toDriftValue(),
+        sugar: sugar.value.toDriftValue(),
       );
 }
 

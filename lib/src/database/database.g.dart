@@ -14,8 +14,7 @@ class DesiredWineEntityData extends DataClass
   final double sugar;
   DesiredWineEntityData(
       {required this.id, required this.alcohol, required this.sugar});
-  factory DesiredWineEntityData.fromData(
-      Map<String, dynamic> data, GeneratedDatabase db,
+  factory DesiredWineEntityData.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DesiredWineEntityData(
@@ -46,7 +45,7 @@ class DesiredWineEntityData extends DataClass
 
   factory DesiredWineEntityData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return DesiredWineEntityData(
       id: serializer.fromJson<int>(json['id']),
       alcohol: serializer.fromJson<double>(json['alcohol']),
@@ -55,7 +54,7 @@ class DesiredWineEntityData extends DataClass
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'alcohol': serializer.toJson<double>(alcohol),
@@ -155,23 +154,27 @@ class DesiredWineEntityCompanion
 
 class $DesiredWineEntityTable extends DesiredWineEntity
     with TableInfo<$DesiredWineEntityTable, DesiredWineEntityData> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $DesiredWineEntityTable(this._db, [this._alias]);
+  $DesiredWineEntityTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
       'id', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const IntType(),
       requiredDuringInsert: false,
       defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _alcoholMeta = const VerificationMeta('alcohol');
+  @override
   late final GeneratedColumn<double?> alcohol = GeneratedColumn<double?>(
       'alcohol', aliasedName, false,
-      typeName: 'REAL', requiredDuringInsert: true);
+      type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _sugarMeta = const VerificationMeta('sugar');
+  @override
   late final GeneratedColumn<double?> sugar = GeneratedColumn<double?>(
       'sugar', aliasedName, false,
-      typeName: 'REAL', requiredDuringInsert: true);
+      type: const RealType(), requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [id, alcohol, sugar];
   @override
@@ -206,13 +209,13 @@ class $DesiredWineEntityTable extends DesiredWineEntity
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   DesiredWineEntityData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return DesiredWineEntityData.fromData(data, _db,
+    return DesiredWineEntityData.fromData(data,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $DesiredWineEntityTable createAlias(String alias) {
-    return $DesiredWineEntityTable(_db, alias);
+    return $DesiredWineEntityTable(attachedDatabase, alias);
   }
 }
 
@@ -221,9 +224,7 @@ class MustEntityData extends DataClass implements Insertable<MustEntityData> {
   final double volume;
   final double sugar;
   MustEntityData({required this.id, required this.volume, required this.sugar});
-  factory MustEntityData.fromData(
-      Map<String, dynamic> data, GeneratedDatabase db,
-      {String? prefix}) {
+  factory MustEntityData.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return MustEntityData(
       id: const IntType()
@@ -253,7 +254,7 @@ class MustEntityData extends DataClass implements Insertable<MustEntityData> {
 
   factory MustEntityData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return MustEntityData(
       id: serializer.fromJson<int>(json['id']),
       volume: serializer.fromJson<double>(json['volume']),
@@ -262,7 +263,7 @@ class MustEntityData extends DataClass implements Insertable<MustEntityData> {
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'volume': serializer.toJson<double>(volume),
@@ -361,23 +362,27 @@ class MustEntityCompanion extends UpdateCompanion<MustEntityData> {
 
 class $MustEntityTable extends MustEntity
     with TableInfo<$MustEntityTable, MustEntityData> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MustEntityTable(this._db, [this._alias]);
+  $MustEntityTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
       'id', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const IntType(),
       requiredDuringInsert: false,
       defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _volumeMeta = const VerificationMeta('volume');
+  @override
   late final GeneratedColumn<double?> volume = GeneratedColumn<double?>(
       'volume', aliasedName, false,
-      typeName: 'REAL', requiredDuringInsert: true);
+      type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _sugarMeta = const VerificationMeta('sugar');
+  @override
   late final GeneratedColumn<double?> sugar = GeneratedColumn<double?>(
       'sugar', aliasedName, false,
-      typeName: 'REAL', requiredDuringInsert: true);
+      type: const RealType(), requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [id, volume, sugar];
   @override
@@ -411,13 +416,13 @@ class $MustEntityTable extends MustEntity
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   MustEntityData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return MustEntityData.fromData(data, _db,
+    return MustEntityData.fromData(data,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $MustEntityTable createAlias(String alias) {
-    return $MustEntityTable(_db, alias);
+    return $MustEntityTable(attachedDatabase, alias);
   }
 }
 
@@ -442,8 +447,7 @@ class IngredientsEntityData extends DataClass
       required this.addedYeast,
       required this.requiredNutrients,
       required this.addedNutrients});
-  factory IngredientsEntityData.fromData(
-      Map<String, dynamic> data, GeneratedDatabase db,
+  factory IngredientsEntityData.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return IngredientsEntityData(
@@ -498,7 +502,7 @@ class IngredientsEntityData extends DataClass
 
   factory IngredientsEntityData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return IngredientsEntityData(
       id: serializer.fromJson<int>(json['id']),
       requiredSugar: serializer.fromJson<double>(json['requiredSugar']),
@@ -513,7 +517,7 @@ class IngredientsEntityData extends DataClass
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'requiredSugar': serializer.toJson<double>(requiredSugar),
@@ -721,58 +725,68 @@ class IngredientsEntityCompanion
 
 class $IngredientsEntityTable extends IngredientsEntity
     with TableInfo<$IngredientsEntityTable, IngredientsEntityData> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $IngredientsEntityTable(this._db, [this._alias]);
+  $IngredientsEntityTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
       'id', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const IntType(),
       requiredDuringInsert: false,
       defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _requiredSugarMeta =
       const VerificationMeta('requiredSugar');
+  @override
   late final GeneratedColumn<double?> requiredSugar = GeneratedColumn<double?>(
       'required_sugar', aliasedName, false,
-      typeName: 'REAL', requiredDuringInsert: true);
+      type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _addedSugarMeta = const VerificationMeta('addedSugar');
+  @override
   late final GeneratedColumn<double?> addedSugar = GeneratedColumn<double?>(
       'added_sugar', aliasedName, false,
-      typeName: 'REAL', requiredDuringInsert: true);
+      type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _requiredWaterMeta =
       const VerificationMeta('requiredWater');
+  @override
   late final GeneratedColumn<double?> requiredWater = GeneratedColumn<double?>(
       'required_water', aliasedName, false,
-      typeName: 'REAL', requiredDuringInsert: true);
+      type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _addedWaterMeta = const VerificationMeta('addedWater');
+  @override
   late final GeneratedColumn<double?> addedWater = GeneratedColumn<double?>(
       'added_water', aliasedName, false,
-      typeName: 'REAL', requiredDuringInsert: true);
+      type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _requiredYeastMeta =
       const VerificationMeta('requiredYeast');
+  @override
   late final GeneratedColumn<bool?> requiredYeast = GeneratedColumn<bool?>(
       'required_yeast', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const BoolType(),
       requiredDuringInsert: true,
       defaultConstraints: 'CHECK (required_yeast IN (0, 1))');
   final VerificationMeta _addedYeastMeta = const VerificationMeta('addedYeast');
+  @override
   late final GeneratedColumn<bool?> addedYeast = GeneratedColumn<bool?>(
       'added_yeast', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const BoolType(),
       requiredDuringInsert: true,
       defaultConstraints: 'CHECK (added_yeast IN (0, 1))');
   final VerificationMeta _requiredNutrientsMeta =
       const VerificationMeta('requiredNutrients');
+  @override
   late final GeneratedColumn<bool?> requiredNutrients = GeneratedColumn<bool?>(
       'required_nutrients', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const BoolType(),
       requiredDuringInsert: true,
       defaultConstraints: 'CHECK (required_nutrients IN (0, 1))');
   final VerificationMeta _addedNutrientsMeta =
       const VerificationMeta('addedNutrients');
+  @override
   late final GeneratedColumn<bool?> addedNutrients = GeneratedColumn<bool?>(
       'added_nutrients', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const BoolType(),
       requiredDuringInsert: true,
       defaultConstraints: 'CHECK (added_nutrients IN (0, 1))');
   @override
@@ -871,13 +885,13 @@ class $IngredientsEntityTable extends IngredientsEntity
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   IngredientsEntityData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return IngredientsEntityData.fromData(data, _db,
+    return IngredientsEntityData.fromData(data,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $IngredientsEntityTable createAlias(String alias) {
-    return $IngredientsEntityTable(_db, alias);
+    return $IngredientsEntityTable(attachedDatabase, alias);
   }
 }
 
@@ -888,8 +902,7 @@ class RecipeRealizationEntityData extends DataClass
   final AvailableRecipes recipe;
   RecipeRealizationEntityData(
       {required this.id, required this.currentTask, required this.recipe});
-  factory RecipeRealizationEntityData.fromData(
-      Map<String, dynamic> data, GeneratedDatabase db,
+  factory RecipeRealizationEntityData.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return RecipeRealizationEntityData(
@@ -924,7 +937,7 @@ class RecipeRealizationEntityData extends DataClass
 
   factory RecipeRealizationEntityData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return RecipeRealizationEntityData(
       id: serializer.fromJson<int>(json['id']),
       currentTask: serializer.fromJson<int>(json['currentTask']),
@@ -933,7 +946,7 @@ class RecipeRealizationEntityData extends DataClass
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'currentTask': serializer.toJson<int>(currentTask),
@@ -1037,24 +1050,28 @@ class RecipeRealizationEntityCompanion
 
 class $RecipeRealizationEntityTable extends RecipeRealizationEntity
     with TableInfo<$RecipeRealizationEntityTable, RecipeRealizationEntityData> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $RecipeRealizationEntityTable(this._db, [this._alias]);
+  $RecipeRealizationEntityTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
       'id', aliasedName, false,
-      typeName: 'INTEGER',
+      type: const IntType(),
       requiredDuringInsert: false,
       defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _currentTaskMeta =
       const VerificationMeta('currentTask');
+  @override
   late final GeneratedColumn<int?> currentTask = GeneratedColumn<int?>(
       'current_task', aliasedName, false,
-      typeName: 'INTEGER', requiredDuringInsert: true);
+      type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _recipeMeta = const VerificationMeta('recipe');
+  @override
   late final GeneratedColumnWithTypeConverter<AvailableRecipes, int?> recipe =
       GeneratedColumn<int?>('recipe', aliasedName, false,
-              typeName: 'INTEGER', requiredDuringInsert: true)
+              type: const IntType(), requiredDuringInsert: true)
           .withConverter<AvailableRecipes>(
               $RecipeRealizationEntityTable.$converter0);
   @override
@@ -1089,13 +1106,13 @@ class $RecipeRealizationEntityTable extends RecipeRealizationEntity
   @override
   RecipeRealizationEntityData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
-    return RecipeRealizationEntityData.fromData(data, _db,
+    return RecipeRealizationEntityData.fromData(data,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $RecipeRealizationEntityTable createAlias(String alias) {
-    return $RecipeRealizationEntityTable(_db, alias);
+    return $RecipeRealizationEntityTable(attachedDatabase, alias);
   }
 
   static TypeConverter<AvailableRecipes, int> $converter0 =
