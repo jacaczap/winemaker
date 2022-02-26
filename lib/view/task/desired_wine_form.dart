@@ -37,7 +37,7 @@ class _DesiredWineFormState extends State<DesiredWineForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               getNumberFormField(desiredAlcoholController, "Desired alcohol level in %", autofocus: true),
-              getNumberFormField(desiredSweetnessController, "Desired sweetness in Blg"),
+              getNumberFormField(desiredSweetnessController, "Desired sweetness in g/l"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: ElevatedButton(
@@ -57,7 +57,7 @@ class _DesiredWineFormState extends State<DesiredWineForm> {
 
   void _saveDesiredWine(BuildContext context) {
     var alcohol = Alcohol(parseDoubleInput(desiredAlcoholController.text));
-    var sugar = Blg(parseDoubleInput(desiredSweetnessController.text));
+    var sugar = GramsPerLiter(parseDoubleInput(desiredSweetnessController.text));
     var desiredWine = DesiredWine(alcohol, sugar);
     saveDesiredWineParameters(desiredWine, context);
   }

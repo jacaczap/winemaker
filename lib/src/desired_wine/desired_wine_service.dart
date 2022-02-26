@@ -26,5 +26,5 @@ extension _DesiredWineExtension on DesiredWine {
 }
 
 extension _DesiredWineEntityDataExtension on DesiredWineEntityData {
-  DesiredWine toDomain() => DesiredWine(Alcohol(alcohol), Blg(sugar));
+  DesiredWine toDomain() => DesiredWine(Alcohol(alcohol), GramsPerLiter(sugar));
 }

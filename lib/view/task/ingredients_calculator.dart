@@ -8,8 +8,8 @@ import 'package:winemaker/src/must/must_service.dart';
 import 'package:winemaker/view/constants.dart';
 import 'package:winemaker/view/utils/future_builder.dart';
 
-class MustParametersDisplay extends StatelessWidget {
-  const MustParametersDisplay({Key? key}) : super(key: key);
+class IngredientsCalculatorDisplay extends StatelessWidget {
+  const IngredientsCalculatorDisplay({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class MustParametersDisplay extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Must parameters'),
+          title: const Text('Ingredients calculator'),
         ),
         body: Column(children: [
           Expanded(child: ListView(children: mustParameters)),

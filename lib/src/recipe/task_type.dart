@@ -11,7 +11,7 @@ extension TaskTypeExtension on TaskType {
     switch (this) {
       case TaskType.description:
         // TODO: return correct widget
-        return const MustParametersDisplay();
+        return const IngredientsCalculatorDisplay();
 
       case TaskType.desiredWineForm:
         return const DesiredWineForm();
@@ -27,7 +27,7 @@ extension TaskTypeExtension on TaskType {
         return const MeasurementsForm();
 
       case TaskType.calculations:
-        return const MustParametersDisplay();
+        return const IngredientsCalculatorDisplay();
     }
   }
 }

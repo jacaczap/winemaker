@@ -3,7 +3,7 @@ import 'package:winemaker/src/common_models/sugar.dart';
 
 class DesiredWine {
   final Alcohol alcohol;
-  final Blg sugar;
+  final GramsPerLiter sugar;
 
   const DesiredWine(this.alcohol, this.sugar);
 }

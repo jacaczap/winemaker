@@ -18,11 +18,12 @@ class RequiredIngredientsDisplay extends StatelessWidget {
         future: _value,
         builder: (context, snapshot) {
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Water: ${snapshot.data?.water} l", style: biggerFont),
               Text("Sugar: ${snapshot.data?.sugar} kg", style: biggerFont),
-              if (snapshot.data != null && snapshot.data!.yeast) const Text("Please add yeast"),
-              if (snapshot.data != null && snapshot.data!.nutrients) const Text("Please add nutrients"),
+              if (snapshot.data != null && snapshot.data!.yeast) const Text("Please add yeast", style: biggerFont),
+              if (snapshot.data != null && snapshot.data!.nutrients) const Text("Please add nutrients", style: biggerFont),
             ],
           );
         });

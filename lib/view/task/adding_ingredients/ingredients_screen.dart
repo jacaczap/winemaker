@@ -10,10 +10,10 @@ class IngredientsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> ingredientsView = [
-      const Text("Ingredients added:", textAlign: TextAlign.center, style: biggerFont),
+      const Text("Remaining ingredients to add", textAlign: TextAlign.center, style: biggerFont),
       const RequiredIngredientsDisplay(),
       const Divider(),
-      const Text("Remaining ingredients to add", textAlign: TextAlign.center, style: biggerFont),
+      const Text("Ingredients added", textAlign: TextAlign.center, style: biggerFont),
       const IngredientsForm(),
     ];
 

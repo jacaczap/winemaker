@@ -7,39 +7,35 @@ import 'package:winemaker/src/ingredients/ingredients.dart';
 import 'package:winemaker/src/must/must_measurements.dart';
 
 Ingredients calculateIngredients(DesiredWine desiredWine, MustMeasurements must) {
-  var expectedVolume = _calculateExpectedVolume(must.volume);
+  var sugarToAddPerLiter = _calculateRequiredSugar(desiredWine, must);
 
-  var sugarToAdd = _calculateRequiredSugar(desiredWine, must, expectedVolume);
+  var volumeOfSugarThatWillBeAddedPerLiter = Litres(sugarToAddPerLiter.value * 0.6 / 1000);
+  var waterToAddPerLiter = averageRedGrapesJuiceDilutionPerLiter - volumeOfSugarThatWillBeAddedPerLiter;
 
+  var waterToAdd = waterToAddPerLiter * must.volume.value;
+  var sugarToAdd = sugarToAddPerLiter.toKilograms(must.volume);
   var shouldAddYeast = true;
   var shouldAddNutrients = true;
-  return Ingredients(sugarToAdd, expectedVolume, shouldAddYeast, shouldAddNutrients);
+  return Ingredients(sugarToAdd.roundTo(2), waterToAdd.roundTo(2), shouldAddYeast, shouldAddNutrients);
 }
 
-Litres _calculateExpectedVolume(Litres mustVolume) => mustVolume * (1 + averageRedGrapesJuiceDilution);
-
-Kilograms _calculateRequiredSugar(DesiredWine desiredWine, MustMeasurements must, Litres expectedVolume) {
+GramsPerLiter _calculateRequiredSugar(DesiredWine desiredWine, MustMeasurements must) {
   var sugarForAlcohol = _calculateSugarForAlcohol(desiredWine.alcohol);
-  var remainingSugarForAlcohol = sugarForAlcohol - must.sugar.toGramsPerLiter();
-  return const Kilograms(15.0);
+  var mustBlgWithoutNonSugarSubstances = must.sugar - averageRedGrapesNonSugarSubstances;
+  var remainingSugarForAlcohol = sugarForAlcohol - mustBlgWithoutNonSugarSubstances.toGramsPerLiter();
+  var sugarForSweetness = _sugarIncludingDilution(desiredWine.sugar, averageRedGrapesJuiceDilutionPerLiter);
+  return remainingSugarForAlcohol + sugarForSweetness;
 }
 
-_GramsPerLiter _calculateSugarForAlcohol(Alcohol desiredAlcohol) {
-  var sugarForAlcoholWithoutDilution = _GramsPerLiter(desiredAlcohol.value * 10 * 1.7);
-  var sugarForAlcoholIncludingDilution = sugarForAlcoholWithoutDilution * (1 + averageRedGrapesJuiceDilution);
+GramsPerLiter _calculateSugarForAlcohol(Alcohol desiredAlcohol) {
+  var sugarForAlcoholWithoutDilution = GramsPerLiter(desiredAlcohol.value * 10 * 1.7);
+  var sugarForAlcoholIncludingDilution = _sugarIncludingDilution(sugarForAlcoholWithoutDilution, averageRedGrapesJuiceDilutionPerLiter);
   return sugarForAlcoholIncludingDilution;
 }
 
+GramsPerLiter _sugarIncludingDilution(GramsPerLiter sugarWithoutDilution, Litres dilutionPerLiter) =>
+    sugarWithoutDilution * (1 + dilutionPerLiter.value);
+
 extension _BlgExtension on Blg {
-  _GramsPerLiter toGramsPerLiter() => _GramsPerLiter(value * 10);
-}
-
-class _GramsPerLiter {
-  final double value;
-
-  _GramsPerLiter(this.value);
-
-  _GramsPerLiter operator +(_GramsPerLiter other) => _GramsPerLiter(other.value + value);
-  _GramsPerLiter operator -(_GramsPerLiter other) => _GramsPerLiter(other.value - value);
-  _GramsPerLiter operator *(double other) => _GramsPerLiter(value * value);
+  GramsPerLiter toGramsPerLiter() => GramsPerLiter(value * 10);
 }
