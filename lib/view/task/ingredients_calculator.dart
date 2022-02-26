@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:winemaker/src/calculator/ingredients_calculator.dart';
 import 'package:winemaker/src/desired_wine/desired_wine.dart';
 import 'package:winemaker/src/desired_wine/desired_wine_service.dart';
 import 'package:winemaker/src/future/future_mapper.dart';
+import 'package:winemaker/src/ingredients/ingredients_service.dart';
 import 'package:winemaker/src/must/must_measurements.dart';
 import 'package:winemaker/src/must/must_service.dart';
 import 'package:winemaker/view/constants.dart';
 import 'package:winemaker/view/utils/future_builder.dart';
 
-class MustParametersDisplay extends StatelessWidget {
-  const MustParametersDisplay({Key? key}) : super(key: key);
+class IngredientsCalculatorDisplay extends StatelessWidget {
+  const IngredientsCalculatorDisplay({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,25 +17,25 @@ class MustParametersDisplay extends StatelessWidget {
 
     var _desiredWineParameters = getDesiredWineById(1, context);
 
-    final List<Widget> mustParameters = getMustParameterDisplay(_desiredWineParameters, _must);
+    final List<Widget> mustParameters = _getMustParameterDisplay(_desiredWineParameters, _must);
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Must parameters'),
+          title: const Text('Ingredients calculator'),
         ),
         body: Column(children: [
           Expanded(child: ListView(children: mustParameters)),
           ElevatedButton(
             child: const Text("Calculate required ingredients"),
             onPressed: () {
-              calculateAndSaveIngredients(context);
+              calculateAndSaveIngredients(_desiredWineParameters, _must, context);
               Navigator.pop(context, true);
             },
           ),
         ]));
   }
 
-  List<Widget> getMustParameterDisplay(Future<DesiredWine> _desiredWineParameters, Future<MustMeasurements> _must) {
+  List<Widget> _getMustParameterDisplay(Future<DesiredWine> _desiredWineParameters, Future<MustMeasurements> _must) {
     var _volume = _must.map((must) => must.volume.toString());
     var _sugar = _must.map((must) => must.sugar.toString());
     var _desiredAlcohol = _desiredWineParameters.map((desiredWine) => desiredWine.alcohol.toString());

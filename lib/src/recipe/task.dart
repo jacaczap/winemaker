@@ -5,5 +5,5 @@ class Task {
   final TaskType type;
   final Map<String, Object>? args;
 
-  Task(this.name, this.type, {this.args});
+  const Task(this.name, this.type, {this.args});
 }

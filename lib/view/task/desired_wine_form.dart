@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:winemaker/src/common_models/alcohol.dart';
+import 'package:winemaker/src/common_models/sugar.dart';
 import 'package:winemaker/src/desired_wine/desired_wine.dart';
 import 'package:winemaker/src/desired_wine/desired_wine_service.dart';
 import 'package:winemaker/src/user_input_utils.dart';
@@ -35,7 +37,7 @@ class _DesiredWineFormState extends State<DesiredWineForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               getNumberFormField(desiredAlcoholController, "Desired alcohol level in %", autofocus: true),
-              getNumberFormField(desiredSweetnessController, "Desired sweetness in Blg"),
+              getNumberFormField(desiredSweetnessController, "Desired sweetness in g/l"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: ElevatedButton(
@@ -54,8 +56,8 @@ class _DesiredWineFormState extends State<DesiredWineForm> {
   }
 
   void _saveDesiredWine(BuildContext context) {
-    var alcohol = parseDoubleInput(desiredAlcoholController.text);
-    var sugar = parseDoubleInput(desiredSweetnessController.text);
+    var alcohol = Alcohol(parseDoubleInput(desiredAlcoholController.text));
+    var sugar = GramsPerLiter(parseDoubleInput(desiredSweetnessController.text));
     var desiredWine = DesiredWine(alcohol, sugar);
     saveDesiredWineParameters(desiredWine, context);
   }

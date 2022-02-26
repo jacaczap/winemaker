@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:flutter/widgets.dart';
-import 'package:moor/ffi.dart';
-import 'package:moor/moor.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -22,11 +22,11 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'db.sqlite'));
-    return VmDatabase(file);
+    return NativeDatabase(file);
   });
 }
 
-@UseMoor(
+@DriftDatabase(
     tables: [DesiredWineEntity, MustEntity, IngredientsEntity, RecipeRealizationEntity],
     daos: [DesiredWineDao, MustDao, IngredientsDao, RecipeRealizationDao])
 class MyDatabase extends _$MyDatabase {

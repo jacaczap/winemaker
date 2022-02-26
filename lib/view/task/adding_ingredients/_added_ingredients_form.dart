@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:winemaker/src/common_models/litres.dart';
+import 'package:winemaker/src/common_models/sugar.dart';
 import 'package:winemaker/src/ingredients/ingredients.dart';
 import 'package:winemaker/src/ingredients/ingredients_service.dart';
 import 'package:winemaker/src/user_input_utils.dart';
@@ -80,8 +82,8 @@ class _IngredientsFormState extends State<IngredientsForm> {
   }
 
   void _saveIngredients(BuildContext context) {
-    var sugar = parseDoubleInput(sugarController.text);
-    var water = parseDoubleInput(waterController.text);
+    var sugar = Kilograms(parseDoubleInput(sugarController.text));
+    var water = Litres(parseDoubleInput(waterController.text));
     var ingredients = Ingredients(sugar, water, wasYeastAdded, wereNutrientsAdded);
     saveAddedIngredients(1, ingredients, context);
   }

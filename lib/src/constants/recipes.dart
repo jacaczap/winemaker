@@ -2,7 +2,7 @@ import 'package:winemaker/src/recipe/recipe.dart';
 import 'package:winemaker/src/recipe/task.dart';
 import 'package:winemaker/src/recipe/task_type.dart';
 
-final Recipe redWineRecipe = Recipe([
+Recipe redWineRecipe = const Recipe([
   Task("Desired wine parameters", TaskType.desiredWineForm),
   Task("Must parameters measurement", TaskType.measurementForm),
   Task("Calculate ingredients", TaskType.calculations),

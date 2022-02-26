@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:winemaker/src/common_models/litres.dart';
+import 'package:winemaker/src/common_models/sugar.dart';
 import 'package:winemaker/src/must/must_measurements.dart';
 import 'package:winemaker/src/must/must_service.dart';
 import 'package:winemaker/src/user_input_utils.dart';
@@ -54,8 +56,8 @@ class _MeasurementsFormState extends State<MeasurementsForm> {
   }
 
   void _saveMeasurements(BuildContext context) {
-    var volume = parseDoubleInput(volumeController.text);
-    var sugar = parseDoubleInput(sugarController.text);
+    var volume = Litres(parseDoubleInput(volumeController.text));
+    var sugar = Blg(parseDoubleInput(sugarController.text));
     var mustMeasurements = MustMeasurements(volume, sugar);
     saveInitialMustMeasurements(mustMeasurements, context);
   }

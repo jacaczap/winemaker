@@ -1,11 +1,11 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 import 'package:winemaker/src/database/database.dart';
 
 import 'must_entity.dart';
 
 part 'must_dao.g.dart';
 
-@UseDao(tables: [MustEntity])
+@DriftAccessor(tables: [MustEntity])
 class MustDao extends DatabaseAccessor<MyDatabase> with _$MustDaoMixin {
   MustDao(MyDatabase db) : super(db);
 

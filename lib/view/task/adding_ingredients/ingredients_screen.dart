@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:winemaker/view/constants.dart';
-import 'package:winemaker/view/task/adding_ingredients/added_ingredients_form.dart';
-import 'package:winemaker/view/task/adding_ingredients/required_ingredients_display.dart';
+import 'package:winemaker/view/task/adding_ingredients/_added_ingredients_form.dart';
+import 'package:winemaker/view/task/adding_ingredients/_required_ingredients_display.dart';
 
 class IngredientsScreen extends StatelessWidget {
   const IngredientsScreen({Key? key}) : super(key: key);
@@ -10,10 +10,10 @@ class IngredientsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> ingredientsView = [
-      const Text("Ingredients added:", textAlign: TextAlign.center, style: biggerFont),
+      const Text("Remaining ingredients to add", textAlign: TextAlign.center, style: biggerFont),
       const RequiredIngredientsDisplay(),
       const Divider(),
-      const Text("Remaining ingredients to add", textAlign: TextAlign.center, style: biggerFont),
+      const Text("Ingredients added", textAlign: TextAlign.center, style: biggerFont),
       const IngredientsForm(),
     ];
 

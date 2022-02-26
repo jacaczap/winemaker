@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:winemaker/view/task/adding_ingredients/ingredients_screen.dart';
 import 'package:winemaker/view/task/desired_wine_form.dart';
+import 'package:winemaker/view/task/ingredients_calculator.dart';
 import 'package:winemaker/view/task/measurements_form.dart';
-import 'package:winemaker/view/task/must_parameters_display.dart';
 
-enum TaskType { description, desiredWineForm, measurementForm, addingIngredients, timeNotification, calculations }
+enum TaskType {
+  description,
+  desiredWineForm,
+  measurementForm,
+  addingIngredients,
+  timeNotification,
+  calculations
+}
 
 extension TaskTypeExtension on TaskType {
   Widget getTaskWidget({Map<String, Object>? args}) {
     switch (this) {
       case TaskType.description:
         // TODO: return correct widget
-        return const MustParametersDisplay();
+        return const IngredientsCalculatorDisplay();
 
       case TaskType.desiredWineForm:
         return const DesiredWineForm();
@@ -27,7 +34,7 @@ extension TaskTypeExtension on TaskType {
         return const MeasurementsForm();
 
       case TaskType.calculations:
-        return const MustParametersDisplay();
+        return const IngredientsCalculatorDisplay();
     }
   }
 }

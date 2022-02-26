@@ -10,19 +10,20 @@ class RequiredIngredientsDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     var _ingredients = getRemainingIngredients(1, context);
 
-    return getIngredientsFutureBuilder(_ingredients);
+    return _getIngredientsFutureBuilder(_ingredients);
   }
 
-  FutureBuilder<Ingredients> getIngredientsFutureBuilder(_value) {
+  FutureBuilder<Ingredients> _getIngredientsFutureBuilder(_value) {
     return FutureBuilder<Ingredients>(
         future: _value,
         builder: (context, snapshot) {
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Water: ${snapshot.data?.water} l", style: biggerFont),
               Text("Sugar: ${snapshot.data?.sugar} kg", style: biggerFont),
-              if (snapshot.data != null && snapshot.data!.yeast) const Text("Please add yeast"),
-              if (snapshot.data != null && snapshot.data!.nutrients) const Text("Please add nutrients"),
+              if (snapshot.data != null && snapshot.data!.yeast) const Text("Please add yeast", style: biggerFont),
+              if (snapshot.data != null && snapshot.data!.nutrients) const Text("Please add nutrients", style: biggerFont),
             ],
           );
         });

@@ -1,6 +1,9 @@
-class DesiredWine {
-  final double alcohol;
-  final double sugar;
+import 'package:winemaker/src/common_models/alcohol.dart';
+import 'package:winemaker/src/common_models/sugar.dart';
 
-  DesiredWine(this.alcohol, this.sugar);
+class DesiredWine {
+  final Alcohol alcohol;
+  final GramsPerLiter sugar;
+
+  const DesiredWine(this.alcohol, this.sugar);
 }
