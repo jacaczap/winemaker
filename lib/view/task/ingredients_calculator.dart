@@ -48,7 +48,7 @@ class IngredientsCalculatorDisplay extends StatelessWidget {
       const Divider(),
       const Text("Desired wine parameters", textAlign: TextAlign.center, style: biggerFont),
       getTextFutureBuilder(_desiredAlcohol, "Alcohol", "%"),
-      getTextFutureBuilder(_desiredSugar, "Sugar", "Blg"),
+      getTextFutureBuilder(_desiredSugar, "Sugar", "g/l"),
     ];
   }
 }

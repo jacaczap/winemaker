@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winemaker/src/database/database.dart';
@@ -14,9 +15,7 @@ class MyApp extends StatelessWidget {
       create: (context) => MyDatabase(),
       child: MaterialApp(
         title: 'Welcome to Winemaker',
-        theme: ThemeData(
-          primarySwatch: Colors.red,
-        ),
+        theme: FlexThemeData.light(scheme: FlexScheme.redWine),
         home: const StartWineMaker(),
       ),
       dispose: (context, db) => db.close(),

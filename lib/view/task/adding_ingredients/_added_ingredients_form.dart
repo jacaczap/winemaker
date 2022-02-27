@@ -39,7 +39,6 @@ class _IngredientsFormState extends State<IngredientsForm> {
           Row(
             children: [
               Checkbox(
-                checkColor: Colors.white,
                 value: wasYeastAdded,
                 onChanged: (bool? value) {
                   setState(() {
@@ -53,7 +52,6 @@ class _IngredientsFormState extends State<IngredientsForm> {
           Row(
             children: [
               Checkbox(
-                checkColor: Colors.white,
                 value: wereNutrientsAdded,
                 onChanged: (bool? value) {
                   setState(() {

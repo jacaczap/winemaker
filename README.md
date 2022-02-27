@@ -52,3 +52,8 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 To generate Drift files use `flutter packages pub run build_runner build`
+
+Try `flutter clean` before
+To build the app run `flutter build appbundle`  
+To install the app run `flutter install`  
+To make sure you install correct run `flutter run --release`  
