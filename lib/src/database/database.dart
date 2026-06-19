@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
+import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:winemaker/src/constants/recipes.dart';
 import 'package:winemaker/src/desired_wine/database/desired_wine_dao.dart';
@@ -18,19 +14,11 @@ import 'package:winemaker/src/recipe/realization/database/recipe_realization_ent
 
 part 'database.g.dart';
 
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
-    return NativeDatabase(file);
-  });
-}
-
 @DriftDatabase(
     tables: [DesiredWineEntity, MustEntity, IngredientsEntity, RecipeRealizationEntity],
     daos: [DesiredWineDao, MustDao, IngredientsDao, RecipeRealizationDao])
 class MyDatabase extends _$MyDatabase {
-  MyDatabase() : super(_openConnection());
+  MyDatabase() : super(driftDatabase(name: 'db'));
 
   // you should bump this number whenever you change or add a table definition
   @override
