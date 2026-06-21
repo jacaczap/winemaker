@@ -10,7 +10,7 @@ enum TaskState {
 ///
 /// Each task type owning per-task data implements this in its feature layer
 /// (e.g. `DesiredWinePayload`, `MustPayload`, `IngredientsPayload`,
-/// `SetupPayload`, `ResultPayload`). The repository encodes
+/// `CalculationsPayload`, `ResultPayload`). The repository encodes
 /// `toJson()` as a JSON string in the `payload` column.
 abstract class TaskPayload {
   const TaskPayload();

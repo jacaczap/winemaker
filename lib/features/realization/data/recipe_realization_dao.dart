@@ -12,6 +12,16 @@ class RecipeRealizationDao extends DatabaseAccessor<MyDatabase>
   Future<List<RecipeRealizationEntityData>> get allRecipeRealizationEntries =>
       select(recipeRealizationEntity).get();
 
+  /// Realizations ordered for the home list: in-progress first, then by most
+  /// recent start time, with completed ones sorted to the bottom.
+  Stream<List<RecipeRealizationEntityData>> watchOrdered() =>
+      (select(recipeRealizationEntity)
+            ..orderBy([
+              (t) => OrderingTerm.asc(t.completed),
+              (t) => OrderingTerm.desc(t.startTime),
+            ]))
+          .watch();
+
   Future<RecipeRealizationEntityData?> recipeRealizationById(int id) =>
       (select(recipeRealizationEntity)..where((tbl) => tbl.id.equals(id)))
           .getSingleOrNull();
@@ -23,4 +33,7 @@ class RecipeRealizationDao extends DatabaseAccessor<MyDatabase>
           int id, RecipeRealizationEntityCompanion realization) =>
       (update(recipeRealizationEntity)..where((i) => i.id.equals(id)))
           .write(realization);
+
+  Future<int> deleteRecipeRealization(int id) =>
+      (delete(recipeRealizationEntity)..where((t) => t.id.equals(id))).go();
 }

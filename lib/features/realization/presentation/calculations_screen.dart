@@ -10,36 +10,40 @@ import 'package:winemaker/features/calculator/domain/desired_wine.dart';
 import 'package:winemaker/features/calculator/domain/ingredients.dart';
 import 'package:winemaker/features/calculator/domain/ingredients_calculator.dart';
 import 'package:winemaker/features/calculator/domain/must_measurements.dart';
+import 'package:winemaker/features/calculator/presentation/calculation_form_fields.dart';
 import 'package:winemaker/features/calculator/presentation/ingredients_result_card.dart';
-import 'package:winemaker/features/calculator/presentation/setup_form_fields.dart';
 import 'package:winemaker/features/realization/data/task_state_repository.dart';
-import 'package:winemaker/features/realization/domain/setup_payload.dart';
+import 'package:winemaker/features/realization/domain/calculations_payload.dart';
+import 'package:winemaker/features/realization/domain/task_screen_result.dart';
+import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
 
-/// Merged setup task: desired wine + must measurements + calculated ingredients
-/// on a single screen. Persists a [SetupPayload] for its task occurrence and
-/// pops `true` so the realization advances.
-class SetupScreen extends ConsumerStatefulWidget {
-  const SetupScreen({
+/// Merged calculations task: desired wine + must measurements + calculated
+/// ingredients on a single screen. Persists a [CalculationsPayload] for its
+/// task occurrence and pops `true` so the realization advances.
+class CalculationsScreen extends ConsumerStatefulWidget {
+  const CalculationsScreen({
     super.key,
     required this.realizationId,
     required this.taskIndex,
     required this.title,
+    this.readOnly = false,
   });
 
   final int realizationId;
   final int taskIndex;
   final String title;
+  final bool readOnly;
 
   @override
-  ConsumerState<SetupScreen> createState() => _SetupScreenState();
+  ConsumerState<CalculationsScreen> createState() => _CalculationsScreenState();
 }
 
-class _SetupScreenState extends ConsumerState<SetupScreen> {
+class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   bool _loading = true;
   bool _saving = false;
-  SetupPayload? _existing;
+  CalculationsPayload? _existing;
   Ingredients? _calculated;
 
   @override
@@ -55,7 +59,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     if (!mounted) return;
     final json = record?.payloadJson;
     setState(() {
-      _existing = json == null ? null : SetupPayload.fromJson(json);
+      _existing = json == null ? null : CalculationsPayload.fromJson(json);
       _calculated = _existing?.ingredients;
       _loading = false;
     });
@@ -77,7 +81,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
     if (_calculated == null || form == null) return;
     setState(() => _saving = true);
     final values = form.value;
-    final payload = SetupPayload(
+    final payload = CalculationsPayload(
       desiredWine: _readDesiredWine(values),
       must: _readMust(values),
       ingredients: _calculated!,
@@ -88,19 +92,22 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
           payload: payload,
         );
     if (!mounted) return;
-    context.pop(true);
+    context.pop(TaskScreenResult.completed);
   }
 
   DesiredWine _readDesiredWine(Map<String, dynamic> values) => DesiredWine(
-        Alcohol(parseDoubleInput(values[SetupFields.alcohol] as String)),
-        GramsPerLiter(parseDoubleInput(values[SetupFields.sweetness] as String)),
-        GramsPerLiter(parseDoubleInput(values[SetupFields.desiredAcidity] as String)),
+        Alcohol(parseDoubleInput(values[CalculationFields.alcohol] as String)),
+        GramsPerLiter(
+            parseDoubleInput(values[CalculationFields.sweetness] as String)),
+        GramsPerLiter(parseDoubleInput(
+            values[CalculationFields.desiredAcidity] as String)),
       );
 
   MustMeasurements _readMust(Map<String, dynamic> values) => MustMeasurements(
-        Litres(parseDoubleInput(values[SetupFields.volume] as String)),
-        Blg(parseDoubleInput(values[SetupFields.mustSugar] as String)),
-        GramsPerLiter(parseDoubleInput(values[SetupFields.mustAcidity] as String)),
+        Litres(parseDoubleInput(values[CalculationFields.volume] as String)),
+        Blg(parseDoubleInput(values[CalculationFields.mustSugar] as String)),
+        GramsPerLiter(
+            parseDoubleInput(values[CalculationFields.mustAcidity] as String)),
       );
 
   @override
@@ -116,6 +123,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
   Widget _buildForm(BuildContext context) {
     final desiredWine = _existing?.desiredWine;
     final must = _existing?.must;
+    final readOnly = widget.readOnly;
     return FormBuilder(
       key: _formKey,
       onChanged: () {
@@ -131,6 +139,7 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               initialAlcohol: desiredWine?.alcohol.value.toString(),
               initialSweetness: desiredWine?.sugar.value.toString(),
               initialAcidity: desiredWine?.acidity.value.toString(),
+              enabled: !readOnly,
             ),
             const SizedBox(height: 24),
             const _SectionTitle('Must measurements'),
@@ -138,23 +147,30 @@ class _SetupScreenState extends ConsumerState<SetupScreen> {
               initialVolume: must?.volume.value.toString(),
               initialSugar: must?.sugar.value.toString(),
               initialAcidity: must?.acidity.value.toString(),
+              enabled: !readOnly,
             ),
             const SizedBox(height: 24),
-            OutlinedButton.icon(
-              onPressed: _saving ? null : _calculate,
-              icon: const Icon(Icons.calculate_outlined),
-              label: const Text('Calculate ingredients'),
-            ),
+            if (!readOnly)
+              OutlinedButton.icon(
+                onPressed: _saving ? null : _calculate,
+                icon: const Icon(Icons.calculate_outlined),
+                label: const Text('Calculate ingredients'),
+              ),
             if (_calculated != null) ...[
               const SizedBox(height: 24),
               IngredientsResultCard(ingredients: _calculated!),
               const SizedBox(height: 16),
+            ],
+            if (readOnly)
+              RedoFromHereButton(
+                onPressed: () => context.pop(TaskScreenResult.redo),
+              )
+            else if (_calculated != null)
               FilledButton.icon(
                 onPressed: _saving ? null : _save,
                 icon: const Icon(Icons.check),
                 label: const Text('Save & mark done'),
               ),
-            ],
           ],
         ),
       ),

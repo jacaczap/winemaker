@@ -6,19 +6,20 @@ import 'package:winemaker/features/calculator/domain/ingredients.dart';
 import 'package:winemaker/features/calculator/domain/must_measurements.dart';
 import 'package:winemaker/features/realization/domain/task_state.dart';
 
-/// Per-occurrence data for a `setup` task.
+/// Per-occurrence data for a `calculations` task.
 ///
 /// Stores the inputs the user entered (desired wine + must measurements) and
 /// the ingredients calculated from them, so the screen can be inspected or
 /// re-edited later without recomputing.
-class SetupPayload extends TaskPayload {
-  const SetupPayload({
+class CalculationsPayload extends TaskPayload {
+  const CalculationsPayload({
     required this.desiredWine,
     required this.must,
     required this.ingredients,
   });
 
-  factory SetupPayload.fromJson(Map<String, dynamic> json) => SetupPayload(
+  factory CalculationsPayload.fromJson(Map<String, dynamic> json) =>
+      CalculationsPayload(
         desiredWine: DesiredWine(
           Alcohol((json['desiredAlcohol'] as num).toDouble()),
           GramsPerLiter((json['desiredSweetness'] as num).toDouble()),

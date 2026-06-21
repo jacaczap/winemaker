@@ -12,16 +12,17 @@ Android (Flutter) app that guides the user step-by-step through making wine.
   recipes exist (currently one: Red Wine). Custom user recipes are future work.
 - **Task**: a single step in a recipe. Has a `TaskType` that decides its screen
   and behavior. Tasks can repeat in a recipe (e.g. `addingIngredients` appears
-  2-3 times) and some depend on earlier ones (calculation needs the setup data).
+  2-3 times) and some depend on earlier ones (adding ingredients needs the
+  calculations data).
 - **Realization**: a started recipe (an instance the user is working through).
   Tracks which recipe, current position, start time, and the data the user
   entered per task. A realization can be in progress or completed.
 
 ## Task types
 
-- **setup**: merged step combining desired-wine input + must measurements +
-  ingredient calculation on ONE screen (3 sections). These were previously three
-  separate tasks but are highly coupled and usually done in one sitting.
+- **calculations**: merged step combining desired-wine input + must measurements
+  + ingredient calculation on ONE screen (3 sections). These were previously
+  three separate tasks but are highly coupled and usually done in one sitting.
   - desired wine: target sweetness (g/l), alcohol level (%), acidity (g/l).
   - must measurements: collected juice volume (l), sweetness (Blg), acidity (g/l).
   - calculation: from desired wine + measurements, computes which/how many
@@ -89,7 +90,7 @@ Acidity is g/l as tartaric acid; sweetness is residual sugar g/l; Blg ≈ °Brix
    - go to the **Calculator screen**.
 2. **Recipes screen**: browse/inspect built-in recipes (their ordered task
    lists). Adding custom recipes is future work.
-3. **Calculator screen**: standalone version of the setup calculation, NOT tied
+3. **Calculator screen**: standalone version of the calculations task, NOT tied
    to a realization. Enter must measurements + desired wine, get the required
    ingredients. Quick what-if tool.
 4. **Realization (recipe) screen**: shows progress (completed + remaining tasks)
@@ -113,7 +114,7 @@ Acidity is g/l as tartaric acid; sweetness is residual sugar g/l; Blg ≈ °Brix
 
 Ordered tasks:
 1. description: collect fruits, put in fermentation bucket, squash, take measurements
-2. setup (desired wine + must measurements + calculation)
+2. calculations (desired wine + must measurements + calculation)
 3. addingIngredients: yeast, nutrients, sugar, water
 4. timeNotification: ferment in bucket with fruit skins, ~2 weeks, warm room
 5. description: squeeze the mass, move to glass fermentation bottle, warm room
@@ -129,7 +130,7 @@ Ordered tasks:
 
 ## Architecture & conventions
 
-- State management: Riverpod 2 (codegen `@riverpod`). Controllers expose
+- State management: Riverpod 3 (codegen `@riverpod`). Controllers expose
   `AsyncValue`; data access via per-feature repositories over Drift 2.
 - Routing: `go_router`; `realizationId` passed as a path param.
 - UI: Material 3, light + dark theme.

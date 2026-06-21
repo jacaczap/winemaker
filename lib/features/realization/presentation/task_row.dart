@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:winemaker/app/router.dart';
+import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 
 enum TaskStatus { completed, current, pending }
 
@@ -12,9 +13,8 @@ class TaskTile extends StatelessWidget {
     required this.taskRouteName,
     required this.realizationId,
     required this.status,
-    required this.canRevert,
     required this.onCompleted,
-    required this.onRevert,
+    required this.onRedo,
     this.routeExtra,
   });
 
@@ -23,9 +23,8 @@ class TaskTile extends StatelessWidget {
   final String taskRouteName;
   final int realizationId;
   final TaskStatus status;
-  final bool canRevert;
   final VoidCallback onCompleted;
-  final VoidCallback onRevert;
+  final VoidCallback onRedo;
   final Object? routeExtra;
 
   @override
@@ -97,7 +96,7 @@ class TaskTile extends StatelessWidget {
   String get _statusLabel {
     switch (status) {
       case TaskStatus.completed:
-        return canRevert ? 'Completed - tap to revert' : 'Completed';
+        return 'Completed - tap to view';
       case TaskStatus.current:
         return 'Tap to start';
       case TaskStatus.pending:
@@ -108,30 +107,38 @@ class TaskTile extends StatelessWidget {
   VoidCallback? _onTap(BuildContext context) {
     switch (status) {
       case TaskStatus.current:
-        return () => _navigateToTask(context);
       case TaskStatus.completed:
-        return canRevert ? () => _confirmRevert(context) : null;
+        return () => _navigateToTask(context);
       case TaskStatus.pending:
         return null;
     }
   }
 
   Future<void> _navigateToTask(BuildContext context) async {
-    final result = await context.pushNamed<bool>(
+    final result = await context.pushNamed<TaskScreenResult>(
       taskRouteName,
       pathParameters: {AppRoute.realizationIdParam: realizationId.toString()},
       extra: routeExtra,
     );
-    if (result == true) onCompleted();
+    if (!context.mounted) return;
+    switch (result) {
+      case TaskScreenResult.completed:
+        onCompleted();
+      case TaskScreenResult.redo:
+        await _confirmRedo(context);
+      case null:
+        break;
+    }
   }
 
-  Future<void> _confirmRevert(BuildContext context) async {
+  Future<void> _confirmRedo(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Revert task?'),
+        title: const Text('Redo from here?'),
         content: Text(
-          'Mark "$label" as not done? You will need to complete it again.',
+          'Go back to "$label" and redo from there? Data entered in later '
+          'tasks will be discarded.',
         ),
         actions: [
           TextButton(
@@ -140,12 +147,12 @@ class TaskTile extends StatelessWidget {
           ),
           FilledButton.tonal(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Revert'),
+            child: const Text('Redo'),
           ),
         ],
       ),
     );
-    if (confirmed == true) onRevert();
+    if (confirmed == true) onRedo();
   }
 }
 

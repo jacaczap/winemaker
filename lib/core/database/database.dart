@@ -17,8 +17,12 @@ part 'database.g.dart';
 class MyDatabase extends _$MyDatabase {
   MyDatabase() : super(driftDatabase(name: 'db'));
 
+  /// Builds a database on a caller-provided executor, used by tests to run
+  /// against an in-memory `NativeDatabase`.
+  MyDatabase.forTesting(super.executor);
+
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -31,6 +35,12 @@ class MyDatabase extends _$MyDatabase {
             await customStatement('DROP TABLE IF EXISTS desired_wine_entity');
             await customStatement('DROP TABLE IF EXISTS must_entity');
             await customStatement('DROP TABLE IF EXISTS ingredients_entity');
+          }
+          if (from < 5) {
+            await m.addColumn(
+                recipeRealizationEntity, recipeRealizationEntity.startTime);
+            await m.addColumn(
+                recipeRealizationEntity, recipeRealizationEntity.completed);
           }
         },
       );

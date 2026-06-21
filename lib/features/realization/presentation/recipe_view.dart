@@ -34,9 +34,9 @@ class RecipeViewWrapper extends ConsumerWidget {
           onTaskComplete: () => ref
               .read(recipeRealizationControllerProvider(realizationId).notifier)
               .completeCurrentTask(),
-          onTaskRevert: () => ref
+          onTaskRedo: (index) => ref
               .read(recipeRealizationControllerProvider(realizationId).notifier)
-              .revertCurrentTask(),
+              .jumpToTask(index),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('Error: $error')),
@@ -50,13 +50,13 @@ class _RecipeBody extends StatelessWidget {
     required this.realizationId,
     required this.realization,
     required this.onTaskComplete,
-    required this.onTaskRevert,
+    required this.onTaskRedo,
   });
 
   final int realizationId;
   final RecipeRealization realization;
   final VoidCallback onTaskComplete;
-  final VoidCallback onTaskRevert;
+  final ValueChanged<int> onTaskRedo;
 
   @override
   Widget build(BuildContext context) {
@@ -90,31 +90,69 @@ class _RecipeBody extends StatelessWidget {
     } else {
       status = TaskStatus.pending;
     }
+    final isCompleted = status == TaskStatus.completed;
     return TaskTile(
       label: task.name,
       icon: task.type.icon,
       taskRouteName: task.type.routeName,
       realizationId: realizationId,
       status: status,
-      canRevert: index == currentTaskIndex - 1,
       onCompleted: onTaskComplete,
-      onRevert: onTaskRevert,
-      routeExtra: _routeExtra(task, index),
+      onRedo: () => onTaskRedo(index),
+      routeExtra: _routeExtra(task, index, readOnly: isCompleted),
     );
   }
 
-  Object? _routeExtra(Task task, int index) {
+  Object? _routeExtra(Task task, int index, {required bool readOnly}) {
     switch (task.type) {
       case TaskType.description:
         return DescriptionScreenArgs(
           title: task.name,
           markdown: task.description ?? '',
+          readOnly: readOnly,
         );
-      case TaskType.setup:
-        return SetupScreenArgs(title: task.name, taskIndex: index);
-      case TaskType.addingIngredients:
+      case TaskType.calculations:
+        return CalculationsScreenArgs(
+          title: task.name,
+          taskIndex: index,
+          readOnly: readOnly,
+        );
+      case TaskType.result:
+        return ResultScreenArgs(
+          title: task.name,
+          taskIndex: index,
+          readOnly: readOnly,
+        );
       case TaskType.timeNotification:
-        return null;
+        final notification = task.notification;
+        return TimeNotificationScreenArgs(
+          title: task.name,
+          taskIndex: index,
+          description: task.description ?? '',
+          delay: notification?.delay ?? Duration.zero,
+          postpone: notification?.postpone ?? Duration.zero,
+          readOnly: readOnly,
+        );
+      case TaskType.addingIngredients:
+        final tasks = realization.recipe.getRecipe().tasks;
+        return AddingIngredientsScreenArgs(
+          title: task.name,
+          taskIndex: index,
+          description: task.description ?? '',
+          calculationsTaskIndex: _lastCalculationsIndexBefore(tasks, index),
+          priorIngredientTaskIndices: [
+            for (var i = 0; i < index; i++)
+              if (tasks[i].type == TaskType.addingIngredients) i,
+          ],
+          readOnly: readOnly,
+        );
     }
+  }
+
+  int? _lastCalculationsIndexBefore(List<Task> tasks, int index) {
+    for (var i = index - 1; i >= 0; i--) {
+      if (tasks[i].type == TaskType.calculations) return i;
+    }
+    return null;
   }
 }

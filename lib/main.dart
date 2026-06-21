@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:winemaker/app/router.dart';
 import 'package:winemaker/app/theme.dart';
+import 'package:winemaker/core/notifications/notification_service.dart';
 
-Future<void> main() async => runApp(const ProviderScope(child: MyApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final container = ProviderContainer();
+  await container.read(notificationServiceProvider).init();
+  runApp(
+    UncontrolledProviderScope(container: container, child: const MyApp()),
+  );
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

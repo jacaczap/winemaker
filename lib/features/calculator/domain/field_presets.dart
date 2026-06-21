@@ -1,7 +1,8 @@
 import 'package:winemaker/core/widgets/field_preset.dart';
 
-/// Suggested values for setup/calculator fields, sourced from the "Reference
-/// values" section of `project.mdc`. Ranges fill a representative value; the
+/// Suggested values for calculations/calculator fields, sourced from the
+/// "Reference values" section of `project.mdc`. Ranges fill a representative
+/// value; the
 /// description keeps the original range or source for context.
 class FieldPresets {
   const FieldPresets._();

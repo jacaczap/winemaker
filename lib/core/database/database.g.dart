@@ -26,8 +26,27 @@ class $RecipeRealizationEntityTable extends RecipeRealizationEntity
               type: DriftSqlType.int, requiredDuringInsert: true)
           .withConverter<AvailableRecipes>(
               $RecipeRealizationEntityTable.$converterrecipe);
+  static const VerificationMeta _startTimeMeta =
+      const VerificationMeta('startTime');
   @override
-  List<GeneratedColumn> get $columns => [id, currentTask, recipe];
+  late final GeneratedColumn<DateTime> startTime = GeneratedColumn<DateTime>(
+      'start_time', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _completedMeta =
+      const VerificationMeta('completed');
+  @override
+  late final GeneratedColumn<bool> completed = GeneratedColumn<bool>(
+      'completed', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("completed" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, currentTask, recipe, startTime, completed];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -50,6 +69,14 @@ class $RecipeRealizationEntityTable extends RecipeRealizationEntity
     } else if (isInserting) {
       context.missing(_currentTaskMeta);
     }
+    if (data.containsKey('start_time')) {
+      context.handle(_startTimeMeta,
+          startTime.isAcceptableOrUnknown(data['start_time']!, _startTimeMeta));
+    }
+    if (data.containsKey('completed')) {
+      context.handle(_completedMeta,
+          completed.isAcceptableOrUnknown(data['completed']!, _completedMeta));
+    }
     return context;
   }
 
@@ -67,6 +94,10 @@ class $RecipeRealizationEntityTable extends RecipeRealizationEntity
       recipe: $RecipeRealizationEntityTable.$converterrecipe.fromSql(
           attachedDatabase.typeMapping
               .read(DriftSqlType.int, data['${effectivePrefix}recipe'])!),
+      startTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}start_time'])!,
+      completed: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}completed'])!,
     );
   }
 
@@ -84,8 +115,14 @@ class RecipeRealizationEntityData extends DataClass
   final int id;
   final int currentTask;
   final AvailableRecipes recipe;
+  final DateTime startTime;
+  final bool completed;
   const RecipeRealizationEntityData(
-      {required this.id, required this.currentTask, required this.recipe});
+      {required this.id,
+      required this.currentTask,
+      required this.recipe,
+      required this.startTime,
+      required this.completed});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -95,6 +132,8 @@ class RecipeRealizationEntityData extends DataClass
       map['recipe'] = Variable<int>(
           $RecipeRealizationEntityTable.$converterrecipe.toSql(recipe));
     }
+    map['start_time'] = Variable<DateTime>(startTime);
+    map['completed'] = Variable<bool>(completed);
     return map;
   }
 
@@ -103,6 +142,8 @@ class RecipeRealizationEntityData extends DataClass
       id: Value(id),
       currentTask: Value(currentTask),
       recipe: Value(recipe),
+      startTime: Value(startTime),
+      completed: Value(completed),
     );
   }
 
@@ -114,6 +155,8 @@ class RecipeRealizationEntityData extends DataClass
       currentTask: serializer.fromJson<int>(json['currentTask']),
       recipe: $RecipeRealizationEntityTable.$converterrecipe
           .fromJson(serializer.fromJson<int>(json['recipe'])),
+      startTime: serializer.fromJson<DateTime>(json['startTime']),
+      completed: serializer.fromJson<bool>(json['completed']),
     );
   }
   @override
@@ -124,15 +167,23 @@ class RecipeRealizationEntityData extends DataClass
       'currentTask': serializer.toJson<int>(currentTask),
       'recipe': serializer.toJson<int>(
           $RecipeRealizationEntityTable.$converterrecipe.toJson(recipe)),
+      'startTime': serializer.toJson<DateTime>(startTime),
+      'completed': serializer.toJson<bool>(completed),
     };
   }
 
   RecipeRealizationEntityData copyWith(
-          {int? id, int? currentTask, AvailableRecipes? recipe}) =>
+          {int? id,
+          int? currentTask,
+          AvailableRecipes? recipe,
+          DateTime? startTime,
+          bool? completed}) =>
       RecipeRealizationEntityData(
         id: id ?? this.id,
         currentTask: currentTask ?? this.currentTask,
         recipe: recipe ?? this.recipe,
+        startTime: startTime ?? this.startTime,
+        completed: completed ?? this.completed,
       );
   RecipeRealizationEntityData copyWithCompanion(
       RecipeRealizationEntityCompanion data) {
@@ -141,6 +192,8 @@ class RecipeRealizationEntityData extends DataClass
       currentTask:
           data.currentTask.present ? data.currentTask.value : this.currentTask,
       recipe: data.recipe.present ? data.recipe.value : this.recipe,
+      startTime: data.startTime.present ? data.startTime.value : this.startTime,
+      completed: data.completed.present ? data.completed.value : this.completed,
     );
   }
 
@@ -149,20 +202,25 @@ class RecipeRealizationEntityData extends DataClass
     return (StringBuffer('RecipeRealizationEntityData(')
           ..write('id: $id, ')
           ..write('currentTask: $currentTask, ')
-          ..write('recipe: $recipe')
+          ..write('recipe: $recipe, ')
+          ..write('startTime: $startTime, ')
+          ..write('completed: $completed')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, currentTask, recipe);
+  int get hashCode =>
+      Object.hash(id, currentTask, recipe, startTime, completed);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is RecipeRealizationEntityData &&
           other.id == this.id &&
           other.currentTask == this.currentTask &&
-          other.recipe == this.recipe);
+          other.recipe == this.recipe &&
+          other.startTime == this.startTime &&
+          other.completed == this.completed);
 }
 
 class RecipeRealizationEntityCompanion
@@ -170,37 +228,51 @@ class RecipeRealizationEntityCompanion
   final Value<int> id;
   final Value<int> currentTask;
   final Value<AvailableRecipes> recipe;
+  final Value<DateTime> startTime;
+  final Value<bool> completed;
   const RecipeRealizationEntityCompanion({
     this.id = const Value.absent(),
     this.currentTask = const Value.absent(),
     this.recipe = const Value.absent(),
+    this.startTime = const Value.absent(),
+    this.completed = const Value.absent(),
   });
   RecipeRealizationEntityCompanion.insert({
     this.id = const Value.absent(),
     required int currentTask,
     required AvailableRecipes recipe,
+    this.startTime = const Value.absent(),
+    this.completed = const Value.absent(),
   })  : currentTask = Value(currentTask),
         recipe = Value(recipe);
   static Insertable<RecipeRealizationEntityData> custom({
     Expression<int>? id,
     Expression<int>? currentTask,
     Expression<int>? recipe,
+    Expression<DateTime>? startTime,
+    Expression<bool>? completed,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (currentTask != null) 'current_task': currentTask,
       if (recipe != null) 'recipe': recipe,
+      if (startTime != null) 'start_time': startTime,
+      if (completed != null) 'completed': completed,
     });
   }
 
   RecipeRealizationEntityCompanion copyWith(
       {Value<int>? id,
       Value<int>? currentTask,
-      Value<AvailableRecipes>? recipe}) {
+      Value<AvailableRecipes>? recipe,
+      Value<DateTime>? startTime,
+      Value<bool>? completed}) {
     return RecipeRealizationEntityCompanion(
       id: id ?? this.id,
       currentTask: currentTask ?? this.currentTask,
       recipe: recipe ?? this.recipe,
+      startTime: startTime ?? this.startTime,
+      completed: completed ?? this.completed,
     );
   }
 
@@ -217,6 +289,12 @@ class RecipeRealizationEntityCompanion
       map['recipe'] = Variable<int>(
           $RecipeRealizationEntityTable.$converterrecipe.toSql(recipe.value));
     }
+    if (startTime.present) {
+      map['start_time'] = Variable<DateTime>(startTime.value);
+    }
+    if (completed.present) {
+      map['completed'] = Variable<bool>(completed.value);
+    }
     return map;
   }
 
@@ -225,7 +303,9 @@ class RecipeRealizationEntityCompanion
     return (StringBuffer('RecipeRealizationEntityCompanion(')
           ..write('id: $id, ')
           ..write('currentTask: $currentTask, ')
-          ..write('recipe: $recipe')
+          ..write('recipe: $recipe, ')
+          ..write('startTime: $startTime, ')
+          ..write('completed: $completed')
           ..write(')'))
         .toString();
   }
@@ -538,12 +618,16 @@ typedef $$RecipeRealizationEntityTableCreateCompanionBuilder
   Value<int> id,
   required int currentTask,
   required AvailableRecipes recipe,
+  Value<DateTime> startTime,
+  Value<bool> completed,
 });
 typedef $$RecipeRealizationEntityTableUpdateCompanionBuilder
     = RecipeRealizationEntityCompanion Function({
   Value<int> id,
   Value<int> currentTask,
   Value<AvailableRecipes> recipe,
+  Value<DateTime> startTime,
+  Value<bool> completed,
 });
 
 class $$RecipeRealizationEntityTableFilterComposer
@@ -565,6 +649,12 @@ class $$RecipeRealizationEntityTableFilterComposer
       get recipe => $composableBuilder(
           column: $table.recipe,
           builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnFilters<DateTime> get startTime => $composableBuilder(
+      column: $table.startTime, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get completed => $composableBuilder(
+      column: $table.completed, builder: (column) => ColumnFilters(column));
 }
 
 class $$RecipeRealizationEntityTableOrderingComposer
@@ -584,6 +674,12 @@ class $$RecipeRealizationEntityTableOrderingComposer
 
   ColumnOrderings<int> get recipe => $composableBuilder(
       column: $table.recipe, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get startTime => $composableBuilder(
+      column: $table.startTime, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get completed => $composableBuilder(
+      column: $table.completed, builder: (column) => ColumnOrderings(column));
 }
 
 class $$RecipeRealizationEntityTableAnnotationComposer
@@ -603,6 +699,12 @@ class $$RecipeRealizationEntityTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<AvailableRecipes, int> get recipe =>
       $composableBuilder(column: $table.recipe, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startTime =>
+      $composableBuilder(column: $table.startTime, builder: (column) => column);
+
+  GeneratedColumn<bool> get completed =>
+      $composableBuilder(column: $table.completed, builder: (column) => column);
 }
 
 class $$RecipeRealizationEntityTableTableManager extends RootTableManager<
@@ -639,21 +741,29 @@ class $$RecipeRealizationEntityTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<int> currentTask = const Value.absent(),
             Value<AvailableRecipes> recipe = const Value.absent(),
+            Value<DateTime> startTime = const Value.absent(),
+            Value<bool> completed = const Value.absent(),
           }) =>
               RecipeRealizationEntityCompanion(
             id: id,
             currentTask: currentTask,
             recipe: recipe,
+            startTime: startTime,
+            completed: completed,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required int currentTask,
             required AvailableRecipes recipe,
+            Value<DateTime> startTime = const Value.absent(),
+            Value<bool> completed = const Value.absent(),
           }) =>
               RecipeRealizationEntityCompanion.insert(
             id: id,
             currentTask: currentTask,
             recipe: recipe,
+            startTime: startTime,
+            completed: completed,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

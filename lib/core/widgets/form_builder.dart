@@ -10,16 +10,18 @@ FormBuilderTextField buildNumberField({
   String? suffix,
   String? initialValue,
   bool autofocus = false,
+  bool enabled = true,
   List<FieldPreset>? presets,
 }) {
   return FormBuilderTextField(
     name: name,
     initialValue: initialValue,
     autofocus: autofocus,
+    enabled: enabled,
     decoration: InputDecoration(
       labelText: label,
       suffixText: suffix,
-      suffixIcon: presets == null
+      suffixIcon: presets == null || !enabled
           ? null
           : PresetButton(fieldName: name, presets: presets, title: label),
     ),

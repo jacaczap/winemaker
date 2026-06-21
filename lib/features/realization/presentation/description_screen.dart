@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:go_router/go_router.dart';
+import 'package:winemaker/features/realization/domain/task_screen_result.dart';
+import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
 
 class DescriptionScreen extends StatelessWidget {
   const DescriptionScreen({
     super.key,
     required this.title,
     required this.markdown,
+    this.readOnly = false,
   });
 
   final String title;
   final String markdown;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +32,15 @@ class DescriptionScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: FilledButton.icon(
-                onPressed: () => context.pop(true),
-                icon: const Icon(Icons.check),
-                label: const Text('Mark as done'),
-              ),
+              child: readOnly
+                  ? RedoFromHereButton(
+                      onPressed: () => context.pop(TaskScreenResult.redo),
+                    )
+                  : FilledButton.icon(
+                      onPressed: () => context.pop(TaskScreenResult.completed),
+                      icon: const Icon(Icons.check),
+                      label: const Text('Mark as done'),
+                    ),
             ),
           ],
         ),

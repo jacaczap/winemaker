@@ -53,7 +53,7 @@ final class RecipeRealizationControllerProvider extends $AsyncNotifierProvider<
 }
 
 String _$recipeRealizationControllerHash() =>
-    r'dc5e03d4a83a03ce2218a251778efa9a06f0c3b9';
+    r'e2ff73520d368cbdd7842d0ca933be182f36e5c5';
 
 final class RecipeRealizationControllerFamily extends $Family
     with
@@ -104,5 +104,58 @@ abstract class _$RecipeRealizationController
         () => build(
               _$args,
             ));
+  }
+}
+
+/// Home-list controller: streams all realizations and owns create/delete.
+
+@ProviderFor(RecipeRealizationsController)
+final recipeRealizationsControllerProvider =
+    RecipeRealizationsControllerProvider._();
+
+/// Home-list controller: streams all realizations and owns create/delete.
+final class RecipeRealizationsControllerProvider
+    extends $StreamNotifierProvider<RecipeRealizationsController,
+        List<RecipeRealization>> {
+  /// Home-list controller: streams all realizations and owns create/delete.
+  RecipeRealizationsControllerProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'recipeRealizationsControllerProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$recipeRealizationsControllerHash();
+
+  @$internal
+  @override
+  RecipeRealizationsController create() => RecipeRealizationsController();
+}
+
+String _$recipeRealizationsControllerHash() =>
+    r'a4821c9f9cd3f0d7532b6caf9853e4880a938fde';
+
+/// Home-list controller: streams all realizations and owns create/delete.
+
+abstract class _$RecipeRealizationsController
+    extends $StreamNotifier<List<RecipeRealization>> {
+  Stream<List<RecipeRealization>> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref
+        as $Ref<AsyncValue<List<RecipeRealization>>, List<RecipeRealization>>;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<AsyncValue<List<RecipeRealization>>,
+            List<RecipeRealization>>,
+        AsyncValue<List<RecipeRealization>>,
+        Object?,
+        Object?>;
+    return element.handleCreate(ref, build);
   }
 }
