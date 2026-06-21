@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:winemaker/core/widgets/form_builder.dart';
+import 'package:winemaker/features/calculator/domain/field_presets.dart';
 
 /// Field names shared by the setup screen and the standalone calculator so
 /// both read the same values out of the enclosing `FormBuilder`.
@@ -35,6 +36,7 @@ class DesiredWineFields extends StatelessWidget {
           label: 'Desired alcohol',
           suffix: '%',
           initialValue: initialAlcohol,
+          presets: FieldPresets.desiredAlcohol,
         ),
         const SizedBox(height: 12),
         buildNumberField(
@@ -42,6 +44,7 @@ class DesiredWineFields extends StatelessWidget {
           label: 'Desired sweetness',
           suffix: 'g/l',
           initialValue: initialSweetness,
+          presets: FieldPresets.desiredSweetness,
         ),
         const SizedBox(height: 12),
         buildNumberField(
@@ -49,6 +52,7 @@ class DesiredWineFields extends StatelessWidget {
           label: 'Desired acidity',
           suffix: 'g/l',
           initialValue: initialAcidity,
+          presets: FieldPresets.desiredAcidity,
         ),
       ],
     );
@@ -85,6 +89,7 @@ class MustMeasurementFields extends StatelessWidget {
           label: 'Sugar',
           suffix: 'Blg',
           initialValue: initialSugar,
+          presets: FieldPresets.measuredSweetness,
         ),
         const SizedBox(height: 12),
         buildNumberField(
@@ -92,6 +97,7 @@ class MustMeasurementFields extends StatelessWidget {
           label: 'Acidity',
           suffix: 'g/l',
           initialValue: initialAcidity,
+          presets: FieldPresets.measuredAcidity,
         ),
       ],
     );
