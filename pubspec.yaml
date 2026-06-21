@@ -47,11 +47,13 @@ dev_dependencies:
   mocktail: ^1.0.0
   flutter_launcher_icons: ^0.14.0
 
-#flutter_icons:
-#  android: true
-#  ios: true
-#  adaptive_icon_background: red
-#  adaptive_icon_foreground:
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#81232D"
+  adaptive_icon_foreground: "assets/icon/app_icon.png"
 
 
 # For information on the generic Dart part of this file, see the
