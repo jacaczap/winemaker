@@ -22,10 +22,11 @@ Android (Flutter) app that guides the user step-by-step through making wine.
 - **setup**: merged step combining desired-wine input + must measurements +
   ingredient calculation on ONE screen (3 sections). These were previously three
   separate tasks but are highly coupled and usually done in one sitting.
-  - desired wine: target sweetness + alcohol level.
-  - must measurements: collected juice volume, sweetness (Blg), acidity.
+  - desired wine: target sweetness (g/l), alcohol level (%), acidity (g/l).
+  - must measurements: collected juice volume (l), sweetness (Blg), acidity (g/l).
   - calculation: from desired wine + measurements, computes which/how many
-    ingredients to add (sugar kg, water l, yeast, nutrients).
+    ingredients to add (sugar kg, water l, yeast, nutrients). Acidity drives the
+    juice dilution (see "Calculation model").
 - **description**: text instructions; user just confirms they did it.
 - **addingIngredients**: tells user to add ingredients and shows how much is
   still remaining vs the calculated total. Sugar is usually split into 2-3
@@ -37,6 +38,45 @@ Android (Flutter) app that guides the user step-by-step through making wine.
   it. User can also manually complete it early (override the wait).
 - **result**: user inputs free text describing results and mistakes. Mainly read
   back later for inspection.
+
+## Calculation model
+
+Source of truth: `Obliczenia wzór.xlsx` (do not change formulas without checking
+it). Inputs: desired wine (alcohol %, sweetness g/l, acidity g/l) and must
+(volume l, sweetness Blg, acidity g/l). Steps, all per litre of juice:
+
+- **Dilution** = `(measuredAcidity / desiredAcidity) − 1`, rounded to 2 dp,
+  clamped at 0 (juice can only be diluted, not concentrated). It is the extra
+  liquid to add per litre to bring acidity down to target. Example: measured 10,
+  desired 5 → ratio 2 → add 1 l extra per litre of juice (5 l juice → +5 l).
+- **Sugar to add** = sugar-for-alcohol + sweetness sugar − natural must sugar.
+  - sugar-for-alcohol = `alcohol × 10 × 1.7 × (1 + dilution)`.
+  - sweetness sugar = `desiredSweetness × (1 + dilution)`.
+  - natural must sugar = `(Blg − nonSugarBlg) × 10`, with `nonSugarBlg = 4` avg.
+- **Water to add** = `dilution − sugarVolume`, scaled by juice volume, where
+  `sugarVolume = sugarToAdd × 0.6` ml per gram and `sugarToAdd` is the TOTAL
+  sugar (alcohol + sweetness). The extra liquid is part water and part the volume
+  the added sugar itself occupies, so water = total extra liquid minus the volume
+  of all added sugar. Deliberate divergence from the spreadsheet: its B16/B17
+  subtract only the alcohol-sugar volume; we subtract all sugar.
+
+## Reference values
+
+Used to seed the future "suggested values" presets (the user can always override).
+Acidity is g/l as tartaric acid; sweetness is residual sugar g/l; Blg ≈ °Brix.
+
+- **Desired acidity (g/l)** by style: dry 6.5–7.5, semi-dry 6.5–7.5, semi-sweet
+  6.5–8.0, sweet 6.5–9.0. General table-wine target: reds 6–8, whites 7–9.
+- **Desired sweetness (g/l)** by style: dry 0–10, semi-dry 20–40, semi-sweet
+  45–50, sweet 100–120.
+- **Desired alcohol (%)** by style: light/sparkling 5.5–12.5, light white 8–12,
+  full white 12.5–14.5, light red 11–13, full red 13.5–15, dessert 10–20,
+  fortified 15–22. Typical table wine 11–15.
+- **Measured acidity (g/l), Polish-grown grapes**: cool-climate musts ~5.5–9;
+  white ≈ 7–9 (e.g. Johanniter 7.4), red ≈ 6–7 (e.g. Regent 6.3).
+- **Measured sweetness (Blg ≈ °Brix), Polish fruit juices**: apple ~13, pear
+  ~15, plum ~14, sweet cherry ~14, sour cherry ~12, blackcurrant ~15, redcurrant
+  ~10.5, raspberry ~10.5, gooseberry ~8, strawberry ~8, grape ~16–21.
 
 ## App flow
 

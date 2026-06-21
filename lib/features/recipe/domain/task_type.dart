@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:winemaker/app/router.dart';
 
 enum TaskType {
+  setup,
   description,
   addingIngredients,
   timeNotification,
@@ -10,6 +11,8 @@ enum TaskType {
 extension TaskTypeExtension on TaskType {
   String get routeName {
     switch (this) {
+      case TaskType.setup:
+        return AppRoute.setup;
       case TaskType.description:
         return AppRoute.description;
       case TaskType.addingIngredients:
@@ -20,6 +23,8 @@ extension TaskTypeExtension on TaskType {
 
   IconData get icon {
     switch (this) {
+      case TaskType.setup:
+        return Icons.science_outlined;
       case TaskType.description:
         return Icons.description_outlined;
       case TaskType.addingIngredients:

@@ -7,10 +7,12 @@ FormBuilderTextField buildNumberField({
   required String name,
   required String label,
   String? suffix,
+  String? initialValue,
   bool autofocus = false,
 }) {
   return FormBuilderTextField(
     name: name,
+    initialValue: initialValue,
     autofocus: autofocus,
     decoration: InputDecoration(
       labelText: label,

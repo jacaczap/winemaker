@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:winemaker/features/realization/presentation/recipe_view.dart';
 import 'package:winemaker/features/realization/presentation/description_screen.dart';
+import 'package:winemaker/features/realization/presentation/setup_screen.dart';
 import 'package:winemaker/features/realization/presentation/welcome_screen.dart';
 
 class AppRoute {
@@ -9,6 +10,7 @@ class AppRoute {
   static const welcome = 'welcome';
   static const recipe = 'recipe';
   static const description = 'description';
+  static const setup = 'setup';
 }
 
 class DescriptionScreenArgs {
@@ -16,6 +18,13 @@ class DescriptionScreenArgs {
 
   final String title;
   final String markdown;
+}
+
+class SetupScreenArgs {
+  const SetupScreenArgs({required this.title, required this.taskIndex});
+
+  final String title;
+  final int taskIndex;
 }
 
 final GoRouter appRouter = GoRouter(
@@ -39,6 +48,18 @@ final GoRouter appRouter = GoRouter(
             return DescriptionScreen(
               title: args?.title ?? 'Description',
               markdown: args?.markdown ?? '',
+            );
+          },
+        ),
+        GoRoute(
+          path: 'setup',
+          name: AppRoute.setup,
+          builder: (context, state) {
+            final args = state.extra as SetupScreenArgs;
+            return SetupScreen(
+              realizationId: _realizationId(state),
+              taskIndex: args.taskIndex,
+              title: args.title,
             );
           },
         ),

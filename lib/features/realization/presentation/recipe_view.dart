@@ -99,17 +99,22 @@ class _RecipeBody extends StatelessWidget {
       canRevert: index == currentTaskIndex - 1,
       onCompleted: onTaskComplete,
       onRevert: onTaskRevert,
-      routeExtra: _routeExtra(task),
+      routeExtra: _routeExtra(task, index),
     );
   }
 
-  Object? _routeExtra(Task task) {
-    if (task.type == TaskType.description) {
-      return DescriptionScreenArgs(
-        title: task.name,
-        markdown: task.description ?? '',
-      );
+  Object? _routeExtra(Task task, int index) {
+    switch (task.type) {
+      case TaskType.description:
+        return DescriptionScreenArgs(
+          title: task.name,
+          markdown: task.description ?? '',
+        );
+      case TaskType.setup:
+        return SetupScreenArgs(title: task.name, taskIndex: index);
+      case TaskType.addingIngredients:
+      case TaskType.timeNotification:
+        return null;
     }
-    return null;
   }
 }
