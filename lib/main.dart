@@ -1,45 +1,42 @@
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:winemaker/src/database/database.dart';
-import 'package:winemaker/view/recipe/recipe_view.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:winemaker/app/router.dart';
+import 'package:winemaker/app/theme.dart';
 
-Future<void> main() async => runApp(const MyApp());
+Future<void> main() async => runApp(const ProviderScope(child: MyApp()));
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Provider<MyDatabase>(
-      create: (context) => MyDatabase(),
-      child: MaterialApp(
-        title: 'Welcome to Winemaker',
-        theme: FlexThemeData.light(scheme: FlexScheme.redWine),
-        home: const StartWineMaker(),
-      ),
-      dispose: (context, db) => db.close(),
+    return MaterialApp.router(
+      title: AppTheme.appTitle,
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: ThemeMode.system,
+      routerConfig: appRouter,
+      builder: (context, child) => _A11yScope(child: child ?? const SizedBox.shrink()),
     );
   }
 }
 
-class StartWineMaker extends StatelessWidget {
-  const StartWineMaker({Key? key}) : super(key: key);
+/// Cross-cutting a11y baseline.
+///
+/// Keeps system text scaling enabled (do not clamp upward) while
+/// preventing text from shrinking below 100% which can hurt legibility.
+class _A11yScope extends StatelessWidget {
+  const _A11yScope({required this.child});
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: const Text('Welcome to Winemaker')),
-        body: Center(
-          child: ElevatedButton(
-            child: const Text("Start Winemaker"),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const RecipeViewWrapper(realizationId: 1)),
-              );
-            },
-          ),
-        ));
+    final media = MediaQuery.of(context);
+    final scaler = media.textScaler.clamp(minScaleFactor: 1.0);
+    return MediaQuery(
+      data: media.copyWith(textScaler: scaler),
+      child: child,
+    );
   }
 }

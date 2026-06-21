@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:winemaker/src/common_models/alcohol.dart';
-import 'package:winemaker/src/common_models/litres.dart';
-import 'package:winemaker/src/common_models/sugar.dart';
-import 'package:winemaker/src/desired_wine/desired_wine.dart';
-import 'package:winemaker/src/ingredients/_ingredients_calculator.dart';
-import 'package:winemaker/src/must/must_measurements.dart';
+import 'package:winemaker/core/models/alcohol.dart';
+import 'package:winemaker/core/models/litres.dart';
+import 'package:winemaker/core/models/sugar.dart';
+import 'package:winemaker/features/calculator/domain/desired_wine.dart';
+import 'package:winemaker/features/calculator/domain/ingredients_calculator.dart';
+import 'package:winemaker/features/calculator/domain/must_measurements.dart';
 
 void main() {
   test('Should calculate ingredients', () {
