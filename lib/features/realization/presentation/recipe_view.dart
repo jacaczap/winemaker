@@ -67,7 +67,7 @@ class RecipeViewWrapper extends ConsumerWidget {
   }
 }
 
-class _RecipeBody extends StatelessWidget {
+class _RecipeBody extends StatefulWidget {
   const _RecipeBody({
     required this.realizationId,
     required this.realization,
@@ -81,9 +81,37 @@ class _RecipeBody extends StatelessWidget {
   final ValueChanged<int> onTaskRedo;
 
   @override
+  State<_RecipeBody> createState() => _RecipeBodyState();
+}
+
+class _RecipeBodyState extends State<_RecipeBody> {
+  final _currentTaskKey = GlobalKey();
+
+  @override
+  void didUpdateWidget(_RecipeBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.realization.currentTask != oldWidget.realization.currentTask) {
+      _scrollToCurrentTask();
+    }
+  }
+
+  void _scrollToCurrentTask() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = _currentTaskKey.currentContext;
+      if (context == null) return;
+      Scrollable.ensureVisible(
+        context,
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final tasks = realization.recipe.getRecipe().tasks;
-    final currentTaskIndex = realization.currentTask;
+    final tasks = widget.realization.recipe.getRecipe().tasks;
+    final currentTaskIndex = widget.realization.currentTask;
 
     return Column(
       children: [
@@ -114,13 +142,14 @@ class _RecipeBody extends StatelessWidget {
     }
     final isCompleted = status == TaskStatus.completed;
     return TaskTile(
+      key: status == TaskStatus.current ? _currentTaskKey : null,
       label: task.name,
       icon: task.type.icon,
       taskRouteName: task.type.routeName,
-      realizationId: realizationId,
+      realizationId: widget.realizationId,
       status: status,
-      onCompleted: onTaskComplete,
-      onRedo: () => onTaskRedo(index),
+      onCompleted: widget.onTaskComplete,
+      onRedo: () => widget.onTaskRedo(index),
       routeExtra: _routeExtra(task, index, readOnly: isCompleted),
     );
   }
@@ -156,7 +185,7 @@ class _RecipeBody extends StatelessWidget {
           readOnly: readOnly,
         );
       case TaskType.addingIngredients:
-        final tasks = realization.recipe.getRecipe().tasks;
+        final tasks = widget.realization.recipe.getRecipe().tasks;
         return AddingIngredientsScreenArgs(
           title: task.name,
           taskIndex: index,

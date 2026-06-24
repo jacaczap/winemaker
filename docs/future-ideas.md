@@ -2,7 +2,6 @@
 
 Backlog of ideas to consider later. Not scheduled, not detailed yet.
 
-  (including after completion).
 - [ ] **Prompt to return to realizations** — after completing a realization,
   offer to go back to the realizations list.
 - [ ] **User custom recipes** — let users create their own recipes, not just the
