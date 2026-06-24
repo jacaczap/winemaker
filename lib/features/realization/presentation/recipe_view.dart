@@ -4,6 +4,7 @@ import 'package:winemaker/app/router.dart';
 import 'package:winemaker/features/realization/domain/recipe_realization.dart';
 import 'package:winemaker/features/realization/presentation/progress.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
+import 'package:winemaker/features/realization/presentation/rename_realization_dialog.dart';
 import 'package:winemaker/features/realization/presentation/task_row.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
@@ -20,12 +21,18 @@ class RecipeViewWrapper extends ConsumerWidget {
       recipeRealizationControllerProvider(realizationId),
     );
 
+    final data = realization.value;
     return Scaffold(
       appBar: AppBar(
-        title: Text(realization.maybeWhen(
-          data: (data) => data.recipe.displayName,
-          orElse: () => 'Recipe',
-        )),
+        title: Text(data?.displayName ?? 'Recipe'),
+        actions: [
+          if (data != null)
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: 'Rename',
+              onPressed: () => _rename(context, ref, data),
+            ),
+        ],
       ),
       body: realization.when(
         data: (data) => _RecipeBody(
@@ -42,6 +49,21 @@ class RecipeViewWrapper extends ConsumerWidget {
         error: (error, _) => Center(child: Text('Error: $error')),
       ),
     );
+  }
+
+  Future<void> _rename(
+    BuildContext context,
+    WidgetRef ref,
+    RecipeRealization realization,
+  ) async {
+    final name = await showRenameRealizationDialog(
+      context,
+      currentName: realization.displayName,
+    );
+    if (name == null) return;
+    await ref
+        .read(recipeRealizationControllerProvider(realizationId).notifier)
+        .rename(name);
   }
 }
 

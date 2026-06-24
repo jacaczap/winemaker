@@ -26,6 +26,11 @@ class $RecipeRealizationEntityTable extends RecipeRealizationEntity
               type: DriftSqlType.int, requiredDuringInsert: true)
           .withConverter<AvailableRecipes>(
               $RecipeRealizationEntityTable.$converterrecipe);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _startTimeMeta =
       const VerificationMeta('startTime');
   @override
@@ -46,7 +51,7 @@ class $RecipeRealizationEntityTable extends RecipeRealizationEntity
       defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns =>
-      [id, currentTask, recipe, startTime, completed];
+      [id, currentTask, recipe, name, startTime, completed];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -68,6 +73,10 @@ class $RecipeRealizationEntityTable extends RecipeRealizationEntity
               data['current_task']!, _currentTaskMeta));
     } else if (isInserting) {
       context.missing(_currentTaskMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     }
     if (data.containsKey('start_time')) {
       context.handle(_startTimeMeta,
@@ -94,6 +103,8 @@ class $RecipeRealizationEntityTable extends RecipeRealizationEntity
       recipe: $RecipeRealizationEntityTable.$converterrecipe.fromSql(
           attachedDatabase.typeMapping
               .read(DriftSqlType.int, data['${effectivePrefix}recipe'])!),
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name']),
       startTime: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}start_time'])!,
       completed: attachedDatabase.typeMapping
@@ -115,12 +126,14 @@ class RecipeRealizationEntityData extends DataClass
   final int id;
   final int currentTask;
   final AvailableRecipes recipe;
+  final String? name;
   final DateTime startTime;
   final bool completed;
   const RecipeRealizationEntityData(
       {required this.id,
       required this.currentTask,
       required this.recipe,
+      this.name,
       required this.startTime,
       required this.completed});
   @override
@@ -132,6 +145,9 @@ class RecipeRealizationEntityData extends DataClass
       map['recipe'] = Variable<int>(
           $RecipeRealizationEntityTable.$converterrecipe.toSql(recipe));
     }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
     map['start_time'] = Variable<DateTime>(startTime);
     map['completed'] = Variable<bool>(completed);
     return map;
@@ -142,6 +158,7 @@ class RecipeRealizationEntityData extends DataClass
       id: Value(id),
       currentTask: Value(currentTask),
       recipe: Value(recipe),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       startTime: Value(startTime),
       completed: Value(completed),
     );
@@ -155,6 +172,7 @@ class RecipeRealizationEntityData extends DataClass
       currentTask: serializer.fromJson<int>(json['currentTask']),
       recipe: $RecipeRealizationEntityTable.$converterrecipe
           .fromJson(serializer.fromJson<int>(json['recipe'])),
+      name: serializer.fromJson<String?>(json['name']),
       startTime: serializer.fromJson<DateTime>(json['startTime']),
       completed: serializer.fromJson<bool>(json['completed']),
     );
@@ -167,6 +185,7 @@ class RecipeRealizationEntityData extends DataClass
       'currentTask': serializer.toJson<int>(currentTask),
       'recipe': serializer.toJson<int>(
           $RecipeRealizationEntityTable.$converterrecipe.toJson(recipe)),
+      'name': serializer.toJson<String?>(name),
       'startTime': serializer.toJson<DateTime>(startTime),
       'completed': serializer.toJson<bool>(completed),
     };
@@ -176,12 +195,14 @@ class RecipeRealizationEntityData extends DataClass
           {int? id,
           int? currentTask,
           AvailableRecipes? recipe,
+          Value<String?> name = const Value.absent(),
           DateTime? startTime,
           bool? completed}) =>
       RecipeRealizationEntityData(
         id: id ?? this.id,
         currentTask: currentTask ?? this.currentTask,
         recipe: recipe ?? this.recipe,
+        name: name.present ? name.value : this.name,
         startTime: startTime ?? this.startTime,
         completed: completed ?? this.completed,
       );
@@ -192,6 +213,7 @@ class RecipeRealizationEntityData extends DataClass
       currentTask:
           data.currentTask.present ? data.currentTask.value : this.currentTask,
       recipe: data.recipe.present ? data.recipe.value : this.recipe,
+      name: data.name.present ? data.name.value : this.name,
       startTime: data.startTime.present ? data.startTime.value : this.startTime,
       completed: data.completed.present ? data.completed.value : this.completed,
     );
@@ -203,6 +225,7 @@ class RecipeRealizationEntityData extends DataClass
           ..write('id: $id, ')
           ..write('currentTask: $currentTask, ')
           ..write('recipe: $recipe, ')
+          ..write('name: $name, ')
           ..write('startTime: $startTime, ')
           ..write('completed: $completed')
           ..write(')'))
@@ -211,7 +234,7 @@ class RecipeRealizationEntityData extends DataClass
 
   @override
   int get hashCode =>
-      Object.hash(id, currentTask, recipe, startTime, completed);
+      Object.hash(id, currentTask, recipe, name, startTime, completed);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -219,6 +242,7 @@ class RecipeRealizationEntityData extends DataClass
           other.id == this.id &&
           other.currentTask == this.currentTask &&
           other.recipe == this.recipe &&
+          other.name == this.name &&
           other.startTime == this.startTime &&
           other.completed == this.completed);
 }
@@ -228,12 +252,14 @@ class RecipeRealizationEntityCompanion
   final Value<int> id;
   final Value<int> currentTask;
   final Value<AvailableRecipes> recipe;
+  final Value<String?> name;
   final Value<DateTime> startTime;
   final Value<bool> completed;
   const RecipeRealizationEntityCompanion({
     this.id = const Value.absent(),
     this.currentTask = const Value.absent(),
     this.recipe = const Value.absent(),
+    this.name = const Value.absent(),
     this.startTime = const Value.absent(),
     this.completed = const Value.absent(),
   });
@@ -241,6 +267,7 @@ class RecipeRealizationEntityCompanion
     this.id = const Value.absent(),
     required int currentTask,
     required AvailableRecipes recipe,
+    this.name = const Value.absent(),
     this.startTime = const Value.absent(),
     this.completed = const Value.absent(),
   })  : currentTask = Value(currentTask),
@@ -249,6 +276,7 @@ class RecipeRealizationEntityCompanion
     Expression<int>? id,
     Expression<int>? currentTask,
     Expression<int>? recipe,
+    Expression<String>? name,
     Expression<DateTime>? startTime,
     Expression<bool>? completed,
   }) {
@@ -256,6 +284,7 @@ class RecipeRealizationEntityCompanion
       if (id != null) 'id': id,
       if (currentTask != null) 'current_task': currentTask,
       if (recipe != null) 'recipe': recipe,
+      if (name != null) 'name': name,
       if (startTime != null) 'start_time': startTime,
       if (completed != null) 'completed': completed,
     });
@@ -265,12 +294,14 @@ class RecipeRealizationEntityCompanion
       {Value<int>? id,
       Value<int>? currentTask,
       Value<AvailableRecipes>? recipe,
+      Value<String?>? name,
       Value<DateTime>? startTime,
       Value<bool>? completed}) {
     return RecipeRealizationEntityCompanion(
       id: id ?? this.id,
       currentTask: currentTask ?? this.currentTask,
       recipe: recipe ?? this.recipe,
+      name: name ?? this.name,
       startTime: startTime ?? this.startTime,
       completed: completed ?? this.completed,
     );
@@ -289,6 +320,9 @@ class RecipeRealizationEntityCompanion
       map['recipe'] = Variable<int>(
           $RecipeRealizationEntityTable.$converterrecipe.toSql(recipe.value));
     }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
     if (startTime.present) {
       map['start_time'] = Variable<DateTime>(startTime.value);
     }
@@ -304,6 +338,7 @@ class RecipeRealizationEntityCompanion
           ..write('id: $id, ')
           ..write('currentTask: $currentTask, ')
           ..write('recipe: $recipe, ')
+          ..write('name: $name, ')
           ..write('startTime: $startTime, ')
           ..write('completed: $completed')
           ..write(')'))
@@ -618,6 +653,7 @@ typedef $$RecipeRealizationEntityTableCreateCompanionBuilder
   Value<int> id,
   required int currentTask,
   required AvailableRecipes recipe,
+  Value<String?> name,
   Value<DateTime> startTime,
   Value<bool> completed,
 });
@@ -626,6 +662,7 @@ typedef $$RecipeRealizationEntityTableUpdateCompanionBuilder
   Value<int> id,
   Value<int> currentTask,
   Value<AvailableRecipes> recipe,
+  Value<String?> name,
   Value<DateTime> startTime,
   Value<bool> completed,
 });
@@ -649,6 +686,9 @@ class $$RecipeRealizationEntityTableFilterComposer
       get recipe => $composableBuilder(
           column: $table.recipe,
           builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get startTime => $composableBuilder(
       column: $table.startTime, builder: (column) => ColumnFilters(column));
@@ -675,6 +715,9 @@ class $$RecipeRealizationEntityTableOrderingComposer
   ColumnOrderings<int> get recipe => $composableBuilder(
       column: $table.recipe, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get startTime => $composableBuilder(
       column: $table.startTime, builder: (column) => ColumnOrderings(column));
 
@@ -699,6 +742,9 @@ class $$RecipeRealizationEntityTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<AvailableRecipes, int> get recipe =>
       $composableBuilder(column: $table.recipe, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumn<DateTime> get startTime =>
       $composableBuilder(column: $table.startTime, builder: (column) => column);
@@ -741,6 +787,7 @@ class $$RecipeRealizationEntityTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<int> currentTask = const Value.absent(),
             Value<AvailableRecipes> recipe = const Value.absent(),
+            Value<String?> name = const Value.absent(),
             Value<DateTime> startTime = const Value.absent(),
             Value<bool> completed = const Value.absent(),
           }) =>
@@ -748,6 +795,7 @@ class $$RecipeRealizationEntityTableTableManager extends RootTableManager<
             id: id,
             currentTask: currentTask,
             recipe: recipe,
+            name: name,
             startTime: startTime,
             completed: completed,
           ),
@@ -755,6 +803,7 @@ class $$RecipeRealizationEntityTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             required int currentTask,
             required AvailableRecipes recipe,
+            Value<String?> name = const Value.absent(),
             Value<DateTime> startTime = const Value.absent(),
             Value<bool> completed = const Value.absent(),
           }) =>
@@ -762,6 +811,7 @@ class $$RecipeRealizationEntityTableTableManager extends RootTableManager<
             id: id,
             currentTask: currentTask,
             recipe: recipe,
+            name: name,
             startTime: startTime,
             completed: completed,
           ),

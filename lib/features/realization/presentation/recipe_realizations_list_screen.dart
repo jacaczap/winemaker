@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:winemaker/app/router.dart';
 import 'package:winemaker/features/realization/domain/recipe_realization.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
+import 'package:winemaker/features/realization/presentation/rename_realization_dialog.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
 
 /// Home screen listing the user's realizations.
@@ -148,7 +149,7 @@ class _RealizationTile extends ConsumerWidget {
               completed ? Icons.check : Icons.local_bar_outlined,
             ),
           ),
-          title: Text(realization.recipe.displayName),
+          title: Text(realization.displayName),
           subtitle: Text('$progress  -  $startedOn'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.pushNamed(
@@ -157,9 +158,21 @@ class _RealizationTile extends ConsumerWidget {
               AppRoute.realizationIdParam: '${realization.id}',
             },
           ),
+          onLongPress: () => _rename(context, ref),
         ),
       ),
     );
+  }
+
+  Future<void> _rename(BuildContext context, WidgetRef ref) async {
+    final name = await showRenameRealizationDialog(
+      context,
+      currentName: realization.displayName,
+    );
+    if (name == null) return;
+    await ref
+        .read(recipeRealizationsControllerProvider.notifier)
+        .rename(realization.id, name);
   }
 
   Widget _deleteBackground(ColorScheme colors) => Container(

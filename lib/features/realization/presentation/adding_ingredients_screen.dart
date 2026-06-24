@@ -125,8 +125,8 @@ class _AddingIngredientsScreenState
     final values = form.value;
     final payload = AddingIngredientsPayload(
       added: Ingredients(
-        Kilograms(parseDoubleInput(values[_sugarField] as String)),
-        Litres(parseDoubleInput(values[_waterField] as String)),
+        Kilograms(parseDoubleInputOrZero(values[_sugarField] as String?)),
+        Litres(parseDoubleInputOrZero(values[_waterField] as String?)),
         _yeastAdded,
         _nutrientsAdded,
       ),
@@ -179,6 +179,7 @@ class _AddingIngredientsScreenState
               suffix: 'kg',
               initialValue: _existing?.added.sugar.value.toString(),
               enabled: !readOnly,
+              optional: true,
             ),
             const SizedBox(height: 12),
             buildNumberField(
@@ -187,6 +188,7 @@ class _AddingIngredientsScreenState
               suffix: 'l',
               initialValue: _existing?.added.water.value.toString(),
               enabled: !readOnly,
+              optional: true,
             ),
             if (_showYeast)
               CheckboxListTile(

@@ -36,6 +36,16 @@ class RecipeRealizationController extends _$RecipeRealizationController {
     });
   }
 
+  /// Renames the realization. Allowed at any time, including after completion.
+  Future<void> rename(String name) async {
+    final current = state.value;
+    if (current == null) return;
+    state = await AsyncValue.guard(() async {
+      await ref.read(recipeRealizationRepositoryProvider).updateName(id, name);
+      return current.copyWith(name: name);
+    });
+  }
+
   /// Jumps back to an earlier task and discards everything after it.
   ///
   /// The target becomes the current task again; data of all later occurrences
@@ -74,6 +84,9 @@ class RecipeRealizationsController extends _$RecipeRealizationsController {
 
   Future<int> create(AvailableRecipes recipe) =>
       ref.read(recipeRealizationRepositoryProvider).create(recipe);
+
+  Future<void> rename(int id, String name) =>
+      ref.read(recipeRealizationRepositoryProvider).updateName(id, name);
 
   Future<void> delete(int id) =>
       ref.read(recipeRealizationRepositoryProvider).delete(id);

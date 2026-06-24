@@ -50,6 +50,13 @@ class RecipeRealizationRepository {
         ),
       );
 
+  /// Renames a realization. Works for in-progress and completed ones.
+  Future<void> updateName(int id, String name) =>
+      _database.recipeRealizationDao.updateRecipeRealization(
+        id,
+        RecipeRealizationEntityCompanion(name: name.toDriftValue()),
+      );
+
   /// Deletes a realization and all of its per-task state.
   Future<void> delete(int id) async {
     await _database.taskStateDao.deleteAllFor(id);
@@ -68,6 +75,7 @@ class RecipeRealizationRepository {
         id: data.id,
         currentTask: data.currentTask,
         recipe: data.recipe,
+        name: data.name,
         startTime: data.startTime,
         completed: data.completed,
       );

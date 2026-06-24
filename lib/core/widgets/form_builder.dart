@@ -11,6 +11,7 @@ FormBuilderTextField buildNumberField({
   String? initialValue,
   bool autofocus = false,
   bool enabled = true,
+  bool optional = false,
   List<FieldPreset>? presets,
 }) {
   return FormBuilderTextField(
@@ -29,6 +30,6 @@ FormBuilderTextField buildNumberField({
     inputFormatters: [
       FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
     ],
-    validator: numberValidator,
+    validator: optional ? optionalNumberValidator : numberValidator,
   );
 }

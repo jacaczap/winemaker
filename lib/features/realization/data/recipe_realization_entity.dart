@@ -8,6 +8,8 @@ class RecipeRealizationEntity extends Table {
 
   IntColumn get recipe => intEnum<AvailableRecipes>()();
 
+  TextColumn get name => text().nullable()();
+
   DateTimeColumn get startTime => dateTime().withDefault(currentDateAndTime)();
 
   BoolColumn get completed => boolean().withDefault(const Constant(false))();

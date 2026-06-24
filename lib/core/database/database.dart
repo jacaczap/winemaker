@@ -22,7 +22,7 @@ class MyDatabase extends _$MyDatabase {
   MyDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -41,6 +41,10 @@ class MyDatabase extends _$MyDatabase {
                 recipeRealizationEntity, recipeRealizationEntity.startTime);
             await m.addColumn(
                 recipeRealizationEntity, recipeRealizationEntity.completed);
+          }
+          if (from < 6) {
+            await m.addColumn(
+                recipeRealizationEntity, recipeRealizationEntity.name);
           }
         },
       );

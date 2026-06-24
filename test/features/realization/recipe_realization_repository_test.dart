@@ -59,6 +59,20 @@ void main() {
     expect(updated.completed, isTrue);
   });
 
+  test('byId falls back to recipe name until renamed', () async {
+    final id = await repository.create(AvailableRecipes.redWine);
+
+    final created = await repository.byId(id);
+    expect(created!.name, isNull);
+    expect(created.displayName, equals(AvailableRecipes.redWine.displayName));
+
+    await repository.updateName(id, 'Grandpa batch');
+
+    final renamed = await repository.byId(id);
+    expect(renamed!.name, equals('Grandpa batch'));
+    expect(renamed.displayName, equals('Grandpa batch'));
+  });
+
   test('watchAll sorts in-progress first, then by most recent start', () async {
     await _insert(db, id: 1, completed: false, start: _at('2024-01-01'));
     await _insert(db, id: 2, completed: true, start: _at('2024-06-01'));
