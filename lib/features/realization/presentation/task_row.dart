@@ -23,7 +23,7 @@ class TaskTile extends StatelessWidget {
   final String taskRouteName;
   final int realizationId;
   final TaskStatus status;
-  final VoidCallback onCompleted;
+  final Future<void> Function() onCompleted;
   final VoidCallback onRedo;
   final Object? routeExtra;
 
@@ -123,7 +123,7 @@ class TaskTile extends StatelessWidget {
     if (!context.mounted) return;
     switch (result) {
       case TaskScreenResult.completed:
-        onCompleted();
+        await onCompleted();
       case TaskScreenResult.redo:
         await _confirmRedo(context);
       case null:

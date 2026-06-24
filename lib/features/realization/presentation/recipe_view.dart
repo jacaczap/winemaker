@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:winemaker/app/router.dart';
 import 'package:winemaker/features/realization/domain/recipe_realization.dart';
 import 'package:winemaker/features/realization/presentation/progress.dart';
+import 'package:winemaker/features/realization/presentation/realization_completed_dialog.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
 import 'package:winemaker/features/realization/presentation/rename_realization_dialog.dart';
 import 'package:winemaker/features/realization/presentation/task_row.dart';
@@ -38,9 +40,7 @@ class RecipeViewWrapper extends ConsumerWidget {
         data: (data) => _RecipeBody(
           realizationId: realizationId,
           realization: data,
-          onTaskComplete: () => ref
-              .read(recipeRealizationControllerProvider(realizationId).notifier)
-              .completeCurrentTask(),
+          onTaskComplete: () => _completeCurrentTask(context, ref),
           onTaskRedo: (index) => ref
               .read(recipeRealizationControllerProvider(realizationId).notifier)
               .jumpToTask(index),
@@ -49,6 +49,26 @@ class RecipeViewWrapper extends ConsumerWidget {
         error: (error, _) => Center(child: Text('Error: $error')),
       ),
     );
+  }
+
+  Future<void> _completeCurrentTask(BuildContext context, WidgetRef ref) async {
+    final notifier = ref
+        .read(recipeRealizationControllerProvider(realizationId).notifier);
+    final wasCompleted = ref
+            .read(recipeRealizationControllerProvider(realizationId))
+            .value
+            ?.completed ??
+        false;
+    await notifier.completeCurrentTask();
+    if (!context.mounted) return;
+    final nowCompleted = ref
+            .read(recipeRealizationControllerProvider(realizationId))
+            .value
+            ?.completed ??
+        false;
+    if (wasCompleted || !nowCompleted) return;
+    final goToList = await showRealizationCompletedDialog(context);
+    if (goToList && context.mounted) context.goNamed(AppRoute.home);
   }
 
   Future<void> _rename(
@@ -77,7 +97,7 @@ class _RecipeBody extends StatefulWidget {
 
   final int realizationId;
   final RecipeRealization realization;
-  final VoidCallback onTaskComplete;
+  final Future<void> Function() onTaskComplete;
   final ValueChanged<int> onTaskRedo;
 
   @override
