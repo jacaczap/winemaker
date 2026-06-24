@@ -15,3 +15,4 @@ Backlog of ideas to consider later. Not scheduled, not detailed yet.
 - [ ] **More visual realization progress** — show progress visually (e.g. a
   filling background or wine-bottle icon), and make completed realizations
   clearly distinct from in-progress (more than just a tick).
+- [ ] **Github actions** - add some CI steps to run tests and build the app in the CI
