@@ -46,3 +46,5 @@ app.*.map.json
 /android/app/release
 
 .cursor/plans
+
+android/key.properties
