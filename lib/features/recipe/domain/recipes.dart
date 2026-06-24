@@ -1,103 +1,97 @@
 import 'package:winemaker/features/recipe/domain/recipe.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/features/recipe/domain/task_type.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 const Recipe redWineRecipe = Recipe([
+  Task(RecipeTaskId.prepareFruit, TaskType.description),
+  Task(RecipeTaskId.calculations, TaskType.calculations),
+  Task(RecipeTaskId.addIngredients, TaskType.addingIngredients),
   Task(
-    'Prepare the fruit',
-    TaskType.description,
-    description: '- Collect the fruit and put it in the fermentation bucket.\n'
-        '- Squash it to release the juice.\n'
-        '- Take the must measurements you will need in the next step '
-        '(volume, sweetness, acidity).',
-  ),
-  Task('Calculations', TaskType.calculations),
-  Task(
-    'Add ingredients',
-    TaskType.addingIngredients,
-    description: 'Add the yeast, nutrients, the first sugar portion '
-        'and water.',
-  ),
-  Task(
-    'Ferment with the skins',
+    RecipeTaskId.fermentWithSkins,
     TaskType.timeNotification,
-    description: 'Let it ferment in the bucket together with the fruit skins '
-        'in a warm room.',
     notification: TimeNotificationParams(
-      delay: Duration(days: 14),
-      postpone: Duration(days: 2),
+      delay: Duration(days: 7),
+      postpone: Duration(days: 1),
     ),
   ),
+  Task(RecipeTaskId.moveToCarboy, TaskType.description),
   Task(
-    'Move to the bottle',
-    TaskType.description,
-    description: '- Squeeze the mass and discard the solids.\n'
-        '- Move the juice into a glass fermentation bottle.\n'
-        '- Keep it in a warm room.',
-  ),
-  Task(
-    'Wait for the sugar to drop',
+    RecipeTaskId.waitSugarDrop,
     TaskType.timeNotification,
-    description: 'Wait until the sugar level drops noticeably.',
     notification: TimeNotificationParams(
       delay: Duration(days: 14),
-      postpone: Duration(days: 2),
+      postpone: Duration(days: 3),
     ),
   ),
+  Task(RecipeTaskId.addRemainingSugar, TaskType.addingIngredients),
   Task(
-    'Add remaining sugar',
-    TaskType.addingIngredients,
-    description: 'Add the remaining sugar portion.',
-  ),
-  Task(
-    'Wait for fermentation to slow',
+    RecipeTaskId.waitFermentationSlow,
     TaskType.timeNotification,
-    description: 'Wait until the fermentation slows down a lot.',
     notification: TimeNotificationParams(
       delay: Duration(days: 14),
       postpone: Duration(days: 7),
     ),
   ),
+  Task(RecipeTaskId.rackWine, TaskType.description),
   Task(
-    'Rack the wine',
-    TaskType.description,
-    description: '- Rack the wine into another bottle.\n'
-        '- Discard the sediment.\n'
-        '- Keep it in a cool room.',
-  ),
-  Task(
-    'Mature the wine',
+    RecipeTaskId.matureWine,
     TaskType.timeNotification,
-    description: 'Let the wine mature for a few months.',
     notification: TimeNotificationParams(
       delay: Duration(days: 90),
       postpone: Duration(days: 14),
     ),
   ),
+  Task(RecipeTaskId.rackWineAgain, TaskType.description),
   Task(
-    'Rack the wine again',
-    TaskType.description,
-    description: '- Rack the wine into another bottle.\n'
-        '- Discard the sediment.\n'
-        '- Keep it in a cool room.',
-  ),
-  Task(
-    'Mature the wine again',
+    RecipeTaskId.matureWineAgain,
     TaskType.timeNotification,
-    description: 'Let the wine mature for a few more months.',
     notification: TimeNotificationParams(
-      delay: Duration(days: 90),
+      delay: Duration(days: 180),
       postpone: Duration(days: 14),
     ),
   ),
-  Task(
-    'Bottle the wine',
-    TaskType.description,
-    description: '- Pour the wine into bottles.\n'
-        '- Discard the sediment.',
-  ),
-  Task('Result', TaskType.result),
+  Task(RecipeTaskId.bottleWine, TaskType.description),
+  Task(RecipeTaskId.result, TaskType.result),
 ]);
+
+/// Resolves the locale-specific name and description for a recipe task.
+extension RecipeTaskTextExtension on RecipeTaskId {
+  String name(AppLocalizations l10n) => switch (this) {
+        RecipeTaskId.prepareFruit => l10n.taskPrepareFruitName,
+        RecipeTaskId.calculations => l10n.taskCalculationsName,
+        RecipeTaskId.addIngredients => l10n.taskAddIngredientsName,
+        RecipeTaskId.fermentWithSkins => l10n.taskFermentWithSkinsName,
+        RecipeTaskId.moveToCarboy => l10n.taskMoveToCarboyName,
+        RecipeTaskId.waitSugarDrop => l10n.taskWaitSugarDropName,
+        RecipeTaskId.addRemainingSugar => l10n.taskAddRemainingSugarName,
+        RecipeTaskId.waitFermentationSlow => l10n.taskWaitFermentationSlowName,
+        RecipeTaskId.rackWine => l10n.taskRackWineName,
+        RecipeTaskId.matureWine => l10n.taskMatureWineName,
+        RecipeTaskId.rackWineAgain => l10n.taskRackWineAgainName,
+        RecipeTaskId.matureWineAgain => l10n.taskMatureWineAgainName,
+        RecipeTaskId.bottleWine => l10n.taskBottleWineName,
+        RecipeTaskId.result => l10n.taskResultName,
+      };
+
+  String? description(AppLocalizations l10n) => switch (this) {
+        RecipeTaskId.prepareFruit => l10n.taskPrepareFruitDescription,
+        RecipeTaskId.calculations => null,
+        RecipeTaskId.addIngredients => l10n.taskAddIngredientsDescription,
+        RecipeTaskId.fermentWithSkins => l10n.taskFermentWithSkinsDescription,
+        RecipeTaskId.moveToCarboy => l10n.taskMoveToCarboyDescription,
+        RecipeTaskId.waitSugarDrop => l10n.taskWaitSugarDropDescription,
+        RecipeTaskId.addRemainingSugar => l10n.taskAddRemainingSugarDescription,
+        RecipeTaskId.waitFermentationSlow =>
+          l10n.taskWaitFermentationSlowDescription,
+        RecipeTaskId.rackWine => l10n.taskRackWineDescription,
+        RecipeTaskId.matureWine => l10n.taskMatureWineDescription,
+        RecipeTaskId.rackWineAgain => l10n.taskRackWineAgainDescription,
+        RecipeTaskId.matureWineAgain => l10n.taskMatureWineAgainDescription,
+        RecipeTaskId.bottleWine => l10n.taskBottleWineDescription,
+        RecipeTaskId.result => null,
+      };
+}
 
 enum AvailableRecipes {
   redWine,
@@ -111,10 +105,10 @@ extension AvaliableRecipesExtension on AvailableRecipes {
     }
   }
 
-  String get displayName {
+  String displayName(AppLocalizations l10n) {
     switch (this) {
       case AvailableRecipes.redWine:
-        return 'Red Wine';
+        return l10n.recipeRedWine;
     }
   }
 }

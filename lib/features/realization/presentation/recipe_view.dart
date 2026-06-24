@@ -11,6 +11,7 @@ import 'package:winemaker/features/realization/presentation/task_row.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/features/recipe/domain/task_type.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 class RecipeViewWrapper extends ConsumerWidget {
   const RecipeViewWrapper({super.key, required this.realizationId});
@@ -24,14 +25,15 @@ class RecipeViewWrapper extends ConsumerWidget {
     );
 
     final data = realization.value;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(data?.displayName ?? 'Recipe'),
+        title: Text(data?.displayName(l10n) ?? l10n.recipeFallbackTitle),
         actions: [
           if (data != null)
             IconButton(
               icon: const Icon(Icons.edit_outlined),
-              tooltip: 'Rename',
+              tooltip: l10n.rename,
               onPressed: () => _rename(context, ref, data),
             ),
         ],
@@ -46,7 +48,7 @@ class RecipeViewWrapper extends ConsumerWidget {
               .jumpToTask(index),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+        error: (error, _) => Center(child: Text(l10n.errorWithMessage(error))),
       ),
     );
   }
@@ -78,7 +80,7 @@ class RecipeViewWrapper extends ConsumerWidget {
   ) async {
     final name = await showRenameRealizationDialog(
       context,
-      currentName: realization.displayName,
+      currentName: realization.displayName(AppLocalizations.of(context)),
     );
     if (name == null) return;
     await ref
@@ -132,6 +134,7 @@ class _RecipeBodyState extends State<_RecipeBody> {
   Widget build(BuildContext context) {
     final tasks = widget.realization.recipe.getRecipe().tasks;
     final currentTaskIndex = widget.realization.currentTask;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -144,14 +147,19 @@ class _RecipeBodyState extends State<_RecipeBody> {
             padding: const EdgeInsets.only(top: 4, bottom: 24),
             itemCount: tasks.length,
             itemBuilder: (context, index) =>
-                _buildTaskTile(tasks[index], index, currentTaskIndex),
+                _buildTaskTile(l10n, tasks[index], index, currentTaskIndex),
           ),
         ),
       ],
     );
   }
 
-  TaskTile _buildTaskTile(Task task, int index, int currentTaskIndex) {
+  TaskTile _buildTaskTile(
+    AppLocalizations l10n,
+    Task task,
+    int index,
+    int currentTaskIndex,
+  ) {
     final TaskStatus status;
     if (currentTaskIndex > index) {
       status = TaskStatus.completed;
@@ -163,43 +171,48 @@ class _RecipeBodyState extends State<_RecipeBody> {
     final isCompleted = status == TaskStatus.completed;
     return TaskTile(
       key: status == TaskStatus.current ? _currentTaskKey : null,
-      label: task.name,
+      label: task.id.name(l10n),
       icon: task.type.icon,
       taskRouteName: task.type.routeName,
       realizationId: widget.realizationId,
       status: status,
       onCompleted: widget.onTaskComplete,
       onRedo: () => widget.onTaskRedo(index),
-      routeExtra: _routeExtra(task, index, readOnly: isCompleted),
+      routeExtra: _routeExtra(l10n, task, index, readOnly: isCompleted),
     );
   }
 
-  Object? _routeExtra(Task task, int index, {required bool readOnly}) {
+  Object? _routeExtra(
+    AppLocalizations l10n,
+    Task task,
+    int index, {
+    required bool readOnly,
+  }) {
     switch (task.type) {
       case TaskType.description:
         return DescriptionScreenArgs(
-          title: task.name,
-          markdown: task.description ?? '',
+          title: task.id.name(l10n),
+          markdown: task.id.description(l10n) ?? '',
           readOnly: readOnly,
         );
       case TaskType.calculations:
         return CalculationsScreenArgs(
-          title: task.name,
+          title: task.id.name(l10n),
           taskIndex: index,
           readOnly: readOnly,
         );
       case TaskType.result:
         return ResultScreenArgs(
-          title: task.name,
+          title: task.id.name(l10n),
           taskIndex: index,
           readOnly: readOnly,
         );
       case TaskType.timeNotification:
         final notification = task.notification;
         return TimeNotificationScreenArgs(
-          title: task.name,
+          title: task.id.name(l10n),
           taskIndex: index,
-          description: task.description ?? '',
+          description: task.id.description(l10n) ?? '',
           delay: notification?.delay ?? Duration.zero,
           postpone: notification?.postpone ?? Duration.zero,
           readOnly: readOnly,
@@ -207,9 +220,9 @@ class _RecipeBodyState extends State<_RecipeBody> {
       case TaskType.addingIngredients:
         final tasks = widget.realization.recipe.getRecipe().tasks;
         return AddingIngredientsScreenArgs(
-          title: task.name,
+          title: task.id.name(l10n),
           taskIndex: index,
-          description: task.description ?? '',
+          description: task.id.description(l10n) ?? '',
           calculationsTaskIndex: _lastCalculationsIndexBefore(tasks, index),
           priorIngredientTaskIndices: [
             for (var i = 0; i < index; i++)

@@ -1,3 +1,5 @@
+import 'package:winemaker/l10n/app_localizations.dart';
+
 double parseDoubleInput(String value) {
   return double.parse(value.replaceFirst(',', '.'));
 }
@@ -8,26 +10,28 @@ double parseDoubleInputOrZero(String? value) {
   return parseDoubleInput(value);
 }
 
-String? numberValidator(String? value) {
-  if (value == null || value.isEmpty) {
-    return 'Please enter value';
-  }
-  return _numericChecks(value);
-}
+/// Builds a validator requiring a non-negative number, with localized messages.
+String? Function(String?) numberValidator(AppLocalizations l10n) => (value) {
+      if (value == null || value.isEmpty) {
+        return l10n.validationRequired;
+      }
+      return _numericChecks(value, l10n);
+    };
 
 /// Like [numberValidator] but allows empty input (treated as `0` on save).
-String? optionalNumberValidator(String? value) {
-  if (value == null || value.isEmpty) return null;
-  return _numericChecks(value);
-}
+String? Function(String?) optionalNumberValidator(AppLocalizations l10n) =>
+    (value) {
+      if (value == null || value.isEmpty) return null;
+      return _numericChecks(value, l10n);
+    };
 
-String? _numericChecks(String value) {
+String? _numericChecks(String value, AppLocalizations l10n) {
   final parsed = double.tryParse(value.replaceFirst(',', '.'));
   if (parsed == null) {
-    return 'Value must be a number';
+    return l10n.validationNotANumber;
   }
   if (parsed < 0) {
-    return 'Value cannot be negative';
+    return l10n.validationNegative;
   }
   return null;
 }

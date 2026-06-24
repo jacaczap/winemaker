@@ -34,9 +34,11 @@ Android (Flutter) app that guides the user step-by-step through making wine.
   portions (sugar has a per-step limit), so this task repeats; remaining =
   calculated total minus what was already added in prior portions.
 - **timeNotification**: a waiting period. Params: description (what we wait for),
-  notification delay, postpone time. Sends a push notification after the delay;
-  the notification has a "postpone {postpone time} days" button that reschedules
-  it. User can also manually complete it early (override the wait).
+  notification delay, postpone time. Sends a reminder notification after the
+  delay; the notification has no actions—tapping it opens the step screen. There
+  the user completes the wait or postpones it by {postpone time} days. Never
+  auto-completes: the wait must always be ended manually (which can be done early
+  as an override).
 - **result**: user inputs free text describing results and mistakes. Mainly read
   back later for inspection.
 

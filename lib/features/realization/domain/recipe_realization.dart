@@ -1,4 +1,5 @@
 import 'package:winemaker/features/recipe/domain/recipes.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 class RecipeRealization {
   final int id;
@@ -18,8 +19,8 @@ class RecipeRealization {
   });
 
   /// The user-facing title: the custom name if set, otherwise the recipe name.
-  String get displayName =>
-      name?.trim().isNotEmpty == true ? name!.trim() : recipe.displayName;
+  String displayName(AppLocalizations l10n) =>
+      name?.trim().isNotEmpty == true ? name!.trim() : recipe.displayName(l10n);
 
   RecipeRealization copyWith({int? currentTask, String? name, bool? completed}) =>
       RecipeRealization(

@@ -3,6 +3,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 class DescriptionScreen extends StatelessWidget {
   const DescriptionScreen({
@@ -39,7 +40,7 @@ class DescriptionScreen extends StatelessWidget {
                   : FilledButton.icon(
                       onPressed: () => context.pop(TaskScreenResult.completed),
                       icon: const Icon(Icons.check),
-                      label: const Text('Mark as done'),
+                      label: Text(AppLocalizations.of(context).markAsDone),
                     ),
             ),
           ],

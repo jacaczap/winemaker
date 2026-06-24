@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:winemaker/core/widgets/form_builder.dart';
 import 'package:winemaker/features/calculator/domain/field_presets.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Field names shared by the calculations screen and the standalone calculator
 /// so both read the same values out of the enclosing `FormBuilder`.
@@ -30,34 +31,38 @@ class DesiredWineFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildNumberField(
+          l10n: l10n,
           name: CalculationFields.alcohol,
-          label: 'Desired alcohol',
+          label: l10n.fieldDesiredAlcohol,
           suffix: '%',
           initialValue: initialAlcohol,
           enabled: enabled,
-          presets: FieldPresets.desiredAlcohol,
+          presets: FieldPresets.desiredAlcohol(l10n),
         ),
         const SizedBox(height: 12),
         buildNumberField(
+          l10n: l10n,
           name: CalculationFields.sweetness,
-          label: 'Desired sweetness',
+          label: l10n.fieldDesiredSweetness,
           suffix: 'g/l',
           initialValue: initialSweetness,
           enabled: enabled,
-          presets: FieldPresets.desiredSweetness,
+          presets: FieldPresets.desiredSweetness(l10n),
         ),
         const SizedBox(height: 12),
         buildNumberField(
+          l10n: l10n,
           name: CalculationFields.desiredAcidity,
-          label: 'Desired acidity',
+          label: l10n.fieldDesiredAcidity,
           suffix: 'g/l',
           initialValue: initialAcidity,
           enabled: enabled,
-          presets: FieldPresets.desiredAcidity,
+          presets: FieldPresets.desiredAcidity(l10n),
         ),
       ],
     );
@@ -81,33 +86,37 @@ class MustMeasurementFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildNumberField(
+          l10n: l10n,
           name: CalculationFields.volume,
-          label: 'Collected volume',
+          label: l10n.fieldCollectedVolume,
           suffix: 'l',
           initialValue: initialVolume,
           enabled: enabled,
         ),
         const SizedBox(height: 12),
         buildNumberField(
+          l10n: l10n,
           name: CalculationFields.mustSugar,
-          label: 'Sugar',
+          label: l10n.fieldMustSugar,
           suffix: 'Blg',
           initialValue: initialSugar,
           enabled: enabled,
-          presets: FieldPresets.measuredSweetness,
+          presets: FieldPresets.measuredSweetness(l10n),
         ),
         const SizedBox(height: 12),
         buildNumberField(
+          l10n: l10n,
           name: CalculationFields.mustAcidity,
-          label: 'Acidity',
+          label: l10n.fieldMustAcidity,
           suffix: 'g/l',
           initialValue: initialAcidity,
           enabled: enabled,
-          presets: FieldPresets.measuredAcidity,
+          presets: FieldPresets.measuredAcidity(l10n),
         ),
       ],
     );

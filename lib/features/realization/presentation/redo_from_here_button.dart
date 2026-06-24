@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Action shown on a completed task opened read-only.
 ///
@@ -14,7 +15,7 @@ class RedoFromHereButton extends StatelessWidget {
     return FilledButton.tonalIcon(
       onPressed: onPressed,
       icon: const Icon(Icons.restart_alt),
-      label: const Text('Redo from here'),
+      label: Text(AppLocalizations.of(context).redoFromHere),
     );
   }
 }

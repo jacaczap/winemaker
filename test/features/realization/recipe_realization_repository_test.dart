@@ -1,8 +1,10 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:winemaker/core/database/database.dart';
 import 'package:winemaker/features/realization/data/recipe_realization_repository.dart';
 import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 import '../../helpers/test_database.dart';
 
@@ -60,17 +62,21 @@ void main() {
   });
 
   test('byId falls back to recipe name until renamed', () async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
     final id = await repository.create(AvailableRecipes.redWine);
 
     final created = await repository.byId(id);
     expect(created!.name, isNull);
-    expect(created.displayName, equals(AvailableRecipes.redWine.displayName));
+    expect(
+      created.displayName(l10n),
+      equals(AvailableRecipes.redWine.displayName(l10n)),
+    );
 
     await repository.updateName(id, 'Grandpa batch');
 
     final renamed = await repository.byId(id);
     expect(renamed!.name, equals('Grandpa batch'));
-    expect(renamed.displayName, equals('Grandpa batch'));
+    expect(renamed.displayName(l10n), equals('Grandpa batch'));
   });
 
   test('watchAll sorts in-progress first, then by most recent start', () async {

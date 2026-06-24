@@ -10,6 +10,7 @@ import 'package:winemaker/features/realization/presentation/time_notification_sc
 import 'package:winemaker/features/recipe/domain/recipes.dart';
 import 'package:winemaker/features/recipe/presentation/recipe_detail_screen.dart';
 import 'package:winemaker/features/recipe/presentation/recipes_screen.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 class AppRoute {
   static const realizationIdParam = 'realizationId';
@@ -142,7 +143,8 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) {
             final args = state.extra as DescriptionScreenArgs?;
             return DescriptionScreen(
-              title: args?.title ?? 'Description',
+              title: args?.title ??
+                  AppLocalizations.of(context).descriptionFallbackTitle,
               markdown: args?.markdown ?? '',
               readOnly: args?.readOnly ?? false,
             );

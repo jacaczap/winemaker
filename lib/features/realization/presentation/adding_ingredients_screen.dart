@@ -15,6 +15,7 @@ import 'package:winemaker/features/realization/domain/adding_ingredients_payload
 import 'package:winemaker/features/realization/domain/calculations_payload.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Adding-ingredients task: shows what is still left to add (the calculated
 /// total minus prior portions) and records what the user adds in this
@@ -151,6 +152,7 @@ class _AddingIngredientsScreenState
   }
 
   Widget _buildForm(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final readOnly = widget.readOnly;
     return FormBuilder(
       key: _formKey,
@@ -169,13 +171,14 @@ class _AddingIngredientsScreenState
             _RemainingCard(remaining: _remaining),
             const SizedBox(height: 24),
             Text(
-              'Added this step',
+              l10n.addedThisStep,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
             buildNumberField(
+              l10n: l10n,
               name: _sugarField,
-              label: 'Added sugar',
+              label: l10n.addedSugar,
               suffix: 'kg',
               initialValue: _existing?.added.sugar.value.toString(),
               enabled: !readOnly,
@@ -183,8 +186,9 @@ class _AddingIngredientsScreenState
             ),
             const SizedBox(height: 12),
             buildNumberField(
+              l10n: l10n,
               name: _waterField,
-              label: 'Added water',
+              label: l10n.addedWater,
               suffix: 'l',
               initialValue: _existing?.added.water.value.toString(),
               enabled: !readOnly,
@@ -193,7 +197,7 @@ class _AddingIngredientsScreenState
             if (_showYeast)
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Yeast added'),
+                title: Text(l10n.yeastAdded),
                 value: _yeastAdded,
                 onChanged:
                     readOnly ? null : (v) => setState(() => _yeastAdded = v!),
@@ -201,7 +205,7 @@ class _AddingIngredientsScreenState
             if (_showNutrients)
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Nutrients added'),
+                title: Text(l10n.nutrientsAdded),
                 value: _nutrientsAdded,
                 onChanged: readOnly
                     ? null
@@ -216,7 +220,7 @@ class _AddingIngredientsScreenState
               FilledButton.icon(
                 onPressed: _saving ? null : _save,
                 icon: const Icon(Icons.check),
-                label: const Text('Save & mark done'),
+                label: Text(l10n.saveAndMarkDone),
               ),
           ],
         ),
@@ -248,33 +252,34 @@ class _RemainingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Remaining to add', style: theme.textTheme.titleMedium),
+            Text(l10n.remainingToAdd, style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             _RemainingRow(
               icon: Icons.scale_outlined,
-              label: 'Sugar',
+              label: l10n.ingredientSugar,
               value: '${remaining.sugar} kg',
             ),
             _RemainingRow(
               icon: Icons.water_drop_outlined,
-              label: 'Water',
+              label: l10n.ingredientWater,
               value: '${remaining.water} l',
             ),
             _RemainingRow(
               icon: Icons.science_outlined,
-              label: 'Yeast',
-              value: remaining.yeast ? 'Add' : 'Done',
+              label: l10n.ingredientYeast,
+              value: remaining.yeast ? l10n.valueAdd : l10n.valueDone,
             ),
             _RemainingRow(
               icon: Icons.eco_outlined,
-              label: 'Nutrients',
-              value: remaining.nutrients ? 'Add' : 'Done',
+              label: l10n.ingredientNutrients,
+              value: remaining.nutrients ? l10n.valueAdd : l10n.valueDone,
             ),
           ],
         ),

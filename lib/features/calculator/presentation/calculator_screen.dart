@@ -10,6 +10,7 @@ import 'package:winemaker/features/calculator/domain/ingredients_calculator.dart
 import 'package:winemaker/features/calculator/domain/must_measurements.dart';
 import 'package:winemaker/features/calculator/presentation/ingredients_result_card.dart';
 import 'package:winemaker/features/calculator/presentation/calculation_form_fields.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Standalone ingredients calculator: a what-if tool for computing the
 /// ingredients to add from desired wine + must measurements, not bound to any
@@ -55,8 +56,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Calculator')),
+      appBar: AppBar(title: Text(l10n.calculatorTitle)),
       body: SafeArea(
         child: FormBuilder(
           key: _formKey,
@@ -68,16 +70,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const _SectionTitle('Desired wine'),
+                _SectionTitle(l10n.desiredWine),
                 const DesiredWineFields(),
                 const SizedBox(height: 24),
-                const _SectionTitle('Must measurements'),
+                _SectionTitle(l10n.mustMeasurements),
                 const MustMeasurementFields(),
                 const SizedBox(height: 24),
                 OutlinedButton.icon(
                   onPressed: _calculate,
                   icon: const Icon(Icons.calculate_outlined),
-                  label: const Text('Calculate ingredients'),
+                  label: Text(l10n.calculateIngredients),
                 ),
                 if (_calculated != null) ...[
                   const SizedBox(height: 24),

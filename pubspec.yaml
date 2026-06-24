@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   drift: ^2.34.0
   drift_flutter: ^0.3.0
   flex_color_scheme: ^8.0.0
@@ -66,6 +68,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Generate localizations (AppLocalizations) from the ARB files in lib/l10n.
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   # assets:

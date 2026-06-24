@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:winemaker/core/utils/user_input_utils.dart';
 import 'package:winemaker/core/widgets/field_preset.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 FormBuilderTextField buildNumberField({
+  required AppLocalizations l10n,
   required String name,
   required String label,
   String? suffix,
@@ -30,6 +32,6 @@ FormBuilderTextField buildNumberField({
     inputFormatters: [
       FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
     ],
-    validator: optional ? optionalNumberValidator : numberValidator,
+    validator: optional ? optionalNumberValidator(l10n) : numberValidator(l10n),
   );
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Shows a dialog to rename a realization.
 ///
@@ -46,24 +47,25 @@ class _RenameRealizationDialogState extends State<_RenameRealizationDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('Rename realization'),
+      title: Text(l10n.renameRealizationTitle),
       content: TextField(
         controller: _controller,
         autofocus: true,
         textCapitalization: TextCapitalization.sentences,
         textInputAction: TextInputAction.done,
-        decoration: const InputDecoration(labelText: 'Name'),
+        decoration: InputDecoration(labelText: l10n.nameLabel),
         onSubmitted: (_) => _submit(),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: _submit,
-          child: const Text('Save'),
+          child: Text(l10n.save),
         ),
       ],
     );

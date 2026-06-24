@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:winemaker/app/notification_navigation.dart';
 import 'package:winemaker/app/router.dart';
 import 'package:winemaker/app/theme.dart';
 import 'package:winemaker/core/notifications/notification_service.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting();
   final container = ProviderContainer();
-  await container.read(notificationServiceProvider).init();
+  final notifications = container.read(notificationServiceProvider);
+  await notifications.init();
+  notifications.onTaskTap =
+      (target) => openTaskFromNotification(container, target);
+  final launchTarget = await notifications.launchTask();
   runApp(
     UncontrolledProviderScope(container: container, child: const MyApp()),
   );
+  if (launchTarget != null) {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => openTaskFromNotification(container, launchTarget),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -23,6 +36,8 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: appRouter,
       builder: (context, child) => _A11yScope(child: child ?? const SizedBox.shrink()),
     );

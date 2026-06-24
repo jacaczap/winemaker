@@ -16,6 +16,7 @@ import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/calculations_payload.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Merged calculations task: desired wine + must measurements + calculated
 /// ingredients on a single screen. Persists a [CalculationsPayload] for its
@@ -121,6 +122,7 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
   }
 
   Widget _buildForm(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final desiredWine = _existing?.desiredWine;
     final must = _existing?.must;
     final readOnly = widget.readOnly;
@@ -134,7 +136,7 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const _SectionTitle('Desired wine'),
+            _SectionTitle(l10n.desiredWine),
             DesiredWineFields(
               initialAlcohol: desiredWine?.alcohol.value.toString(),
               initialSweetness: desiredWine?.sugar.value.toString(),
@@ -142,7 +144,7 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
               enabled: !readOnly,
             ),
             const SizedBox(height: 24),
-            const _SectionTitle('Must measurements'),
+            _SectionTitle(l10n.mustMeasurements),
             MustMeasurementFields(
               initialVolume: must?.volume.value.toString(),
               initialSugar: must?.sugar.value.toString(),
@@ -154,7 +156,7 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
               OutlinedButton.icon(
                 onPressed: _saving ? null : _calculate,
                 icon: const Icon(Icons.calculate_outlined),
-                label: const Text('Calculate ingredients'),
+                label: Text(l10n.calculateIngredients),
               ),
             if (_calculated != null) ...[
               const SizedBox(height: 24),
@@ -169,7 +171,7 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
               FilledButton.icon(
                 onPressed: _saving ? null : _save,
                 icon: const Icon(Icons.check),
-                label: const Text('Save & mark done'),
+                label: Text(l10n.saveAndMarkDone),
               ),
           ],
         ),

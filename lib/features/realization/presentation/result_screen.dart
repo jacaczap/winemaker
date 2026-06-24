@@ -5,6 +5,7 @@ import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/result_payload.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Result task: free-text capture of how the wine turned out and any mistakes.
 ///
@@ -89,6 +90,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
   }
 
   Widget _buildForm(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -96,15 +98,15 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
         children: [
           _ResultField(
             controller: _resultsController,
-            label: 'Results',
-            hint: 'How did the wine turn out? Taste, clarity, strength…',
+            label: l10n.resultsLabel,
+            hint: l10n.resultsHint,
             enabled: !widget.readOnly,
           ),
           const SizedBox(height: 24),
           _ResultField(
             controller: _mistakesController,
-            label: 'Mistakes',
-            hint: 'Anything to do differently next time?',
+            label: l10n.mistakesLabel,
+            hint: l10n.mistakesHint,
             enabled: !widget.readOnly,
           ),
           const SizedBox(height: 24),
@@ -116,7 +118,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             FilledButton.icon(
               onPressed: _saving ? null : _save,
               icon: const Icon(Icons.check),
-              label: const Text('Save & mark done'),
+              label: Text(l10n.saveAndMarkDone),
             ),
         ],
       ),

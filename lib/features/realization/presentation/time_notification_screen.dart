@@ -9,6 +9,7 @@ import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/domain/time_notification_payload.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Waiting-period task: schedules a reminder and counts down to it.
 ///
@@ -91,7 +92,6 @@ class _TimeNotificationScreenState
           title: widget.title,
           body: widget.description,
           scheduledFor: scheduledFor,
-          postponeDays: widget.postpone.inDays,
         );
     await ref.read(taskStateRepositoryProvider).savePending(
           widget.realizationId,
@@ -135,6 +135,7 @@ class _TimeNotificationScreenState
   }
 
   Widget _buildBody(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheduledFor = _scheduledFor;
     final remaining =
         scheduledFor?.difference(DateTime.now()) ?? Duration.zero;
@@ -166,13 +167,13 @@ class _TimeNotificationScreenState
               OutlinedButton.icon(
                 onPressed: _busy ? null : _postpone,
                 icon: const Icon(Icons.snooze_outlined),
-                label: Text('Postpone ${widget.postpone.inDays} days'),
+                label: Text(l10n.postponeDays(widget.postpone.inDays)),
               ),
             const SizedBox(height: 12),
             FilledButton.icon(
               onPressed: _busy ? null : _complete,
               icon: const Icon(Icons.check),
-              label: Text(ready ? 'Mark as done' : 'Complete now'),
+              label: Text(ready ? l10n.markAsDone : l10n.completeNow),
             ),
           ],
         ],
@@ -196,6 +197,7 @@ class _CountdownCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -208,17 +210,19 @@ class _CountdownCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              ready ? 'Ready to continue' : _formatRemaining(remaining),
+              ready ? l10n.readyToContinue : _formatRemaining(l10n, remaining),
               style: theme.textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
             Text(
               ready
-                  ? 'The waiting period is over.'
+                  ? l10n.waitingPeriodOver
                   : scheduledFor == null
                       ? ''
-                      : 'Reminder on ${_formatDate(scheduledFor!)}',
+                      : l10n.reminderOn(
+                          _formatDate(l10n.localeName, scheduledFor!),
+                        ),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: colors.onSurfaceVariant,
               ),
@@ -230,16 +234,16 @@ class _CountdownCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) =>
-      DateFormat('EEE, d MMM yyyy, HH:mm').format(date);
+  String _formatDate(String locale, DateTime date) =>
+      DateFormat('EEE, d MMM yyyy, HH:mm', locale).format(date);
 
-  String _formatRemaining(Duration remaining) {
+  String _formatRemaining(AppLocalizations l10n, Duration remaining) {
     final days = remaining.inDays;
     final hours = remaining.inHours % 24;
     final minutes = remaining.inMinutes % 60;
-    if (days > 0) return '$days d $hours h left';
-    if (hours > 0) return '$hours h $minutes m left';
+    if (days > 0) return l10n.timeLeftDays(days, hours);
+    if (hours > 0) return l10n.timeLeftHours(hours, minutes);
     final seconds = remaining.inSeconds % 60;
-    return '$minutes m $seconds s left';
+    return l10n.timeLeftMinutes(minutes, seconds);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 class RecipeProgressHeader extends StatelessWidget {
   const RecipeProgressHeader({
@@ -13,6 +14,7 @@ class RecipeProgressHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isEmpty = totalNumberOfTasks == 0;
     final completed = numberOfCompletedTasks.clamp(0, totalNumberOfTasks);
     final progress = isEmpty ? 0.0 : completed / totalNumberOfTasks;
@@ -27,7 +29,7 @@ class RecipeProgressHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                isFinished ? 'All tasks complete' : 'Progress',
+                isFinished ? l10n.allTasksComplete : l10n.progress,
                 style: theme.textTheme.titleMedium,
               ),
               Text(
@@ -40,8 +42,8 @@ class RecipeProgressHeader extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Semantics(
-            label: 'Recipe progress',
-            value: '$completed of $totalNumberOfTasks tasks completed',
+            label: l10n.semanticsRecipeProgress,
+            value: l10n.semanticsTasksCompleted(completed, totalNumberOfTasks),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(

@@ -7,6 +7,7 @@ import 'package:winemaker/features/realization/domain/recipe_realization.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
 import 'package:winemaker/features/realization/presentation/rename_realization_dialog.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Home screen listing the user's realizations.
 ///
@@ -19,25 +20,26 @@ class RecipeRealizationsListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final realizations = ref.watch(recipeRealizationsControllerProvider);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Winemaker'),
         actions: [
           IconButton(
             icon: const Icon(Icons.menu_book_outlined),
-            tooltip: 'Recipes',
+            tooltip: l10n.recipesTitle,
             onPressed: () => context.pushNamed(AppRoute.recipes),
           ),
           IconButton(
             icon: const Icon(Icons.calculate_outlined),
-            tooltip: 'Calculator',
+            tooltip: l10n.calculatorTitle,
             onPressed: () => context.pushNamed(AppRoute.calculator),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
-        label: const Text('New realization'),
+        label: Text(l10n.newRealization),
         onPressed: () => _startNewRealization(context, ref),
       ),
       body: SafeArea(
@@ -46,7 +48,7 @@ class RecipeRealizationsListScreen extends ConsumerWidget {
               ? const _EmptyState()
               : _RealizationList(realizations: items),
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => Center(child: Text('Error: $error')),
+          error: (error, _) => Center(child: Text(l10n.errorWithMessage(error))),
         ),
       ),
     );
@@ -67,6 +69,7 @@ class RecipeRealizationsListScreen extends ConsumerWidget {
   }
 
   Future<AvailableRecipes?> _pickRecipe(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return showModalBottomSheet<AvailableRecipes>(
       context: context,
       builder: (context) => SafeArea(
@@ -76,14 +79,14 @@ class RecipeRealizationsListScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(
-                'Choose a recipe',
+                l10n.chooseRecipe,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
             for (final recipe in AvailableRecipes.values)
               ListTile(
                 leading: const Icon(Icons.local_bar_outlined),
-                title: Text(recipe.displayName),
+                title: Text(recipe.displayName(l10n)),
                 onTap: () => Navigator.of(context).pop(recipe),
               ),
           ],
@@ -120,14 +123,17 @@ class _RealizationTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
     final totalTasks = realization.recipe.getRecipe().tasks.length;
     final completed = realization.completed;
-    final startedOn =
-        DateFormat('d MMM y, HH:mm').format(realization.startTime);
+    final startedOn = DateFormat('d MMM y, HH:mm', l10n.localeName)
+        .format(realization.startTime);
     final progress = completed
-        ? 'Completed'
-        : 'Step ${(realization.currentTask + 1).clamp(1, totalTasks)} '
-            'of $totalTasks';
+        ? l10n.completed
+        : l10n.stepProgress(
+            (realization.currentTask + 1).clamp(1, totalTasks),
+            totalTasks,
+          );
 
     return Dismissible(
       key: ValueKey(realization.id),
@@ -149,7 +155,7 @@ class _RealizationTile extends ConsumerWidget {
               completed ? Icons.check : Icons.local_bar_outlined,
             ),
           ),
-          title: Text(realization.displayName),
+          title: Text(realization.displayName(l10n)),
           subtitle: Text('$progress  -  $startedOn'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.pushNamed(
@@ -167,7 +173,7 @@ class _RealizationTile extends ConsumerWidget {
   Future<void> _rename(BuildContext context, WidgetRef ref) async {
     final name = await showRenameRealizationDialog(
       context,
-      currentName: realization.displayName,
+      currentName: realization.displayName(AppLocalizations.of(context)),
     );
     if (name == null) return;
     await ref
@@ -186,21 +192,20 @@ class _RealizationTile extends ConsumerWidget {
       );
 
   Future<bool> _confirmDelete(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete realization?'),
-        content: const Text(
-          'This removes the realization and all its entered data.',
-        ),
+        title: Text(l10n.deleteRealizationTitle),
+        content: Text(l10n.deleteRealizationMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -215,6 +220,7 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -228,13 +234,13 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No realizations yet',
+              l10n.noRealizationsTitle,
               style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Tap "New realization" to start making wine.',
+              l10n.noRealizationsMessage,
               style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),

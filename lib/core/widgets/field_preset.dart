@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// A suggested value for a numeric form field.
 class FieldPreset {
@@ -39,7 +40,7 @@ class PresetButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.tune),
-      tooltip: 'Suggested values',
+      tooltip: AppLocalizations.of(context).suggestedValues,
       onPressed: () => _openSheet(context),
     );
   }

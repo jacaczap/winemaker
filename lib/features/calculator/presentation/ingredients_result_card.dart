@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:winemaker/features/calculator/domain/ingredients.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Displays the ingredients computed from desired wine + must measurements.
 class IngredientsResultCard extends StatelessWidget {
@@ -10,33 +11,35 @@ class IngredientsResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Ingredients to add', style: theme.textTheme.titleMedium),
+            Text(l10n.ingredientsToAdd, style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             _IngredientRow(
               icon: Icons.scale_outlined,
-              label: 'Sugar',
+              label: l10n.ingredientSugar,
               value: '${ingredients.sugar.value} kg',
             ),
             _IngredientRow(
               icon: Icons.water_drop_outlined,
-              label: 'Water',
+              label: l10n.ingredientWater,
               value: '${ingredients.water.value} l',
             ),
             _IngredientRow(
               icon: Icons.science_outlined,
-              label: 'Yeast',
-              value: ingredients.yeast ? 'Add' : 'Not needed',
+              label: l10n.ingredientYeast,
+              value: ingredients.yeast ? l10n.valueAdd : l10n.valueNotNeeded,
             ),
             _IngredientRow(
               icon: Icons.eco_outlined,
-              label: 'Nutrients',
-              value: ingredients.nutrients ? 'Add' : 'Not needed',
+              label: l10n.ingredientNutrients,
+              value:
+                  ingredients.nutrients ? l10n.valueAdd : l10n.valueNotNeeded,
             ),
           ],
         ),

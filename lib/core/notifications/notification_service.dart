@@ -4,26 +4,32 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:winemaker/core/l10n/system_localizations.dart';
 
 part 'notification_service.g.dart';
 
 const _channelId = 'wine_tasks';
-const _channelName = 'Wine tasks';
-const _channelDescription = 'Reminders for timed wine-making steps';
-const _postponeActionId = 'postpone';
+
+/// Identifies the task occurrence a reminder belongs to.
+typedef ReminderTarget = ({int realizationId, int taskIndex});
 
 /// Schedules and cancels the local reminders backing `timeNotification` tasks.
 ///
 /// Reminders are relative (`now + delay`) so the exact device time zone is
-/// irrelevant; we schedule the absolute instant and let the OS fire it. Each
-/// reminder carries a "Postpone N days" action handled by [_handlePostpone],
-/// which reschedules the same notification even while the app is closed.
+/// irrelevant; we schedule the absolute instant and let the OS fire it. A
+/// reminder has no actions: it is a plain prompt to open the app. Tapping it
+/// routes to the matching task via [onTaskTap] (app running) or [launchTask]
+/// (app started from the notification). The task is never completed
+/// automatically; the user still acts on the step screen.
 class NotificationService {
   NotificationService();
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
   bool _initialized = false;
+
+  /// Called when a reminder is tapped while the app is already running.
+  void Function(ReminderTarget target)? onTaskTap;
 
   Future<void> init() async {
     if (_initialized) return;
@@ -32,15 +38,14 @@ class NotificationService {
       settings: const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       ),
-      onDidReceiveNotificationResponse: _handlePostpone,
-      onDidReceiveBackgroundNotificationResponse:
-          _onBackgroundNotificationResponse,
+      onDidReceiveNotificationResponse: _handleTap,
     );
+    final l10n = systemAppLocalizations();
     await _androidPlugin?.createNotificationChannel(
-      const AndroidNotificationChannel(
+      AndroidNotificationChannel(
         _channelId,
-        _channelName,
-        description: _channelDescription,
+        l10n.notificationChannelName,
+        description: l10n.notificationChannelDescription,
         importance: Importance.high,
       ),
     );
@@ -55,60 +60,50 @@ class NotificationService {
     required String title,
     required String body,
     required DateTime scheduledFor,
-    required int postponeDays,
   }) async {
     await init();
     await _androidPlugin?.requestNotificationsPermission();
-    await _schedule(
-      id: _notificationId(realizationId, taskIndex),
-      title: title,
-      body: body,
-      scheduledFor: scheduledFor,
-      postponeDays: postponeDays,
-    );
-  }
-
-  Future<void> cancel(int realizationId, int taskIndex) =>
-      _plugin.cancel(id: _notificationId(realizationId, taskIndex));
-
-  Future<void> _schedule({
-    required int id,
-    required String title,
-    required String body,
-    required DateTime scheduledFor,
-    required int postponeDays,
-  }) async {
     final now = tz.TZDateTime.now(tz.local);
     final when = tz.TZDateTime.from(scheduledFor, tz.local);
-    final safeWhen = when.isAfter(now) ? when : now.add(const Duration(seconds: 1));
+    final safeWhen =
+        when.isAfter(now) ? when : now.add(const Duration(seconds: 1));
+    final l10n = systemAppLocalizations();
     await _plugin.zonedSchedule(
-      id: id,
+      id: _notificationId(realizationId, taskIndex),
       title: title,
       body: body,
       scheduledDate: safeWhen,
       notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           _channelId,
-          _channelName,
-          channelDescription: _channelDescription,
+          l10n.notificationChannelName,
+          channelDescription: l10n.notificationChannelDescription,
           importance: Importance.high,
           priority: Priority.high,
-          actions: [
-            AndroidNotificationAction(
-              _postponeActionId,
-              'Postpone $postponeDays days',
-            ),
-          ],
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       payload: jsonEncode({
-        'id': id,
-        'title': title,
-        'body': body,
-        'postponeDays': postponeDays,
+        'realizationId': realizationId,
+        'taskIndex': taskIndex,
       }),
     );
+  }
+
+  Future<void> cancel(int realizationId, int taskIndex) =>
+      _plugin.cancel(id: _notificationId(realizationId, taskIndex));
+
+  /// The task whose reminder launched the app from a terminated state, if any.
+  Future<ReminderTarget?> launchTask() async {
+    await init();
+    final details = await _plugin.getNotificationAppLaunchDetails();
+    if (details == null || !details.didNotificationLaunchApp) return null;
+    return _decodeTarget(details.notificationResponse?.payload);
+  }
+
+  void _handleTap(NotificationResponse response) {
+    final target = _decodeTarget(response.payload);
+    if (target != null) onTaskTap?.call(target);
   }
 
   AndroidFlutterLocalNotificationsPlugin? get _androidPlugin =>
@@ -116,35 +111,17 @@ class NotificationService {
           AndroidFlutterLocalNotificationsPlugin>();
 }
 
+ReminderTarget? _decodeTarget(String? raw) {
+  if (raw == null || raw.isEmpty) return null;
+  final data = jsonDecode(raw) as Map<String, dynamic>;
+  final realizationId = data['realizationId'] as int?;
+  final taskIndex = data['taskIndex'] as int?;
+  if (realizationId == null || taskIndex == null) return null;
+  return (realizationId: realizationId, taskIndex: taskIndex);
+}
+
 int _notificationId(int realizationId, int taskIndex) =>
     (realizationId * 1000 + taskIndex) & 0x7fffffff;
-
-@pragma('vm:entry-point')
-void _onBackgroundNotificationResponse(NotificationResponse response) {
-  _handlePostpone(response);
-}
-
-/// Reschedules a reminder when its "Postpone" action is tapped.
-///
-/// Runs in a background isolate when the app is closed, so it re-initializes
-/// the plugin before rescheduling. Only the OS notification is moved; the app
-/// reconciles the stored time the next time the task screen is opened.
-Future<void> _handlePostpone(NotificationResponse response) async {
-  if (response.actionId != _postponeActionId) return;
-  final raw = response.payload;
-  if (raw == null || raw.isEmpty) return;
-  final data = jsonDecode(raw) as Map<String, dynamic>;
-  final postponeDays = data['postponeDays'] as int;
-  final service = NotificationService();
-  await service.init();
-  await service._schedule(
-    id: data['id'] as int,
-    title: data['title'] as String,
-    body: data['body'] as String,
-    scheduledFor: DateTime.now().add(Duration(days: postponeDays)),
-    postponeDays: postponeDays,
-  );
-}
 
 @Riverpod(keepAlive: true)
 NotificationService notificationService(Ref ref) => NotificationService();

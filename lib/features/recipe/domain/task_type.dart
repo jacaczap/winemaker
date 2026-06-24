@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:winemaker/app/router.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 enum TaskType {
   calculations,
@@ -40,18 +41,18 @@ extension TaskTypeExtension on TaskType {
     }
   }
 
-  String get label {
+  String label(AppLocalizations l10n) {
     switch (this) {
       case TaskType.calculations:
-        return 'Calculations';
+        return l10n.taskTypeCalculations;
       case TaskType.description:
-        return 'Instructions';
+        return l10n.taskTypeInstructions;
       case TaskType.addingIngredients:
-        return 'Add ingredients';
+        return l10n.taskTypeAddIngredients;
       case TaskType.timeNotification:
-        return 'Wait';
+        return l10n.taskTypeWait;
       case TaskType.result:
-        return 'Result';
+        return l10n.taskTypeResult;
     }
   }
 }

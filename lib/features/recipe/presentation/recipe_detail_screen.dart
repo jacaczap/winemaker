@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/features/recipe/domain/task_type.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Read-only view of a recipe's ordered task list.
 class RecipeDetailScreen extends StatelessWidget {
@@ -13,7 +14,7 @@ class RecipeDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final tasks = recipe.getRecipe().tasks;
     return Scaffold(
-      appBar: AppBar(title: Text(recipe.displayName)),
+      appBar: AppBar(title: Text(recipe.displayName(AppLocalizations.of(context)))),
       body: SafeArea(
         child: ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -39,6 +40,7 @@ class _TaskTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
     return Material(
       color: colors.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(16),
@@ -61,10 +63,10 @@ class _TaskTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(task.name, style: theme.textTheme.titleMedium),
+                  Text(task.id.name(l10n), style: theme.textTheme.titleMedium),
                   const SizedBox(height: 2),
                   Text(
-                    'Step $stepNumber - ${task.type.label}',
+                    l10n.recipeStepLabel(stepNumber, task.type.label(l10n)),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colors.onSurfaceVariant,
                     ),

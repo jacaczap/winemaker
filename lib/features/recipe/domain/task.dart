@@ -1,12 +1,32 @@
 import 'task_type.dart';
 
+/// Stable identifier for a task in a built-in recipe.
+///
+/// Decouples a task from its user-facing text so the name and description can
+/// be resolved per locale (see `RecipeTaskTextExtension` in `recipes.dart`).
+enum RecipeTaskId {
+  prepareFruit,
+  calculations,
+  addIngredients,
+  fermentWithSkins,
+  moveToCarboy,
+  waitSugarDrop,
+  addRemainingSugar,
+  waitFermentationSlow,
+  rackWine,
+  matureWine,
+  rackWineAgain,
+  matureWineAgain,
+  bottleWine,
+  result,
+}
+
 class Task {
-  final String name;
+  final RecipeTaskId id;
   final TaskType type;
-  final String? description;
   final TimeNotificationParams? notification;
 
-  const Task(this.name, this.type, {this.description, this.notification});
+  const Task(this.id, this.type, {this.notification});
 }
 
 /// Timing parameters for a [TaskType.timeNotification] task.

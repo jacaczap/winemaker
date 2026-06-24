@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:winemaker/app/router.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
 enum TaskStatus { completed, current, pending }
 
@@ -31,6 +32,7 @@ class TaskTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
     final isCurrent = status == TaskStatus.current;
     final isCompleted = status == TaskStatus.completed;
 
@@ -76,7 +78,7 @@ class TaskTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        _statusLabel,
+                        _statusLabel(l10n),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: foreground.withValues(alpha: 0.8),
                         ),
@@ -93,14 +95,14 @@ class TaskTile extends StatelessWidget {
     );
   }
 
-  String get _statusLabel {
+  String _statusLabel(AppLocalizations l10n) {
     switch (status) {
       case TaskStatus.completed:
-        return 'Completed - tap to view';
+        return l10n.statusCompletedTapToView;
       case TaskStatus.current:
-        return 'Tap to start';
+        return l10n.statusTapToStart;
       case TaskStatus.pending:
-        return 'Pending';
+        return l10n.statusPending;
     }
   }
 
@@ -132,22 +134,20 @@ class TaskTile extends StatelessWidget {
   }
 
   Future<void> _confirmRedo(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Redo from here?'),
-        content: Text(
-          'Go back to "$label" and redo from there? Data entered in later '
-          'tasks will be discarded.',
-        ),
+        title: Text(l10n.redoTitle),
+        content: Text(l10n.redoMessage(label)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton.tonal(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Redo'),
+            child: Text(l10n.redo),
           ),
         ],
       ),
