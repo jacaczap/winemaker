@@ -1,0 +1,226 @@
+{
+  "@@locale": "en",
+
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "redo": "Redo",
+  "markAsDone": "Mark as done",
+  "saveAndMarkDone": "Save & mark done",
+  "calculateIngredients": "Calculate ingredients",
+  "redoFromHere": "Redo from here",
+  "errorWithMessage": "Error: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": { "type": "Object" }
+    }
+  },
+
+  "ingredientSugar": "Sugar",
+  "ingredientWater": "Water",
+  "ingredientYeast": "Yeast",
+  "ingredientNutrients": "Nutrients",
+  "valueAdd": "Add",
+  "valueNotNeeded": "Not needed",
+  "valueDone": "Done",
+
+  "validationRequired": "Please enter value",
+  "validationNotANumber": "Value must be a number",
+  "validationNegative": "Value cannot be negative",
+
+  "notificationChannelName": "Wine tasks",
+  "notificationChannelDescription": "Reminders for timed wine-making steps",
+
+  "suggestedValues": "Suggested values",
+
+  "calculatorTitle": "Calculator",
+  "desiredWine": "Desired wine",
+  "mustMeasurements": "Must measurements",
+  "ingredientsToAdd": "Ingredients to add",
+
+  "fieldDesiredAlcohol": "Desired alcohol",
+  "fieldDesiredSweetness": "Desired sweetness",
+  "fieldDesiredAcidity": "Desired acidity",
+  "fieldCollectedVolume": "Collected volume",
+  "fieldMustSugar": "Sugar",
+  "fieldMustAcidity": "Acidity",
+
+  "recipeRedWine": "Red Wine",
+
+  "recipesTitle": "Recipes",
+  "recipeStepCount": "{count, plural, one{{count} step} other{{count} steps}}",
+  "@recipeStepCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recipeStepLabel": "Step {step} - {type}",
+  "@recipeStepLabel": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "type": { "type": "String" }
+    }
+  },
+
+  "taskTypeCalculations": "Calculations",
+  "taskTypeInstructions": "Instructions",
+  "taskTypeAddIngredients": "Add ingredients",
+  "taskTypeWait": "Wait",
+  "taskTypeResult": "Result",
+
+  "taskPrepareFruitName": "Prepare the fruit",
+  "taskPrepareFruitDescription": "- Collect the fruit and put it in the primary fermentation bucket.\n- Crush it to release the juice.\n- Take the must measurements you will need in the next step (volume, sweetness, acidity).",
+  "taskCalculationsName": "Calculations",
+  "taskAddIngredientsName": "Add ingredients",
+  "taskAddIngredientsDescription": "Add the yeast, yeast nutrient, the first sugar portion and water.",
+  "taskFermentWithSkinsName": "Ferment with the skins",
+  "taskFermentWithSkinsDescription": "Let the must ferment in the bucket with the fruit skins in a warm room, punching the floating cap of skins down into the liquid once or twice a day. Press when the vigorous fermentation has calmed and the cap no longer rises (usually about a week).",
+  "taskMoveToCarboyName": "Move to the carboy",
+  "taskMoveToCarboyDescription": "- Press the pulp and discard the solids.\n- Move the juice into a glass carboy.\n- Keep it in a warm room.",
+  "taskWaitSugarDropName": "Wait for the sugar to drop",
+  "taskWaitSugarDropDescription": "Wait until the sugar level drops noticeably before adding the next sugar portion. As a guide, complete this step once the measured sweetness falls to about 2-5 Blg.",
+  "taskAddRemainingSugarName": "Add remaining sugar",
+  "taskAddRemainingSugarDescription": "Add the remaining sugar portion.",
+  "taskWaitFermentationSlowName": "Wait for fermentation to slow",
+  "taskWaitFermentationSlowDescription": "Wait for the active fermentation to wind down. Rack once the airlock bubbles only occasionally and a layer of sediment has settled at the bottom.",
+  "taskRackWineName": "Rack the wine",
+  "taskRackWineDescription": "- Siphon (rack) the wine into a clean carboy, leaving the sediment (lees) behind.\n- Keep it in a cool room.",
+  "taskMatureWineName": "Mature the wine",
+  "taskMatureWineDescription": "Let the wine mature for a few months, racking off the sediment every 1-3 months. Typical total bulk aging: light reds 3-6 months, medium reds 6-9 months, full-bodied reds 12 months or more.",
+  "taskRackWineAgainName": "Rack the wine again",
+  "taskRackWineAgainDescription": "- Siphon (rack) the wine into a clean carboy, leaving the sediment (lees) behind.\n- Keep it in a cool room.",
+  "taskMatureWineAgainName": "Mature the wine again",
+  "taskMatureWineAgainDescription": "Let the wine mature for a few more months, until it is clear and tastes smooth.",
+  "taskBottleWineName": "Bottle the wine",
+  "taskBottleWineDescription": "- Siphon the wine into bottles, leaving the last of the sediment behind.",
+  "taskResultName": "Result",
+
+  "newRealization": "New realization",
+  "chooseRecipe": "Choose a recipe",
+  "completed": "Completed",
+  "stepProgress": "Step {current} of {total}",
+  "@stepProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "deleteRealizationTitle": "Delete realization?",
+  "deleteRealizationMessage": "This removes the realization and all its entered data.",
+  "noRealizationsTitle": "No realizations yet",
+  "noRealizationsMessage": "Tap \"New realization\" to start making wine.",
+
+  "recipeFallbackTitle": "Recipe",
+  "descriptionFallbackTitle": "Description",
+  "rename": "Rename",
+
+  "allTasksComplete": "All tasks complete",
+  "progress": "Progress",
+  "semanticsRecipeProgress": "Recipe progress",
+  "semanticsTasksCompleted": "{completed} of {total} tasks completed",
+  "@semanticsTasksCompleted": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "statusCompletedTapToView": "Completed - tap to view",
+  "statusTapToStart": "Tap to start",
+  "statusPending": "Pending",
+  "redoTitle": "Redo from here?",
+  "redoMessage": "Go back to \"{label}\" and redo from there? Data entered in later tasks will be discarded.",
+  "@redoMessage": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+
+  "realizationCompletedTitle": "Realization completed",
+  "realizationCompletedMessage": "You have completed every task in this realization.",
+  "stayHere": "Stay here",
+  "backToList": "Back to list",
+
+  "renameRealizationTitle": "Rename realization",
+  "nameLabel": "Name",
+
+  "addedThisStep": "Added this step",
+  "addedSugar": "Added sugar",
+  "addedWater": "Added water",
+  "yeastAdded": "Yeast added",
+  "nutrientsAdded": "Nutrients added",
+  "remainingToAdd": "Remaining to add",
+
+  "postponeDays": "{days, plural, one{Postpone {days} day} other{Postpone {days} days}}",
+  "@postponeDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "completeNow": "Complete now",
+  "readyToContinue": "Ready to continue",
+  "waitingPeriodOver": "The waiting period is over.",
+  "reminderOn": "Reminder on {date}",
+  "@reminderOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "timeLeftDays": "{days} d {hours} h left",
+  "@timeLeftDays": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "hours": { "type": "int" }
+    }
+  },
+  "timeLeftHours": "{hours} h {minutes} m left",
+  "@timeLeftHours": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "timeLeftMinutes": "{minutes} m {seconds} s left",
+  "@timeLeftMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "seconds": { "type": "int" }
+    }
+  },
+
+  "resultsLabel": "Results",
+  "resultsHint": "How did the wine turn out? Taste, clarity, strength…",
+  "mistakesLabel": "Mistakes",
+  "mistakesHint": "Anything to do differently next time?",
+
+  "presetDry": "Dry",
+  "presetSemiDry": "Semi-dry",
+  "presetSemiSweet": "Semi-sweet",
+  "presetSweet": "Sweet",
+  "presetRedTableWine": "Red table wine",
+  "presetWhiteTableWine": "White table wine",
+  "presetLightSparkling": "Light / sparkling",
+  "presetLightWhite": "Light white",
+  "presetFullWhite": "Full white",
+  "presetLightRed": "Light red",
+  "presetFullRed": "Full red",
+  "presetTableWine": "Table wine",
+  "presetDessert": "Dessert",
+  "presetFortified": "Fortified",
+  "presetWhiteGrape": "White grape",
+  "presetRedGrape": "Red grape",
+  "presetCoolClimateMust": "Cool-climate must",
+  "presetApple": "Apple",
+  "presetPear": "Pear",
+  "presetPlum": "Plum",
+  "presetSweetCherry": "Sweet cherry",
+  "presetSourCherry": "Sour cherry",
+  "presetBlackcurrant": "Blackcurrant",
+  "presetRedcurrant": "Redcurrant",
+  "presetRaspberry": "Raspberry",
+  "presetGooseberry": "Gooseberry",
+  "presetStrawberry": "Strawberry",
+  "presetGrape": "Grape",
+  "presetEgJohanniter": "e.g. Johanniter 7–9",
+  "presetEgRegent": "e.g. Regent 6–7"
+}

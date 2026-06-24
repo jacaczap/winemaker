@@ -1,45 +1,65 @@
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:winemaker/src/database/database.dart';
-import 'package:winemaker/view/recipe/recipe_view.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:winemaker/app/notification_navigation.dart';
+import 'package:winemaker/app/router.dart';
+import 'package:winemaker/app/theme.dart';
+import 'package:winemaker/core/notifications/notification_service.dart';
+import 'package:winemaker/l10n/app_localizations.dart';
 
-Future<void> main() async => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Provider<MyDatabase>(
-      create: (context) => MyDatabase(),
-      child: MaterialApp(
-        title: 'Welcome to Winemaker',
-        theme: FlexThemeData.light(scheme: FlexScheme.redWine),
-        home: const StartWineMaker(),
-      ),
-      dispose: (context, db) => db.close(),
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting();
+  final container = ProviderContainer();
+  final notifications = container.read(notificationServiceProvider);
+  await notifications.init();
+  notifications.onTaskTap =
+      (target) => openTaskFromNotification(container, target);
+  final launchTarget = await notifications.launchTask();
+  runApp(
+    UncontrolledProviderScope(container: container, child: const MyApp()),
+  );
+  if (launchTarget != null) {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => openTaskFromNotification(container, launchTarget),
     );
   }
 }
 
-class StartWineMaker extends StatelessWidget {
-  const StartWineMaker({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: const Text('Welcome to Winemaker')),
-        body: Center(
-          child: ElevatedButton(
-            child: const Text("Start Winemaker"),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const RecipeViewWrapper(realizationId: 1)),
-              );
-            },
-          ),
-        ));
+    return MaterialApp.router(
+      title: AppTheme.appTitle,
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: ThemeMode.system,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      routerConfig: appRouter,
+      builder: (context, child) => _A11yScope(child: child ?? const SizedBox.shrink()),
+    );
+  }
+}
+
+/// Cross-cutting a11y baseline.
+///
+/// Keeps system text scaling enabled (do not clamp upward) while
+/// preventing text from shrinking below 100% which can hurt legibility.
+class _A11yScope extends StatelessWidget {
+  const _A11yScope({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final scaler = media.textScaler.clamp(minScaleFactor: 1.0);
+    return MediaQuery(
+      data: media.copyWith(textScaler: scaler),
+      child: child,
+    );
   }
 }

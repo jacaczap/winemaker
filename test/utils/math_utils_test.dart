@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:winemaker/src/utils/math_utils.dart';
+import 'package:winemaker/core/utils/math_utils.dart';
 
 void main() {
   test('Should round double up', () {

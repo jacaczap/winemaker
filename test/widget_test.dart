@@ -1,16 +1,34 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:winemaker/core/database/database.dart';
+import 'package:winemaker/core/notifications/notification_service.dart';
 import 'package:winemaker/main.dart';
 
+import 'helpers/test_database.dart';
+
 void main() {
-  testWidgets('Should show task list when started', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('home shows the empty state when there are no realizations',
+      (tester) async {
+    final db = createTestDatabase();
+    addTearDown(db.close);
 
-    expect(find.text('Start Winemaker'), findsOneWidget);
-
-    await tester.tap(find.text("Start Winemaker"));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          databaseProvider.overrideWithValue(db),
+          notificationServiceProvider.overrideWithValue(FakeNotificationService()),
+        ],
+        child: const MyApp(),
+      ),
+    );
     await tester.pumpAndSettle();
 
-    expect(find.text('Must parameters measurement'), findsOneWidget);
-    expect(find.text('Must parameters displayed'), findsOneWidget);
+    expect(find.widgetWithText(AppBar, 'Winemaker'), findsOneWidget);
+    expect(find.text('No realizations yet'), findsOneWidget);
+    expect(find.text('New realization'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
   });
 }
