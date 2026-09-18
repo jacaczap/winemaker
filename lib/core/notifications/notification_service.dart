@@ -10,8 +10,11 @@ part 'notification_service.g.dart';
 
 const _channelId = 'wine_tasks';
 
-/// Identifies the task occurrence a reminder belongs to.
-typedef ReminderTarget = ({int realizationId, int taskIndex});
+/// Identifies the task a reminder belongs to.
+///
+/// [taskKey] is the task's stable recipe id, not its position, so a reminder
+/// scheduled before a recipe reorder still points at the same task.
+typedef ReminderTarget = ({int realizationId, String taskKey});
 
 /// Schedules and cancels the local reminders backing `timeNotification` tasks.
 ///
@@ -52,11 +55,11 @@ class NotificationService {
     _initialized = true;
   }
 
-  /// Schedules the reminder for a single task occurrence, replacing any
-  /// previously scheduled one for the same `(realizationId, taskIndex)`.
+  /// Schedules the reminder for a single task, replacing any previously
+  /// scheduled one for the same `(realizationId, taskKey)`.
   Future<void> scheduleTaskReminder({
     required int realizationId,
-    required int taskIndex,
+    required String taskKey,
     required String title,
     required String body,
     required DateTime scheduledFor,
@@ -69,7 +72,7 @@ class NotificationService {
         when.isAfter(now) ? when : now.add(const Duration(seconds: 1));
     final l10n = systemAppLocalizations();
     await _plugin.zonedSchedule(
-      id: _notificationId(realizationId, taskIndex),
+      id: _notificationId(realizationId, taskKey),
       title: title,
       body: body,
       scheduledDate: safeWhen,
@@ -85,13 +88,13 @@ class NotificationService {
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       payload: jsonEncode({
         'realizationId': realizationId,
-        'taskIndex': taskIndex,
+        'taskKey': taskKey,
       }),
     );
   }
 
-  Future<void> cancel(int realizationId, int taskIndex) =>
-      _plugin.cancel(id: _notificationId(realizationId, taskIndex));
+  Future<void> cancel(int realizationId, String taskKey) =>
+      _plugin.cancel(id: _notificationId(realizationId, taskKey));
 
   /// The task whose reminder launched the app from a terminated state, if any.
   Future<ReminderTarget?> launchTask() async {
@@ -115,13 +118,23 @@ ReminderTarget? _decodeTarget(String? raw) {
   if (raw == null || raw.isEmpty) return null;
   final data = jsonDecode(raw) as Map<String, dynamic>;
   final realizationId = data['realizationId'] as int?;
-  final taskIndex = data['taskIndex'] as int?;
-  if (realizationId == null || taskIndex == null) return null;
-  return (realizationId: realizationId, taskIndex: taskIndex);
+  final taskKey = data['taskKey'] as String?;
+  if (realizationId == null || taskKey == null) return null;
+  return (realizationId: realizationId, taskKey: taskKey);
 }
 
-int _notificationId(int realizationId, int taskIndex) =>
-    (realizationId * 1000 + taskIndex) & 0x7fffffff;
+int _notificationId(int realizationId, String taskKey) =>
+    (realizationId * 1000 + _stableHash(taskKey) % 1000) & 0x7fffffff;
+
+/// FNV-1a, used instead of [String.hashCode] because notification ids must
+/// stay the same across app restarts and Dart versions.
+int _stableHash(String value) {
+  var hash = 0x811c9dc5;
+  for (final unit in value.codeUnits) {
+    hash = ((hash ^ unit) * 0x01000193) & 0x7fffffff;
+  }
+  return hash;
+}
 
 @Riverpod(keepAlive: true)
 NotificationService notificationService(Ref ref) => NotificationService();

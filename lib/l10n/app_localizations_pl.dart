@@ -132,6 +132,9 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get taskTypeMeasurement => 'Pomiar';
+
+  @override
   String get taskTypeCalculations => 'Obliczenia';
 
   @override
@@ -151,17 +154,28 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get taskPrepareFruitDescription =>
-      '- Zbierz owoce i włóż je do pojemnika do fermentacji wstępnej.\n- Rozgnieć je, aby uwolnić sok.\n- Wykonaj pomiary moszczu potrzebne w następnym kroku (objętość, słodycz, kwasowość).';
+      '- Zbierz owoce i włóż je do pojemnika do fermentacji wstępnej.\n- Rozgnieć je, aby uwolnić sok.\n- Zmierz słodycz soku. Zapiszesz ją w następnym kroku. Objętość i kwasowość zmierzysz później, po odciśnięciu.';
+
+  @override
+  String get taskInitialSweetnessName => 'Początkowa słodycz';
+
+  @override
+  String get taskInitialSweetnessDescription =>
+      'Zapisz słodycz soku przed rozpoczęciem fermentacji. To jedyny pomiar, którego nie da się powtórzyć: gdy pojawi się alkohol, areometr przestaje poprawnie wskazywać cukier.';
 
   @override
   String get taskCalculationsName => 'Obliczenia';
 
   @override
-  String get taskAddIngredientsName => 'Dodaj składniki';
+  String get taskCalculationsDescription =>
+      'Wpisz objętość i kwasowość zmierzone po odciśnięciu. Słodycz jest przeniesiona z pomiaru wykonanego przed fermentacją.';
+
+  @override
+  String get taskAddIngredientsName => 'Dodaj drożdże i pożywkę';
 
   @override
   String get taskAddIngredientsDescription =>
-      'Dodaj drożdże, pożywkę dla drożdży, pierwszą porcję cukru i wodę.';
+      'Dodaj drożdże i pożywkę dla drożdży. Cukier i wodę zostaw na później: ich ilość zależy od objętości soku, którą można zmierzyć dopiero po odciśnięciu. Niewielka ilość wody użyta do uwodnienia drożdży jest za mała, aby wpłynąć na obliczenia.';
 
   @override
   String get taskFermentWithSkinsName => 'Fermentuj na miazdze';
@@ -171,11 +185,18 @@ class AppLocalizationsPl extends AppLocalizations {
       'Pozostaw moszcz do fermentacji w pojemniku ze skórkami owoców w ciepłym pomieszczeniu, zatapiając unoszący się kożuch ze skórek w cieczy raz lub dwa razy dziennie. Odciśnij, gdy burzliwa fermentacja ustanie, a kożuch przestanie się unosić (zwykle po około tygodniu).';
 
   @override
-  String get taskMoveToCarboyName => 'Przelej do gąsiora';
+  String get taskMoveToCarboyName => 'Odciśnij i przelej do gąsiora';
 
   @override
   String get taskMoveToCarboyDescription =>
-      '- Odciśnij miazgę i wyrzuć części stałe.\n- Przelej sok do szklanego gąsiora.\n- Trzymaj w ciepłym pomieszczeniu.';
+      '- Odciśnij miazgę i wyrzuć części stałe.\n- Przelej sok do szklanego gąsiora.\n- Zmierz objętość i kwasowość soku. Następny krok potrzebuje obu wartości.\n- Trzymaj w ciepłym pomieszczeniu.';
+
+  @override
+  String get taskAddWaterAndSugarName => 'Dodaj wodę i cukier';
+
+  @override
+  String get taskAddWaterAndSugarDescription =>
+      'Dodaj całą wodę i pierwszą porcję cukru. Rozpuść cukier w niewielkiej ilości wina, zanim wlejesz je z powrotem do gąsiora: cukier, który się nie rozpuści, nie przefermentuje.';
 
   @override
   String get taskWaitSugarDropName => 'Poczekaj na spadek cukru';
@@ -189,7 +210,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get taskAddRemainingSugarDescription =>
-      'Dodaj pozostałą porcję cukru.';
+      'Dodaj pozostały cukier, rozpuszczając go tak jak poprzednio.';
 
   @override
   String get taskWaitFermentationSlowName =>

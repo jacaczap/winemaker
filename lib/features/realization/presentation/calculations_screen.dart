@@ -14,25 +14,35 @@ import 'package:winemaker/features/calculator/presentation/calculation_form_fiel
 import 'package:winemaker/features/calculator/presentation/ingredients_result_card.dart';
 import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/calculations_payload.dart';
+import 'package:winemaker/features/realization/domain/initial_measurement_payload.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Merged calculations task: desired wine + must measurements + calculated
 /// ingredients on a single screen. Persists a [CalculationsPayload] for its
 /// task occurrence and pops `true` so the realization advances.
+///
+/// Runs after pressing, where the volume and acidity are finally measurable.
+/// The sweetness is not asked for again: it comes from [sweetnessTaskId],
+/// which recorded it before fermentation started.
 class CalculationsScreen extends ConsumerStatefulWidget {
   const CalculationsScreen({
     super.key,
     required this.realizationId,
-    required this.taskIndex,
+    required this.taskId,
     required this.title,
+    this.description = '',
+    this.sweetnessTaskId,
     this.readOnly = false,
   });
 
   final int realizationId;
-  final int taskIndex;
+  final RecipeTaskId taskId;
   final String title;
+  final String description;
+  final RecipeTaskId? sweetnessTaskId;
   final bool readOnly;
 
   @override
@@ -46,6 +56,7 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
   bool _saving = false;
   CalculationsPayload? _existing;
   Ingredients? _calculated;
+  Blg? _carriedSweetness;
 
   @override
   void initState() {
@@ -54,14 +65,21 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
   }
 
   Future<void> _loadExisting() async {
-    final record = await ref
-        .read(taskStateRepositoryProvider)
-        .get(widget.realizationId, widget.taskIndex);
+    final repository = ref.read(taskStateRepositoryProvider);
+    final record = await repository.get(widget.realizationId, widget.taskId);
+    final sweetnessTaskId = widget.sweetnessTaskId;
+    final sweetnessJson = sweetnessTaskId == null
+        ? null
+        : (await repository.get(widget.realizationId, sweetnessTaskId))
+            ?.payloadJson;
     if (!mounted) return;
     final json = record?.payloadJson;
     setState(() {
       _existing = json == null ? null : CalculationsPayload.fromJson(json);
       _calculated = _existing?.ingredients;
+      _carriedSweetness = sweetnessJson == null
+          ? null
+          : InitialMeasurementPayload.fromJson(sweetnessJson).sweetness;
       _loading = false;
     });
   }
@@ -89,7 +107,7 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
     );
     await ref.read(taskStateRepositoryProvider).markCompleted(
           widget.realizationId,
-          widget.taskIndex,
+          widget.taskId,
           payload: payload,
         );
     if (!mounted) return;
@@ -106,7 +124,9 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
 
   MustMeasurements _readMust(Map<String, dynamic> values) => MustMeasurements(
         Litres(parseDoubleInput(values[CalculationFields.volume] as String)),
-        Blg(parseDoubleInput(values[CalculationFields.mustSugar] as String)),
+        _carriedSweetness ??
+            Blg(parseDoubleInput(
+                values[CalculationFields.mustSugar] as String)),
         GramsPerLiter(
             parseDoubleInput(values[CalculationFields.mustAcidity] as String)),
       );
@@ -136,6 +156,13 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (widget.description.isNotEmpty) ...[
+              Text(
+                widget.description,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 24),
+            ],
             _SectionTitle(l10n.desiredWine),
             DesiredWineFields(
               initialAlcohol: desiredWine?.alcohol.value.toString(),
@@ -147,9 +174,11 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
             _SectionTitle(l10n.mustMeasurements),
             MustMeasurementFields(
               initialVolume: must?.volume.value.toString(),
-              initialSugar: must?.sugar.value.toString(),
+              initialSugar:
+                  (must?.sugar ?? _carriedSweetness)?.value.toString(),
               initialAcidity: must?.acidity.value.toString(),
               enabled: !readOnly,
+              sugarEnabled: _carriedSweetness == null,
             ),
             const SizedBox(height: 24),
             if (!readOnly)

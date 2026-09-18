@@ -171,7 +171,7 @@ class _RecipeBodyState extends State<_RecipeBody> {
     final isCompleted = status == TaskStatus.completed;
     return TaskTile(
       key: status == TaskStatus.current ? _currentTaskKey : null,
-      label: task.id.name(l10n),
+      label: task.id.displayName(l10n),
       icon: task.type.icon,
       taskRouteName: task.type.routeName,
       realizationId: widget.realizationId,
@@ -188,54 +188,69 @@ class _RecipeBodyState extends State<_RecipeBody> {
     int index, {
     required bool readOnly,
   }) {
+    final tasks = widget.realization.recipe.getRecipe().tasks;
     switch (task.type) {
       case TaskType.description:
         return DescriptionScreenArgs(
-          title: task.id.name(l10n),
+          title: task.id.displayName(l10n),
           markdown: task.id.description(l10n) ?? '',
+          readOnly: readOnly,
+        );
+      case TaskType.initialMeasurement:
+        return InitialMeasurementScreenArgs(
+          title: task.id.displayName(l10n),
+          taskId: task.id,
+          description: task.id.description(l10n) ?? '',
           readOnly: readOnly,
         );
       case TaskType.calculations:
         return CalculationsScreenArgs(
-          title: task.id.name(l10n),
-          taskIndex: index,
+          title: task.id.displayName(l10n),
+          taskId: task.id,
+          description: task.id.description(l10n) ?? '',
+          sweetnessTaskId: _lastTaskIdBefore(
+            tasks,
+            index,
+            TaskType.initialMeasurement,
+          ),
           readOnly: readOnly,
         );
       case TaskType.result:
         return ResultScreenArgs(
-          title: task.id.name(l10n),
-          taskIndex: index,
+          title: task.id.displayName(l10n),
+          taskId: task.id,
           readOnly: readOnly,
         );
       case TaskType.timeNotification:
         final notification = task.notification;
         return TimeNotificationScreenArgs(
-          title: task.id.name(l10n),
-          taskIndex: index,
+          title: task.id.displayName(l10n),
+          taskId: task.id,
           description: task.id.description(l10n) ?? '',
           delay: notification?.delay ?? Duration.zero,
           postpone: notification?.postpone ?? Duration.zero,
           readOnly: readOnly,
         );
       case TaskType.addingIngredients:
-        final tasks = widget.realization.recipe.getRecipe().tasks;
         return AddingIngredientsScreenArgs(
-          title: task.id.name(l10n),
-          taskIndex: index,
+          title: task.id.displayName(l10n),
+          taskId: task.id,
           description: task.id.description(l10n) ?? '',
-          calculationsTaskIndex: _lastCalculationsIndexBefore(tasks, index),
-          priorIngredientTaskIndices: [
+          ingredients: task.ingredients,
+          calculationsTaskId:
+              _lastTaskIdBefore(tasks, index, TaskType.calculations),
+          priorIngredientTaskIds: [
             for (var i = 0; i < index; i++)
-              if (tasks[i].type == TaskType.addingIngredients) i,
+              if (tasks[i].type == TaskType.addingIngredients) tasks[i].id,
           ],
           readOnly: readOnly,
         );
     }
   }
 
-  int? _lastCalculationsIndexBefore(List<Task> tasks, int index) {
+  RecipeTaskId? _lastTaskIdBefore(List<Task> tasks, int index, TaskType type) {
     for (var i = index - 1; i >= 0; i--) {
-      if (tasks[i].type == TaskType.calculations) return i;
+      if (tasks[i].type == type) return tasks[i].id;
     }
     return null;
   }

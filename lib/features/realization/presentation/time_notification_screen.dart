@@ -9,6 +9,7 @@ import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/domain/time_notification_payload.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Waiting-period task: schedules a reminder and counts down to it.
@@ -20,7 +21,7 @@ class TimeNotificationScreen extends ConsumerStatefulWidget {
   const TimeNotificationScreen({
     super.key,
     required this.realizationId,
-    required this.taskIndex,
+    required this.taskId,
     required this.title,
     required this.description,
     required this.delay,
@@ -29,7 +30,7 @@ class TimeNotificationScreen extends ConsumerStatefulWidget {
   });
 
   final int realizationId;
-  final int taskIndex;
+  final RecipeTaskId taskId;
   final String title;
   final String description;
   final Duration delay;
@@ -67,7 +68,7 @@ class _TimeNotificationScreenState
   Future<void> _init() async {
     final record = await ref
         .read(taskStateRepositoryProvider)
-        .get(widget.realizationId, widget.taskIndex);
+        .get(widget.realizationId, widget.taskId);
     if (!mounted) return;
     final json = record?.payloadJson;
     if (json != null) {
@@ -88,14 +89,14 @@ class _TimeNotificationScreenState
   Future<void> _reschedule(DateTime scheduledFor) async {
     await ref.read(notificationServiceProvider).scheduleTaskReminder(
           realizationId: widget.realizationId,
-          taskIndex: widget.taskIndex,
+          taskKey: widget.taskId.name,
           title: widget.title,
           body: widget.description,
           scheduledFor: scheduledFor,
         );
     await ref.read(taskStateRepositoryProvider).savePending(
           widget.realizationId,
-          widget.taskIndex,
+          widget.taskId,
           payload: TimeNotificationPayload(scheduledFor: scheduledFor),
         );
     if (mounted) setState(() => _scheduledFor = scheduledFor);
@@ -112,10 +113,10 @@ class _TimeNotificationScreenState
     setState(() => _busy = true);
     await ref
         .read(notificationServiceProvider)
-        .cancel(widget.realizationId, widget.taskIndex);
+        .cancel(widget.realizationId, widget.taskId.name);
     await ref.read(taskStateRepositoryProvider).markCompleted(
           widget.realizationId,
-          widget.taskIndex,
+          widget.taskId,
           payload: TimeNotificationPayload(
             scheduledFor: _scheduledFor ?? DateTime.now(),
           ),

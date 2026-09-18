@@ -1,0 +1,34 @@
+---
+alwaysApply: true
+---
+
+# Keep `docs/what-to-test.md` up to date
+
+`docs/what-to-test.md` is a short manual checklist. After a change a tester
+could notice — UI, recipe content, calculations, persistence, migrations,
+notifications, routing — add an entry before finishing.
+
+## Rules
+
+- Add new entries at the top, under the `---` separator.
+- Never delete or rewrite existing entries. The user clears the file manually.
+- One entry per change, not per file touched.
+- Skip it for changes with no observable effect: docs, comments, formatting,
+  test-only edits.
+
+## Format
+
+```markdown
+## <date> — <short title>
+
+- [ ] <what to verify, one short line>
+```
+
+## Writing the items
+
+Keep them blunt and few — a handful of lines, not a test plan. Name the thing
+to check, not how to check it or why ("Confirm old realizations migrated
+correctly", not a paragraph about the migration).
+
+Cover only what could plausibly break. Always include existing stored data when
+a migration or payload changed, and the other locale when text changed.

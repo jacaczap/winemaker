@@ -21,8 +21,9 @@ Future<void> openTaskFromNotification(
       .byId(target.realizationId);
   if (realization == null) return;
   final tasks = realization.recipe.getRecipe().tasks;
-  if (target.taskIndex < 0 || target.taskIndex >= tasks.length) return;
-  final task = tasks[target.taskIndex];
+  final index = tasks.indexWhere((t) => t.id.name == target.taskKey);
+  if (index < 0) return;
+  final task = tasks[index];
   if (task.type != TaskType.timeNotification) return;
   final notification = task.notification;
   final l10n = systemAppLocalizations();
@@ -32,12 +33,12 @@ Future<void> openTaskFromNotification(
       AppRoute.realizationIdParam: '${target.realizationId}',
     },
     extra: TimeNotificationScreenArgs(
-      title: task.id.name(l10n),
-      taskIndex: target.taskIndex,
+      title: task.id.displayName(l10n),
+      taskId: task.id,
       description: task.id.description(l10n) ?? '',
       delay: notification?.delay ?? Duration.zero,
       postpone: notification?.postpone ?? Duration.zero,
-      readOnly: realization.currentTask > target.taskIndex,
+      readOnly: realization.currentTask > index,
     ),
   );
 }

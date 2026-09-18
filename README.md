@@ -1,5 +1,7 @@
 # winemaker
 
+![Winemaker — Make wine, step by step](assets/play_feature_graphic.png)
+
 Android app that guides the user step-by-step through making wine. The user
 starts a *realization* of a recipe (currently the built-in Red Wine recipe) and
 works through its ordered tasks: measurements and ingredient calculations,

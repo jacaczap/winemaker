@@ -5,7 +5,7 @@ Backlog of ideas to consider later. Not scheduled, not detailed yet.
 - [ ] **User custom recipes** — let users create their own recipes, not just the
   built-in ones.
 - [ ] **White wine recipe** — add a built-in recipe.
-- [ ] **Mirabelle plum recipe** — add a built-in recipe.
+- [ ] **Cherry plum recipe** — add a built-in recipe.
 - [ ] **Completed-wine calculator** — a calculator for an already-finished wine.
 - [ ] **Wine label printout** — generate a printable label after completion.
 - [ ] **Record real wait time** — when a time-notification task completes, save
@@ -15,4 +15,14 @@ Backlog of ideas to consider later. Not scheduled, not detailed yet.
 - [ ] **More visual realization progress** — show progress visually (e.g. a
   filling background or wine-bottle icon), and make completed realizations
   clearly distinct from in-progress (more than just a tick).
+- [ ] **Auto scroll** - Auto scroll to the completed step or just to previous view. 
+  Right now in recipe view you always land on top
+- [ ] **Delete realization** - enable deleting realization
+- [ ] **Name realization first** - creating new realization opens rename window 
+- [ ] **Store timestamps** - completion of every step should have a timestamp for later check
+- [ ] **Comment field** - optional comment field to every step - for documenting purposes. Allow adding comments to completed steps without reverting to them. Don't change timestamp in such situation
+- [ ] **Finished recipe summary** - new view for summary of recipe. Like a journal:
+  date - what happened + comments. All in one neat block with separated steps
 - [ ] **Github actions** - add some CI steps to run tests and build the app in the CI
+- [ ] **Water cannot be less than 0** - calculator gives negative values of water that has to be added (probably could also happen with sugar). This shouldn't be possible. Redesign the calculations step to provide min-max values possible with selected fruits.
+- [ ] **Default 0 added ingredients** - 0 should be default amount for ingredients so users don't need to input it manually if they didn't add for example sugar 

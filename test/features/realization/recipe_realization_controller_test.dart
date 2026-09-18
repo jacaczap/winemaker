@@ -7,6 +7,7 @@ import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/result_payload.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
+import 'package:winemaker/features/recipe/domain/task_type.dart';
 
 import '../../helpers/test_database.dart';
 
@@ -93,13 +94,14 @@ void main() {
   test('jumpToTask resets the pointer, discards later data and cancels reminders',
       () async {
     final id = await seedRealization(currentTask: lastTaskIndex);
+    final tasks = redWineRecipe.tasks;
     final taskStates = container.read(taskStateRepositoryProvider);
-    await taskStates.markCompleted(id, 0);
-    await taskStates.markCompleted(id, 2);
-    await taskStates.markCompleted(id, 5);
+    await taskStates.markCompleted(id, tasks[0].id);
+    await taskStates.markCompleted(id, tasks[2].id);
+    await taskStates.markCompleted(id, tasks[5].id);
     await taskStates.markCompleted(
       id,
-      lastTaskIndex,
+      tasks[lastTaskIndex].id,
       payload: const ResultPayload(results: 'great', mistakes: 'none'),
     );
     await container.read(recipeRealizationControllerProvider(id).future);
@@ -113,15 +115,18 @@ void main() {
     expect(state.completed, isFalse);
 
     final remaining = await taskStates.listForRealization(id);
-    expect(remaining.map((r) => r.taskIndex), unorderedEquals([0, 2]));
+    expect(
+      remaining.map((r) => r.taskId),
+      unorderedEquals([tasks[0].id, tasks[2].id]),
+    );
 
-    final timeNotificationIndices = [
-      for (var i = 3; i < redWineRecipe.tasks.length; i++)
-        if (redWineRecipe.tasks[i].type.name == 'timeNotification') i,
+    final cancelledWaits = [
+      for (final task in tasks.skip(3))
+        if (task.type == TaskType.timeNotification) task.id.name,
     ];
     expect(
       notifications.cancelled.map((c) => c.$2),
-      containsAll(timeNotificationIndices),
+      containsAll(cancelledWaits),
     );
   });
 

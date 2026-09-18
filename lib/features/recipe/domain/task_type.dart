@@ -3,6 +3,7 @@ import 'package:winemaker/app/router.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
 enum TaskType {
+  initialMeasurement,
   calculations,
   description,
   addingIngredients,
@@ -13,6 +14,8 @@ enum TaskType {
 extension TaskTypeExtension on TaskType {
   String get routeName {
     switch (this) {
+      case TaskType.initialMeasurement:
+        return AppRoute.initialMeasurement;
       case TaskType.calculations:
         return AppRoute.calculations;
       case TaskType.description:
@@ -28,6 +31,8 @@ extension TaskTypeExtension on TaskType {
 
   IconData get icon {
     switch (this) {
+      case TaskType.initialMeasurement:
+        return Icons.speed_outlined;
       case TaskType.calculations:
         return Icons.science_outlined;
       case TaskType.description:
@@ -43,6 +48,8 @@ extension TaskTypeExtension on TaskType {
 
   String label(AppLocalizations l10n) {
     switch (this) {
+      case TaskType.initialMeasurement:
+        return l10n.taskTypeMeasurement;
       case TaskType.calculations:
         return l10n.taskTypeCalculations;
       case TaskType.description:

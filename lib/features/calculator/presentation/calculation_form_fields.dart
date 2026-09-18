@@ -77,12 +77,17 @@ class MustMeasurementFields extends StatelessWidget {
     this.initialSugar,
     this.initialAcidity,
     this.enabled = true,
+    this.sugarEnabled = true,
   });
 
   final String? initialVolume;
   final String? initialSugar;
   final String? initialAcidity;
   final bool enabled;
+
+  /// Set to false when the sweetness is carried over from an earlier task and
+  /// must not be re-entered here.
+  final bool sugarEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +110,7 @@ class MustMeasurementFields extends StatelessWidget {
           label: l10n.fieldMustSugar,
           suffix: 'Blg',
           initialValue: initialSugar,
-          enabled: enabled,
+          enabled: enabled && sugarEnabled,
           presets: FieldPresets.measuredSweetness(l10n),
         ),
         const SizedBox(height: 12),

@@ -63,7 +63,10 @@ class _TaskTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(task.id.name(l10n), style: theme.textTheme.titleMedium),
+                  Text(
+                    task.id.displayName(l10n),
+                    style: theme.textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 2),
                   Text(
                     l10n.recipeStepLabel(stepNumber, task.type.label(l10n)),

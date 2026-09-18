@@ -55,16 +55,17 @@ class RecipeRealizationController extends _$RecipeRealizationController {
     final current = state.value;
     if (current == null) return;
     if (targetIndex < 0 || targetIndex >= current.currentTask) return;
-    final tasks = current.recipe.getRecipe().tasks;
+    final laterTasks =
+        current.recipe.getRecipe().tasks.sublist(targetIndex + 1);
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await ref
           .read(taskStateRepositoryProvider)
-          .discardAfter(id, targetIndex);
+          .discard(id, laterTasks.map((t) => t.id));
       final notifications = ref.read(notificationServiceProvider);
-      for (var i = targetIndex + 1; i < tasks.length; i++) {
-        if (tasks[i].type == TaskType.timeNotification) {
-          await notifications.cancel(id, i);
+      for (final task in laterTasks) {
+        if (task.type == TaskType.timeNotification) {
+          await notifications.cancel(id, task.id.name);
         }
       }
       await ref

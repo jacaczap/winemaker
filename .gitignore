@@ -48,3 +48,5 @@ app.*.map.json
 .cursor/plans
 
 android/key.properties
+
+docs/what-to-test.md

@@ -130,6 +130,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get taskTypeMeasurement => 'Measurement';
+
+  @override
   String get taskTypeCalculations => 'Calculations';
 
   @override
@@ -149,17 +152,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskPrepareFruitDescription =>
-      '- Collect the fruit and put it in the primary fermentation bucket.\n- Crush it to release the juice.\n- Take the must measurements you will need in the next step (volume, sweetness, acidity).';
+      '- Collect the fruit and put it in the primary fermentation bucket.\n- Crush it to release the juice.\n- Measure the sweetness of the juice. You will record it in the next step. The volume and the acidity are measured later, after pressing.';
+
+  @override
+  String get taskInitialSweetnessName => 'Initial sweetness';
+
+  @override
+  String get taskInitialSweetnessDescription =>
+      'Record the sweetness of the juice before fermentation starts. This is the one measurement that cannot be retaken: once alcohol is present, a hydrometer no longer reads sugar correctly.';
 
   @override
   String get taskCalculationsName => 'Calculations';
 
   @override
-  String get taskAddIngredientsName => 'Add ingredients';
+  String get taskCalculationsDescription =>
+      'Enter the volume and the acidity you measured after pressing. The sweetness is carried over from the reading taken before fermentation.';
+
+  @override
+  String get taskAddIngredientsName => 'Add yeast and nutrient';
 
   @override
   String get taskAddIngredientsDescription =>
-      'Add the yeast, yeast nutrient, the first sugar portion and water.';
+      'Add the yeast and the yeast nutrient. Leave the sugar and the water for later: the amounts depend on the juice volume, which can only be measured after pressing. The little water used to rehydrate the yeast is too small to affect the calculation.';
 
   @override
   String get taskFermentWithSkinsName => 'Ferment with the skins';
@@ -169,11 +183,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Let the must ferment in the bucket with the fruit skins in a warm room, punching the floating cap of skins down into the liquid once or twice a day. Press when the vigorous fermentation has calmed and the cap no longer rises (usually about a week).';
 
   @override
-  String get taskMoveToCarboyName => 'Move to the carboy';
+  String get taskMoveToCarboyName => 'Press and move to the carboy';
 
   @override
   String get taskMoveToCarboyDescription =>
-      '- Press the pulp and discard the solids.\n- Move the juice into a glass carboy.\n- Keep it in a warm room.';
+      '- Press the pulp and discard the solids.\n- Move the juice into a glass carboy.\n- Measure the volume and the acidity of the juice. The next step needs both.\n- Keep it in a warm room.';
+
+  @override
+  String get taskAddWaterAndSugarName => 'Add water and sugar';
+
+  @override
+  String get taskAddWaterAndSugarDescription =>
+      'Add all of the water and the first portion of sugar. Dissolve the sugar in a little of the wine before returning it to the carboy: sugar that does not dissolve will not ferment.';
 
   @override
   String get taskWaitSugarDropName => 'Wait for the sugar to drop';
@@ -187,7 +208,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskAddRemainingSugarDescription =>
-      'Add the remaining sugar portion.';
+      'Add the remaining sugar, dissolving it first as before.';
 
   @override
   String get taskWaitFermentationSlowName => 'Wait for fermentation to slow';

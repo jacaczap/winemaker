@@ -1,3 +1,5 @@
+import 'package:winemaker/features/recipe/domain/task.dart';
+
 /// Status of a single task occurrence within a realization.
 ///
 /// Persisted as text so adding values later does not require a migration.
@@ -18,7 +20,7 @@ abstract class TaskPayload {
   Map<String, dynamic> toJson();
 }
 
-/// A single row in `realization_task_state`.
+/// A single row in `task_state_entity`.
 ///
 /// `payloadJson` is the decoded JSON map (or null if the row stores no data,
 /// e.g. a description task that's merely acknowledged). Callers decode it
@@ -26,13 +28,13 @@ abstract class TaskPayload {
 class TaskStateRecord {
   const TaskStateRecord({
     required this.realizationId,
-    required this.taskIndex,
+    required this.taskId,
     required this.status,
     required this.payloadJson,
   });
 
   final int realizationId;
-  final int taskIndex;
+  final RecipeTaskId taskId;
   final TaskState status;
   final Map<String, dynamic>? payloadJson;
 }

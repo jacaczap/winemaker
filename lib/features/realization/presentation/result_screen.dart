@@ -5,6 +5,7 @@ import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/result_payload.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Result task: free-text capture of how the wine turned out and any mistakes.
@@ -16,13 +17,13 @@ class ResultScreen extends ConsumerStatefulWidget {
   const ResultScreen({
     super.key,
     required this.realizationId,
-    required this.taskIndex,
+    required this.taskId,
     required this.title,
     this.readOnly = false,
   });
 
   final int realizationId;
-  final int taskIndex;
+  final RecipeTaskId taskId;
   final String title;
   final bool readOnly;
 
@@ -53,7 +54,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
   Future<void> _loadExisting() async {
     final record = await ref
         .read(taskStateRepositoryProvider)
-        .get(widget.realizationId, widget.taskIndex);
+        .get(widget.realizationId, widget.taskId);
     if (!mounted) return;
     final json = record?.payloadJson;
     if (json != null) {
@@ -72,7 +73,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     );
     await ref.read(taskStateRepositoryProvider).markCompleted(
           widget.realizationId,
-          widget.taskIndex,
+          widget.taskId,
           payload: payload,
         );
     if (!mounted) return;

@@ -5,8 +5,12 @@ import 'package:winemaker/l10n/app_localizations.dart';
 
 const Recipe redWineRecipe = Recipe([
   Task(RecipeTaskId.prepareFruit, TaskType.description),
-  Task(RecipeTaskId.calculations, TaskType.calculations),
-  Task(RecipeTaskId.addIngredients, TaskType.addingIngredients),
+  Task(RecipeTaskId.initialSweetness, TaskType.initialMeasurement),
+  Task(
+    RecipeTaskId.addIngredients,
+    TaskType.addingIngredients,
+    ingredients: {IngredientKind.yeast, IngredientKind.nutrients},
+  ),
   Task(
     RecipeTaskId.fermentWithSkins,
     TaskType.timeNotification,
@@ -16,6 +20,12 @@ const Recipe redWineRecipe = Recipe([
     ),
   ),
   Task(RecipeTaskId.moveToCarboy, TaskType.description),
+  Task(RecipeTaskId.calculations, TaskType.calculations),
+  Task(
+    RecipeTaskId.addWaterAndSugar,
+    TaskType.addingIngredients,
+    ingredients: {IngredientKind.water, IngredientKind.sugar},
+  ),
   Task(
     RecipeTaskId.waitSugarDrop,
     TaskType.timeNotification,
@@ -24,7 +34,11 @@ const Recipe redWineRecipe = Recipe([
       postpone: Duration(days: 3),
     ),
   ),
-  Task(RecipeTaskId.addRemainingSugar, TaskType.addingIngredients),
+  Task(
+    RecipeTaskId.addRemainingSugar,
+    TaskType.addingIngredients,
+    ingredients: {IngredientKind.sugar},
+  ),
   Task(
     RecipeTaskId.waitFermentationSlow,
     TaskType.timeNotification,
@@ -57,12 +71,14 @@ const Recipe redWineRecipe = Recipe([
 
 /// Resolves the locale-specific name and description for a recipe task.
 extension RecipeTaskTextExtension on RecipeTaskId {
-  String name(AppLocalizations l10n) => switch (this) {
+  String displayName(AppLocalizations l10n) => switch (this) {
         RecipeTaskId.prepareFruit => l10n.taskPrepareFruitName,
+        RecipeTaskId.initialSweetness => l10n.taskInitialSweetnessName,
         RecipeTaskId.calculations => l10n.taskCalculationsName,
         RecipeTaskId.addIngredients => l10n.taskAddIngredientsName,
         RecipeTaskId.fermentWithSkins => l10n.taskFermentWithSkinsName,
         RecipeTaskId.moveToCarboy => l10n.taskMoveToCarboyName,
+        RecipeTaskId.addWaterAndSugar => l10n.taskAddWaterAndSugarName,
         RecipeTaskId.waitSugarDrop => l10n.taskWaitSugarDropName,
         RecipeTaskId.addRemainingSugar => l10n.taskAddRemainingSugarName,
         RecipeTaskId.waitFermentationSlow => l10n.taskWaitFermentationSlowName,
@@ -76,10 +92,13 @@ extension RecipeTaskTextExtension on RecipeTaskId {
 
   String? description(AppLocalizations l10n) => switch (this) {
         RecipeTaskId.prepareFruit => l10n.taskPrepareFruitDescription,
-        RecipeTaskId.calculations => null,
+        RecipeTaskId.initialSweetness =>
+          l10n.taskInitialSweetnessDescription,
+        RecipeTaskId.calculations => l10n.taskCalculationsDescription,
         RecipeTaskId.addIngredients => l10n.taskAddIngredientsDescription,
         RecipeTaskId.fermentWithSkins => l10n.taskFermentWithSkinsDescription,
         RecipeTaskId.moveToCarboy => l10n.taskMoveToCarboyDescription,
+        RecipeTaskId.addWaterAndSugar => l10n.taskAddWaterAndSugarDescription,
         RecipeTaskId.waitSugarDrop => l10n.taskWaitSugarDropDescription,
         RecipeTaskId.addRemainingSugar => l10n.taskAddRemainingSugarDescription,
         RecipeTaskId.waitFermentationSlow =>

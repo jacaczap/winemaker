@@ -4,6 +4,7 @@ import 'package:winemaker/core/database/database.dart';
 import 'package:winemaker/features/realization/data/recipe_realization_repository.dart';
 import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
+import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
 import '../../helpers/test_database.dart';
@@ -91,7 +92,8 @@ void main() {
 
   test('delete removes the realization and its task state', () async {
     final id = await repository.create(AvailableRecipes.redWine);
-    await TaskStateRepository(db).markCompleted(id, 0);
+    await TaskStateRepository(db)
+        .markCompleted(id, RecipeTaskId.prepareFruit);
 
     await repository.delete(id);
 

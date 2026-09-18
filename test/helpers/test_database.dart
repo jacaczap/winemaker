@@ -11,13 +11,13 @@ MyDatabase createTestDatabase() => MyDatabase.forTesting(NativeDatabase.memory()
 /// unavailable in unit tests, so the controller is given this fake to verify
 /// that pending reminders get cancelled on jump-back.
 class FakeNotificationService extends NotificationService {
-  final List<(int realizationId, int taskIndex)> cancelled = [];
+  final List<(int realizationId, String taskKey)> cancelled = [];
 
   @override
   Future<void> init() async {}
 
   @override
-  Future<void> cancel(int realizationId, int taskIndex) async {
-    cancelled.add((realizationId, taskIndex));
+  Future<void> cancel(int realizationId, String taskKey) async {
+    cancelled.add((realizationId, taskKey));
   }
 }

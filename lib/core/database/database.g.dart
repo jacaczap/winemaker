@@ -358,12 +358,11 @@ class $TaskStateEntityTable extends TaskStateEntity
   late final GeneratedColumn<int> realizationId = GeneratedColumn<int>(
       'realization_id', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _taskIndexMeta =
-      const VerificationMeta('taskIndex');
   @override
-  late final GeneratedColumn<int> taskIndex = GeneratedColumn<int>(
-      'task_index', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  late final GeneratedColumnWithTypeConverter<RecipeTaskId, String> taskId =
+      GeneratedColumn<String>('task_id', aliasedName, false,
+              type: DriftSqlType.string, requiredDuringInsert: true)
+          .withConverter<RecipeTaskId>($TaskStateEntityTable.$convertertaskId);
   @override
   late final GeneratedColumnWithTypeConverter<TaskState, String> status =
       GeneratedColumn<String>('status', aliasedName, false,
@@ -377,7 +376,7 @@ class $TaskStateEntityTable extends TaskStateEntity
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [realizationId, taskIndex, status, payload];
+      [realizationId, taskId, status, payload];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -397,12 +396,6 @@ class $TaskStateEntityTable extends TaskStateEntity
     } else if (isInserting) {
       context.missing(_realizationIdMeta);
     }
-    if (data.containsKey('task_index')) {
-      context.handle(_taskIndexMeta,
-          taskIndex.isAcceptableOrUnknown(data['task_index']!, _taskIndexMeta));
-    } else if (isInserting) {
-      context.missing(_taskIndexMeta);
-    }
     if (data.containsKey('payload')) {
       context.handle(_payloadMeta,
           payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta));
@@ -411,15 +404,16 @@ class $TaskStateEntityTable extends TaskStateEntity
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {realizationId, taskIndex};
+  Set<GeneratedColumn> get $primaryKey => {realizationId, taskId};
   @override
   TaskStateEntityData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return TaskStateEntityData(
       realizationId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}realization_id'])!,
-      taskIndex: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}task_index'])!,
+      taskId: $TaskStateEntityTable.$convertertaskId.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}task_id'])!),
       status: $TaskStateEntityTable.$converterstatus.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}status'])!),
@@ -433,6 +427,8 @@ class $TaskStateEntityTable extends TaskStateEntity
     return $TaskStateEntityTable(attachedDatabase, alias);
   }
 
+  static JsonTypeConverter2<RecipeTaskId, String, String> $convertertaskId =
+      const EnumNameConverter<RecipeTaskId>(RecipeTaskId.values);
   static JsonTypeConverter2<TaskState, String, String> $converterstatus =
       const EnumNameConverter<TaskState>(TaskState.values);
 }
@@ -440,19 +436,22 @@ class $TaskStateEntityTable extends TaskStateEntity
 class TaskStateEntityData extends DataClass
     implements Insertable<TaskStateEntityData> {
   final int realizationId;
-  final int taskIndex;
+  final RecipeTaskId taskId;
   final TaskState status;
   final String? payload;
   const TaskStateEntityData(
       {required this.realizationId,
-      required this.taskIndex,
+      required this.taskId,
       required this.status,
       this.payload});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['realization_id'] = Variable<int>(realizationId);
-    map['task_index'] = Variable<int>(taskIndex);
+    {
+      map['task_id'] = Variable<String>(
+          $TaskStateEntityTable.$convertertaskId.toSql(taskId));
+    }
     {
       map['status'] = Variable<String>(
           $TaskStateEntityTable.$converterstatus.toSql(status));
@@ -466,7 +465,7 @@ class TaskStateEntityData extends DataClass
   TaskStateEntityCompanion toCompanion(bool nullToAbsent) {
     return TaskStateEntityCompanion(
       realizationId: Value(realizationId),
-      taskIndex: Value(taskIndex),
+      taskId: Value(taskId),
       status: Value(status),
       payload: payload == null && nullToAbsent
           ? const Value.absent()
@@ -479,7 +478,8 @@ class TaskStateEntityData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TaskStateEntityData(
       realizationId: serializer.fromJson<int>(json['realizationId']),
-      taskIndex: serializer.fromJson<int>(json['taskIndex']),
+      taskId: $TaskStateEntityTable.$convertertaskId
+          .fromJson(serializer.fromJson<String>(json['taskId'])),
       status: $TaskStateEntityTable.$converterstatus
           .fromJson(serializer.fromJson<String>(json['status'])),
       payload: serializer.fromJson<String?>(json['payload']),
@@ -490,7 +490,8 @@ class TaskStateEntityData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'realizationId': serializer.toJson<int>(realizationId),
-      'taskIndex': serializer.toJson<int>(taskIndex),
+      'taskId': serializer.toJson<String>(
+          $TaskStateEntityTable.$convertertaskId.toJson(taskId)),
       'status': serializer.toJson<String>(
           $TaskStateEntityTable.$converterstatus.toJson(status)),
       'payload': serializer.toJson<String?>(payload),
@@ -499,12 +500,12 @@ class TaskStateEntityData extends DataClass
 
   TaskStateEntityData copyWith(
           {int? realizationId,
-          int? taskIndex,
+          RecipeTaskId? taskId,
           TaskState? status,
           Value<String?> payload = const Value.absent()}) =>
       TaskStateEntityData(
         realizationId: realizationId ?? this.realizationId,
-        taskIndex: taskIndex ?? this.taskIndex,
+        taskId: taskId ?? this.taskId,
         status: status ?? this.status,
         payload: payload.present ? payload.value : this.payload,
       );
@@ -513,7 +514,7 @@ class TaskStateEntityData extends DataClass
       realizationId: data.realizationId.present
           ? data.realizationId.value
           : this.realizationId,
-      taskIndex: data.taskIndex.present ? data.taskIndex.value : this.taskIndex,
+      taskId: data.taskId.present ? data.taskId.value : this.taskId,
       status: data.status.present ? data.status.value : this.status,
       payload: data.payload.present ? data.payload.value : this.payload,
     );
@@ -523,7 +524,7 @@ class TaskStateEntityData extends DataClass
   String toString() {
     return (StringBuffer('TaskStateEntityData(')
           ..write('realizationId: $realizationId, ')
-          ..write('taskIndex: $taskIndex, ')
+          ..write('taskId: $taskId, ')
           ..write('status: $status, ')
           ..write('payload: $payload')
           ..write(')'))
@@ -531,49 +532,49 @@ class TaskStateEntityData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(realizationId, taskIndex, status, payload);
+  int get hashCode => Object.hash(realizationId, taskId, status, payload);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TaskStateEntityData &&
           other.realizationId == this.realizationId &&
-          other.taskIndex == this.taskIndex &&
+          other.taskId == this.taskId &&
           other.status == this.status &&
           other.payload == this.payload);
 }
 
 class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
   final Value<int> realizationId;
-  final Value<int> taskIndex;
+  final Value<RecipeTaskId> taskId;
   final Value<TaskState> status;
   final Value<String?> payload;
   final Value<int> rowid;
   const TaskStateEntityCompanion({
     this.realizationId = const Value.absent(),
-    this.taskIndex = const Value.absent(),
+    this.taskId = const Value.absent(),
     this.status = const Value.absent(),
     this.payload = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TaskStateEntityCompanion.insert({
     required int realizationId,
-    required int taskIndex,
+    required RecipeTaskId taskId,
     required TaskState status,
     this.payload = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : realizationId = Value(realizationId),
-        taskIndex = Value(taskIndex),
+        taskId = Value(taskId),
         status = Value(status);
   static Insertable<TaskStateEntityData> custom({
     Expression<int>? realizationId,
-    Expression<int>? taskIndex,
+    Expression<String>? taskId,
     Expression<String>? status,
     Expression<String>? payload,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (realizationId != null) 'realization_id': realizationId,
-      if (taskIndex != null) 'task_index': taskIndex,
+      if (taskId != null) 'task_id': taskId,
       if (status != null) 'status': status,
       if (payload != null) 'payload': payload,
       if (rowid != null) 'rowid': rowid,
@@ -582,13 +583,13 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
 
   TaskStateEntityCompanion copyWith(
       {Value<int>? realizationId,
-      Value<int>? taskIndex,
+      Value<RecipeTaskId>? taskId,
       Value<TaskState>? status,
       Value<String?>? payload,
       Value<int>? rowid}) {
     return TaskStateEntityCompanion(
       realizationId: realizationId ?? this.realizationId,
-      taskIndex: taskIndex ?? this.taskIndex,
+      taskId: taskId ?? this.taskId,
       status: status ?? this.status,
       payload: payload ?? this.payload,
       rowid: rowid ?? this.rowid,
@@ -601,8 +602,9 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
     if (realizationId.present) {
       map['realization_id'] = Variable<int>(realizationId.value);
     }
-    if (taskIndex.present) {
-      map['task_index'] = Variable<int>(taskIndex.value);
+    if (taskId.present) {
+      map['task_id'] = Variable<String>(
+          $TaskStateEntityTable.$convertertaskId.toSql(taskId.value));
     }
     if (status.present) {
       map['status'] = Variable<String>(
@@ -621,7 +623,7 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
   String toString() {
     return (StringBuffer('TaskStateEntityCompanion(')
           ..write('realizationId: $realizationId, ')
-          ..write('taskIndex: $taskIndex, ')
+          ..write('taskId: $taskId, ')
           ..write('status: $status, ')
           ..write('payload: $payload, ')
           ..write('rowid: $rowid')
@@ -842,7 +844,7 @@ typedef $$RecipeRealizationEntityTableProcessedTableManager
 typedef $$TaskStateEntityTableCreateCompanionBuilder = TaskStateEntityCompanion
     Function({
   required int realizationId,
-  required int taskIndex,
+  required RecipeTaskId taskId,
   required TaskState status,
   Value<String?> payload,
   Value<int> rowid,
@@ -850,7 +852,7 @@ typedef $$TaskStateEntityTableCreateCompanionBuilder = TaskStateEntityCompanion
 typedef $$TaskStateEntityTableUpdateCompanionBuilder = TaskStateEntityCompanion
     Function({
   Value<int> realizationId,
-  Value<int> taskIndex,
+  Value<RecipeTaskId> taskId,
   Value<TaskState> status,
   Value<String?> payload,
   Value<int> rowid,
@@ -868,8 +870,10 @@ class $$TaskStateEntityTableFilterComposer
   ColumnFilters<int> get realizationId => $composableBuilder(
       column: $table.realizationId, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get taskIndex => $composableBuilder(
-      column: $table.taskIndex, builder: (column) => ColumnFilters(column));
+  ColumnWithTypeConverterFilters<RecipeTaskId, RecipeTaskId, String>
+      get taskId => $composableBuilder(
+          column: $table.taskId,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnWithTypeConverterFilters<TaskState, TaskState, String> get status =>
       $composableBuilder(
@@ -893,8 +897,8 @@ class $$TaskStateEntityTableOrderingComposer
       column: $table.realizationId,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get taskIndex => $composableBuilder(
-      column: $table.taskIndex, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get taskId => $composableBuilder(
+      column: $table.taskId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get status => $composableBuilder(
       column: $table.status, builder: (column) => ColumnOrderings(column));
@@ -915,8 +919,8 @@ class $$TaskStateEntityTableAnnotationComposer
   GeneratedColumn<int> get realizationId => $composableBuilder(
       column: $table.realizationId, builder: (column) => column);
 
-  GeneratedColumn<int> get taskIndex =>
-      $composableBuilder(column: $table.taskIndex, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<RecipeTaskId, String> get taskId =>
+      $composableBuilder(column: $table.taskId, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<TaskState, String> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
@@ -953,28 +957,28 @@ class $$TaskStateEntityTableTableManager extends RootTableManager<
               $$TaskStateEntityTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> realizationId = const Value.absent(),
-            Value<int> taskIndex = const Value.absent(),
+            Value<RecipeTaskId> taskId = const Value.absent(),
             Value<TaskState> status = const Value.absent(),
             Value<String?> payload = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TaskStateEntityCompanion(
             realizationId: realizationId,
-            taskIndex: taskIndex,
+            taskId: taskId,
             status: status,
             payload: payload,
             rowid: rowid,
           ),
           createCompanionCallback: ({
             required int realizationId,
-            required int taskIndex,
+            required RecipeTaskId taskId,
             required TaskState status,
             Value<String?> payload = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TaskStateEntityCompanion.insert(
             realizationId: realizationId,
-            taskIndex: taskIndex,
+            taskId: taskId,
             status: status,
             payload: payload,
             rowid: rowid,

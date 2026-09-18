@@ -314,6 +314,12 @@ abstract class AppLocalizations {
   /// **'Step {step} - {type}'**
   String recipeStepLabel(int step, String type);
 
+  /// No description provided for @taskTypeMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement'**
+  String get taskTypeMeasurement;
+
   /// No description provided for @taskTypeCalculations.
   ///
   /// In en, this message translates to:
@@ -353,8 +359,20 @@ abstract class AppLocalizations {
   /// No description provided for @taskPrepareFruitDescription.
   ///
   /// In en, this message translates to:
-  /// **'- Collect the fruit and put it in the primary fermentation bucket.\n- Crush it to release the juice.\n- Take the must measurements you will need in the next step (volume, sweetness, acidity).'**
+  /// **'- Collect the fruit and put it in the primary fermentation bucket.\n- Crush it to release the juice.\n- Measure the sweetness of the juice. You will record it in the next step. The volume and the acidity are measured later, after pressing.'**
   String get taskPrepareFruitDescription;
+
+  /// No description provided for @taskInitialSweetnessName.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial sweetness'**
+  String get taskInitialSweetnessName;
+
+  /// No description provided for @taskInitialSweetnessDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Record the sweetness of the juice before fermentation starts. This is the one measurement that cannot be retaken: once alcohol is present, a hydrometer no longer reads sugar correctly.'**
+  String get taskInitialSweetnessDescription;
 
   /// No description provided for @taskCalculationsName.
   ///
@@ -362,16 +380,22 @@ abstract class AppLocalizations {
   /// **'Calculations'**
   String get taskCalculationsName;
 
+  /// No description provided for @taskCalculationsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the volume and the acidity you measured after pressing. The sweetness is carried over from the reading taken before fermentation.'**
+  String get taskCalculationsDescription;
+
   /// No description provided for @taskAddIngredientsName.
   ///
   /// In en, this message translates to:
-  /// **'Add ingredients'**
+  /// **'Add yeast and nutrient'**
   String get taskAddIngredientsName;
 
   /// No description provided for @taskAddIngredientsDescription.
   ///
   /// In en, this message translates to:
-  /// **'Add the yeast, yeast nutrient, the first sugar portion and water.'**
+  /// **'Add the yeast and the yeast nutrient. Leave the sugar and the water for later: the amounts depend on the juice volume, which can only be measured after pressing. The little water used to rehydrate the yeast is too small to affect the calculation.'**
   String get taskAddIngredientsDescription;
 
   /// No description provided for @taskFermentWithSkinsName.
@@ -389,14 +413,26 @@ abstract class AppLocalizations {
   /// No description provided for @taskMoveToCarboyName.
   ///
   /// In en, this message translates to:
-  /// **'Move to the carboy'**
+  /// **'Press and move to the carboy'**
   String get taskMoveToCarboyName;
 
   /// No description provided for @taskMoveToCarboyDescription.
   ///
   /// In en, this message translates to:
-  /// **'- Press the pulp and discard the solids.\n- Move the juice into a glass carboy.\n- Keep it in a warm room.'**
+  /// **'- Press the pulp and discard the solids.\n- Move the juice into a glass carboy.\n- Measure the volume and the acidity of the juice. The next step needs both.\n- Keep it in a warm room.'**
   String get taskMoveToCarboyDescription;
+
+  /// No description provided for @taskAddWaterAndSugarName.
+  ///
+  /// In en, this message translates to:
+  /// **'Add water and sugar'**
+  String get taskAddWaterAndSugarName;
+
+  /// No description provided for @taskAddWaterAndSugarDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add all of the water and the first portion of sugar. Dissolve the sugar in a little of the wine before returning it to the carboy: sugar that does not dissolve will not ferment.'**
+  String get taskAddWaterAndSugarDescription;
 
   /// No description provided for @taskWaitSugarDropName.
   ///
@@ -419,7 +455,7 @@ abstract class AppLocalizations {
   /// No description provided for @taskAddRemainingSugarDescription.
   ///
   /// In en, this message translates to:
-  /// **'Add the remaining sugar portion.'**
+  /// **'Add the remaining sugar, dissolving it first as before.'**
   String get taskAddRemainingSugarDescription;
 
   /// No description provided for @taskWaitFermentationSlowName.
