@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:winemaker/core/models/alcohol.dart';
-import 'package:winemaker/core/models/litres.dart';
 import 'package:winemaker/core/models/sugar.dart';
-import 'package:winemaker/core/utils/user_input_utils.dart';
-import 'package:winemaker/features/calculator/domain/desired_wine.dart';
+import 'package:winemaker/features/calculator/domain/achievable_targets.dart';
 import 'package:winemaker/features/calculator/domain/ingredients.dart';
 import 'package:winemaker/features/calculator/domain/ingredients_calculator.dart';
-import 'package:winemaker/features/calculator/domain/must_measurements.dart';
 import 'package:winemaker/features/calculator/presentation/calculation_form_fields.dart';
 import 'package:winemaker/features/calculator/presentation/ingredients_result_card.dart';
 import 'package:winemaker/features/realization/data/task_state_repository.dart';
@@ -88,21 +84,22 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
     final form = _formKey.currentState;
     if (form == null || !form.saveAndValidate()) return;
     final values = form.value;
-    final ingredients = calculateIngredients(
-      _readDesiredWine(values),
-      _readMust(values),
-    );
+    final must = readMust(values, sweetness: _carriedSweetness);
+    if (must == null) return;
+    final ingredients = calculateIngredients(readDesiredWine(values), must);
     setState(() => _calculated = ingredients);
   }
 
   Future<void> _save() async {
     final form = _formKey.currentState;
     if (_calculated == null || form == null) return;
-    setState(() => _saving = true);
     final values = form.value;
+    final must = readMust(values, sweetness: _carriedSweetness);
+    if (must == null) return;
+    setState(() => _saving = true);
     final payload = CalculationsPayload(
-      desiredWine: _readDesiredWine(values),
-      must: _readMust(values),
+      desiredWine: readDesiredWine(values),
+      must: must,
       ingredients: _calculated!,
     );
     await ref.read(taskStateRepositoryProvider).markCompleted(
@@ -114,22 +111,15 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
     context.pop(TaskScreenResult.completed);
   }
 
-  DesiredWine _readDesiredWine(Map<String, dynamic> values) => DesiredWine(
-        Alcohol(parseDoubleInput(values[CalculationFields.alcohol] as String)),
-        GramsPerLiter(
-            parseDoubleInput(values[CalculationFields.sweetness] as String)),
-        GramsPerLiter(parseDoubleInput(
-            values[CalculationFields.desiredAcidity] as String)),
-      );
-
-  MustMeasurements _readMust(Map<String, dynamic> values) => MustMeasurements(
-        Litres(parseDoubleInput(values[CalculationFields.volume] as String)),
-        _carriedSweetness ??
-            Blg(parseDoubleInput(
-                values[CalculationFields.mustSugar] as String)),
-        GramsPerLiter(
-            parseDoubleInput(values[CalculationFields.mustAcidity] as String)),
-      );
+  /// Limits implied by whatever has been measured so far, so the desired-wine
+  /// sliders cannot be set to a wine this must cannot make.
+  TargetLimits? _limits() {
+    final values = _formKey.currentState?.instantValue;
+    if (values == null) return null;
+    final must = readMust(values, sweetness: _carriedSweetness);
+    if (must == null) return null;
+    return targetLimits(must, readDesiredWine(values));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,9 +138,7 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
     final readOnly = widget.readOnly;
     return FormBuilder(
       key: _formKey,
-      onChanged: () {
-        if (_calculated != null) setState(() => _calculated = null);
-      },
+      onChanged: () => setState(() => _calculated = null),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -163,14 +151,6 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
               ),
               const SizedBox(height: 24),
             ],
-            _SectionTitle(l10n.desiredWine),
-            DesiredWineFields(
-              initialAlcohol: desiredWine?.alcohol.value.toString(),
-              initialSweetness: desiredWine?.sugar.value.toString(),
-              initialAcidity: desiredWine?.acidity.value.toString(),
-              enabled: !readOnly,
-            ),
-            const SizedBox(height: 24),
             _SectionTitle(l10n.mustMeasurements),
             MustMeasurementFields(
               initialVolume: must?.volume.value.toString(),
@@ -179,6 +159,15 @@ class _CalculationsScreenState extends ConsumerState<CalculationsScreen> {
               initialAcidity: must?.acidity.value.toString(),
               enabled: !readOnly,
               sugarEnabled: _carriedSweetness == null,
+            ),
+            const SizedBox(height: 24),
+            _SectionTitle(l10n.desiredWine),
+            DesiredWineFields(
+              initialAlcohol: desiredWine?.alcohol.value.toString(),
+              initialSweetness: desiredWine?.sugar.value.toString(),
+              initialAcidity: desiredWine?.acidity.value.toString(),
+              limits: readOnly ? null : _limits(),
+              enabled: !readOnly,
             ),
             const SizedBox(height: 24),
             if (!readOnly)

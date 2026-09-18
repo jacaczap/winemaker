@@ -78,6 +78,19 @@ class AppLocalizationsPl extends AppLocalizations {
   String get suggestedValues => 'Sugerowane wartości';
 
   @override
+  String get outsideTypicalRange => 'Poza typowym zakresem';
+
+  @override
+  String limitAcidityLowered(String value) {
+    return 'Kwasowość obniżona do $value g/l - dodawany cukier zajmuje objętość, która rozcieńcza moszcz.';
+  }
+
+  @override
+  String limitAlcoholRaised(String value) {
+    return 'Alkohol podniesiony do $value % - moszcz zawiera już tyle cukru.';
+  }
+
+  @override
   String get calculatorTitle => 'Kalkulator';
 
   @override

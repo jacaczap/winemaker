@@ -11,6 +11,8 @@ class Litres {
 
   Litres operator *(double other) => Litres(value * other);
 
+  Litres atLeastZero() => value < 0 ? const Litres(0) : this;
+
   @override
   String toString() => value.toString();
 

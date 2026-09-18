@@ -230,6 +230,24 @@ abstract class AppLocalizations {
   /// **'Suggested values'**
   String get suggestedValues;
 
+  /// No description provided for @outsideTypicalRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Outside the typical range'**
+  String get outsideTypicalRange;
+
+  /// No description provided for @limitAcidityLowered.
+  ///
+  /// In en, this message translates to:
+  /// **'Acidity lowered to {value} g/l - the sugar you add takes up volume, which dilutes the must.'**
+  String limitAcidityLowered(String value);
+
+  /// No description provided for @limitAlcoholRaised.
+  ///
+  /// In en, this message translates to:
+  /// **'Alcohol raised to {value} % - the must already holds this much sugar.'**
+  String limitAlcoholRaised(String value);
+
   /// No description provided for @calculatorTitle.
   ///
   /// In en, this message translates to:

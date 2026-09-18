@@ -78,6 +78,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get suggestedValues => 'Suggested values';
 
   @override
+  String get outsideTypicalRange => 'Outside the typical range';
+
+  @override
+  String limitAcidityLowered(String value) {
+    return 'Acidity lowered to $value g/l - the sugar you add takes up volume, which dilutes the must.';
+  }
+
+  @override
+  String limitAlcoholRaised(String value) {
+    return 'Alcohol raised to $value % - the must already holds this much sugar.';
+  }
+
+  @override
   String get calculatorTitle => 'Calculator';
 
   @override

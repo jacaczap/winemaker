@@ -27,6 +27,9 @@
   "notificationChannelDescription": "Przypomnienia o etapach wymagających czasu",
 
   "suggestedValues": "Sugerowane wartości",
+  "outsideTypicalRange": "Poza typowym zakresem",
+  "limitAcidityLowered": "Kwasowość obniżona do {value} g/l - dodawany cukier zajmuje objętość, która rozcieńcza moszcz.",
+  "limitAlcoholRaised": "Alkohol podniesiony do {value} % - moszcz zawiera już tyle cukru.",
 
   "calculatorTitle": "Kalkulator",
   "desiredWine": "Pożądane wino",

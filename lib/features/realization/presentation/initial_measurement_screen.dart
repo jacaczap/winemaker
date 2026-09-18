@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:winemaker/core/models/sugar.dart';
 import 'package:winemaker/core/utils/user_input_utils.dart';
-import 'package:winemaker/core/widgets/form_builder.dart';
+import 'package:winemaker/core/widgets/slider_number_field.dart';
 import 'package:winemaker/features/calculator/domain/field_presets.dart';
+import 'package:winemaker/features/calculator/domain/field_ranges.dart';
 import 'package:winemaker/features/calculator/presentation/calculation_form_fields.dart';
 import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/initial_measurement_payload.dart';
@@ -109,11 +110,11 @@ class _InitialMeasurementScreenState
               ),
               const SizedBox(height: 24),
             ],
-            buildNumberField(
-              l10n: l10n,
+            SliderNumberField(
               name: CalculationFields.mustSugar,
               label: l10n.fieldMustSugar,
               suffix: 'Blg',
+              range: FieldRanges.mustSweetness,
               initialValue: _existing?.sweetness.value.toString(),
               enabled: !widget.readOnly,
               presets: FieldPresets.measuredSweetness(l10n),

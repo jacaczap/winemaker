@@ -32,6 +32,19 @@
   "notificationChannelDescription": "Reminders for timed wine-making steps",
 
   "suggestedValues": "Suggested values",
+  "outsideTypicalRange": "Outside the typical range",
+  "limitAcidityLowered": "Acidity lowered to {value} g/l - the sugar you add takes up volume, which dilutes the must.",
+  "@limitAcidityLowered": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "limitAlcoholRaised": "Alcohol raised to {value} % - the must already holds this much sugar.",
+  "@limitAlcoholRaised": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
 
   "calculatorTitle": "Calculator",
   "desiredWine": "Desired wine",

@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:winemaker/core/widgets/form_builder.dart';
+import 'package:winemaker/core/models/alcohol.dart';
+import 'package:winemaker/core/models/litres.dart';
+import 'package:winemaker/core/models/sugar.dart';
+import 'package:winemaker/core/utils/user_input_utils.dart';
+import 'package:winemaker/core/widgets/slider_number_field.dart';
+import 'package:winemaker/features/calculator/domain/achievable_targets.dart';
+import 'package:winemaker/features/calculator/domain/desired_wine.dart';
 import 'package:winemaker/features/calculator/domain/field_presets.dart';
+import 'package:winemaker/features/calculator/domain/field_ranges.dart';
+import 'package:winemaker/features/calculator/domain/must_measurements.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Field names shared by the calculations screen and the standalone calculator
@@ -14,55 +22,90 @@ class CalculationFields {
   static const mustAcidity = 'mustAcidity';
 }
 
+/// Reads the desired wine out of form values, treating gaps as zero so the
+/// limits can be computed while the form is still being filled in.
+DesiredWine readDesiredWine(Map<String, dynamic> values) => DesiredWine(
+      Alcohol(tryParseDoubleInput(values[CalculationFields.alcohol]) ?? 0),
+      GramsPerLiter(
+          tryParseDoubleInput(values[CalculationFields.sweetness]) ?? 0),
+      GramsPerLiter(
+          tryParseDoubleInput(values[CalculationFields.desiredAcidity]) ?? 0),
+    );
+
+/// Reads the must out of form values, or null while a measurement is missing.
+///
+/// Pass [sweetness] when it was recorded by an earlier task, in which case the
+/// form does not ask for it again.
+MustMeasurements? readMust(Map<String, dynamic> values, {Blg? sweetness}) {
+  final volume = tryParseDoubleInput(values[CalculationFields.volume]);
+  final sugar = sweetness ?? _blgOrNull(values[CalculationFields.mustSugar]);
+  final acidity = tryParseDoubleInput(values[CalculationFields.mustAcidity]);
+  if (volume == null || sugar == null || acidity == null) return null;
+  return MustMeasurements(Litres(volume), sugar, GramsPerLiter(acidity));
+}
+
+Blg? _blgOrNull(Object? value) {
+  final parsed = tryParseDoubleInput(value);
+  return parsed == null ? null : Blg(parsed);
+}
+
 /// Inputs describing the wine the user wants to make.
+///
+/// [limits] narrows the sliders to what the measured must can actually reach;
+/// pass null while the must is still incomplete.
 class DesiredWineFields extends StatelessWidget {
   const DesiredWineFields({
     super.key,
     this.initialAlcohol,
     this.initialSweetness,
     this.initialAcidity,
+    this.limits,
     this.enabled = true,
   });
 
   final String? initialAlcohol;
   final String? initialSweetness;
   final String? initialAcidity;
+  final TargetLimits? limits;
   final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final limits = this.limits;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildNumberField(
-          l10n: l10n,
+        SliderNumberField(
           name: CalculationFields.alcohol,
           label: l10n.fieldDesiredAlcohol,
           suffix: '%',
+          range: FieldRanges.desiredAlcohol,
           initialValue: initialAlcohol,
           enabled: enabled,
-          presets: FieldPresets.desiredAlcohol(l10n),
+          hardMin: limits?.minAlcohol.value,
+          limitMessage: (value) => l10n.limitAlcoholRaised(value),
         ),
         const SizedBox(height: 12),
-        buildNumberField(
-          l10n: l10n,
+        SliderNumberField(
           name: CalculationFields.sweetness,
           label: l10n.fieldDesiredSweetness,
           suffix: 'g/l',
+          range: FieldRanges.desiredSweetness,
           initialValue: initialSweetness,
           enabled: enabled,
-          presets: FieldPresets.desiredSweetness(l10n),
+          caption: (value) => SweetnessStyle.of(value).label(l10n),
         ),
         const SizedBox(height: 12),
-        buildNumberField(
-          l10n: l10n,
+        SliderNumberField(
           name: CalculationFields.desiredAcidity,
           label: l10n.fieldDesiredAcidity,
           suffix: 'g/l',
+          range: FieldRanges.desiredAcidity,
           initialValue: initialAcidity,
           enabled: enabled,
-          presets: FieldPresets.desiredAcidity(l10n),
+          hardMax: limits?.maxAcidity.value,
+          limitMessage: (value) => l10n.limitAcidityLowered(value),
         ),
       ],
     );
@@ -95,30 +138,30 @@ class MustMeasurementFields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildNumberField(
-          l10n: l10n,
+        SliderNumberField(
           name: CalculationFields.volume,
           label: l10n.fieldCollectedVolume,
           suffix: 'l',
+          range: FieldRanges.volume,
           initialValue: initialVolume,
           enabled: enabled,
         ),
         const SizedBox(height: 12),
-        buildNumberField(
-          l10n: l10n,
+        SliderNumberField(
           name: CalculationFields.mustSugar,
           label: l10n.fieldMustSugar,
           suffix: 'Blg',
+          range: FieldRanges.mustSweetness,
           initialValue: initialSugar,
           enabled: enabled && sugarEnabled,
           presets: FieldPresets.measuredSweetness(l10n),
         ),
         const SizedBox(height: 12),
-        buildNumberField(
-          l10n: l10n,
+        SliderNumberField(
           name: CalculationFields.mustAcidity,
           label: l10n.fieldMustAcidity,
           suffix: 'g/l',
+          range: FieldRanges.mustAcidity,
           initialValue: initialAcidity,
           enabled: enabled,
           presets: FieldPresets.measuredAcidity(l10n),

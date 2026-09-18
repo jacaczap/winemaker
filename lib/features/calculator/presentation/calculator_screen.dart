@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:winemaker/core/models/alcohol.dart';
-import 'package:winemaker/core/models/litres.dart';
-import 'package:winemaker/core/models/sugar.dart';
-import 'package:winemaker/core/utils/user_input_utils.dart';
-import 'package:winemaker/features/calculator/domain/desired_wine.dart';
+import 'package:winemaker/features/calculator/domain/achievable_targets.dart';
 import 'package:winemaker/features/calculator/domain/ingredients.dart';
 import 'package:winemaker/features/calculator/domain/ingredients_calculator.dart';
-import 'package:winemaker/features/calculator/domain/must_measurements.dart';
 import 'package:winemaker/features/calculator/presentation/ingredients_result_card.dart';
 import 'package:winemaker/features/calculator/presentation/calculation_form_fields.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
@@ -31,28 +26,22 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final form = _formKey.currentState;
     if (form == null || !form.saveAndValidate()) return;
     final values = form.value;
+    final must = readMust(values);
+    if (must == null) return;
     setState(() {
-      _calculated = calculateIngredients(
-        _readDesiredWine(values),
-        _readMust(values),
-      );
+      _calculated = calculateIngredients(readDesiredWine(values), must);
     });
   }
 
-  DesiredWine _readDesiredWine(Map<String, dynamic> values) => DesiredWine(
-        Alcohol(parseDoubleInput(values[CalculationFields.alcohol] as String)),
-        GramsPerLiter(
-            parseDoubleInput(values[CalculationFields.sweetness] as String)),
-        GramsPerLiter(parseDoubleInput(
-            values[CalculationFields.desiredAcidity] as String)),
-      );
-
-  MustMeasurements _readMust(Map<String, dynamic> values) => MustMeasurements(
-        Litres(parseDoubleInput(values[CalculationFields.volume] as String)),
-        Blg(parseDoubleInput(values[CalculationFields.mustSugar] as String)),
-        GramsPerLiter(
-            parseDoubleInput(values[CalculationFields.mustAcidity] as String)),
-      );
+  /// Limits implied by whatever has been measured so far, so the desired-wine
+  /// sliders cannot be set to a wine this must cannot make.
+  TargetLimits? _limits() {
+    final values = _formKey.currentState?.instantValue;
+    if (values == null) return null;
+    final must = readMust(values);
+    if (must == null) return null;
+    return targetLimits(must, readDesiredWine(values));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,19 +51,17 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       body: SafeArea(
         child: FormBuilder(
           key: _formKey,
-          onChanged: () {
-            if (_calculated != null) setState(() => _calculated = null);
-          },
+          onChanged: () => setState(() => _calculated = null),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _SectionTitle(l10n.desiredWine),
-                const DesiredWineFields(),
-                const SizedBox(height: 24),
                 _SectionTitle(l10n.mustMeasurements),
                 const MustMeasurementFields(),
+                const SizedBox(height: 24),
+                _SectionTitle(l10n.desiredWine),
+                DesiredWineFields(limits: _limits()),
                 const SizedBox(height: 24),
                 OutlinedButton.icon(
                   onPressed: _calculate,

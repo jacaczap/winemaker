@@ -26,7 +26,8 @@ class Kilograms {
   @override
   String toString() => value.toString();
 
-  Kilograms roundTo(int decimalPlaces) => Kilograms(value.roundTo(decimalPlaces));
+  Kilograms roundTo(int decimalPlaces) =>
+      Kilograms(value.roundTo(decimalPlaces));
 }
 
 class GramsPerLiter {
@@ -34,13 +35,18 @@ class GramsPerLiter {
 
   const GramsPerLiter(this.value);
 
-  GramsPerLiter operator +(GramsPerLiter other) => GramsPerLiter(value + other.value);
+  GramsPerLiter operator +(GramsPerLiter other) =>
+      GramsPerLiter(value + other.value);
 
-  GramsPerLiter operator -(GramsPerLiter other) => GramsPerLiter(value - other.value);
+  GramsPerLiter operator -(GramsPerLiter other) =>
+      GramsPerLiter(value - other.value);
 
   GramsPerLiter operator *(double other) => GramsPerLiter(value * other);
 
-  Kilograms toKilograms(Litres volume) => Kilograms(volume.value * value / 1000);
+  GramsPerLiter atLeastZero() => value < 0 ? const GramsPerLiter(0) : this;
+
+  Kilograms toKilograms(Litres volume) =>
+      Kilograms(volume.value * value / 1000);
 
   @override
   String toString() => value.toString();

@@ -24,5 +24,3 @@ Backlog of ideas to consider later. Not scheduled, not detailed yet.
 - [ ] **Finished recipe summary** - new view for summary of recipe. Like a journal:
   date - what happened + comments. All in one neat block with separated steps
 - [ ] **Github actions** - add some CI steps to run tests and build the app in the CI
-- [ ] **Water cannot be less than 0** - calculator gives negative values of water that has to be added (probably could also happen with sugar). This shouldn't be possible. Redesign the calculations step to provide min-max values possible with selected fruits.
-- [ ] **Default 0 added ingredients** - 0 should be default amount for ingredients so users don't need to input it manually if they didn't add for example sugar 

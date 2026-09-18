@@ -10,6 +10,12 @@ double parseDoubleInputOrZero(String? value) {
   return parseDoubleInput(value);
 }
 
+/// Parses a raw form value, returning null when it is missing or not a number.
+double? tryParseDoubleInput(Object? value) {
+  if (value is! String || value.isEmpty) return null;
+  return double.tryParse(value.replaceFirst(',', '.'));
+}
+
 /// Builds a validator requiring a non-negative number, with localized messages.
 String? Function(String?) numberValidator(AppLocalizations l10n) => (value) {
       if (value == null || value.isEmpty) {

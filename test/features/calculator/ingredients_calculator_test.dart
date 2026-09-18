@@ -21,16 +21,6 @@ void main() {
       expect(result.nutrients, isTrue);
     });
 
-    test('clamps dilution at zero when must is less acidic than target', () {
-      const desiredWine =
-          DesiredWine(Alcohol(12), GramsPerLiter(0), GramsPerLiter(9));
-      const must = MustMeasurements(Litres(10), Blg(20), GramsPerLiter(5));
-
-      final result = calculateIngredients(desiredWine, must);
-
-      expect(result.water.value, lessThanOrEqualTo(0));
-    });
-
     test('adds water proportionally when must is too acidic', () {
       const desiredWine =
           DesiredWine(Alcohol(0), GramsPerLiter(0), GramsPerLiter(5));
@@ -42,7 +32,17 @@ void main() {
       expect(result.water.value, equals(5));
     });
 
-    test('returns no dilution when desired acidity is non-positive', () {
+    test('no water when the must is already less acidic than the target', () {
+      const desiredWine =
+          DesiredWine(Alcohol(12), GramsPerLiter(0), GramsPerLiter(9));
+      const must = MustMeasurements(Litres(10), Blg(20), GramsPerLiter(5));
+
+      final result = calculateIngredients(desiredWine, must);
+
+      expect(result.water.value, equals(0));
+    });
+
+    test('no water when no dilution is called for', () {
       const desiredWine =
           DesiredWine(Alcohol(10), GramsPerLiter(0), GramsPerLiter(0));
       const must = MustMeasurements(Litres(10), Blg(4), GramsPerLiter(8));
@@ -50,7 +50,18 @@ void main() {
       final result = calculateIngredients(desiredWine, must);
 
       expect(result.sugar.value, equals(1.7));
-      expect(result.water.value, equals(-1.02));
+      expect(result.water.value, equals(0));
+    });
+
+    test('no sugar when the must already carries more than the target needs',
+        () {
+      const desiredWine =
+          DesiredWine(Alcohol(6), GramsPerLiter(0), GramsPerLiter(7));
+      const must = MustMeasurements(Litres(10), Blg(24), GramsPerLiter(7));
+
+      final result = calculateIngredients(desiredWine, must);
+
+      expect(result.sugar.value, equals(0));
     });
 
     test('always recommends yeast and nutrients', () {

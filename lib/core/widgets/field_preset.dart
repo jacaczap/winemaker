@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:winemaker/l10n/app_localizations.dart';
 
 /// A suggested value for a numeric form field.
 class FieldPreset {
@@ -20,43 +18,18 @@ class FieldPreset {
   final String? description;
 }
 
-/// Icon button placed on a form field that opens a sheet of [FieldPreset]s.
-///
-/// Selecting one patches the named field in the enclosing `FormBuilder`; the
-/// user can still type any value afterwards.
-class PresetButton extends StatelessWidget {
-  const PresetButton({
-    super.key,
-    required this.fieldName,
-    required this.presets,
-    required this.title,
-  });
-
-  final String fieldName;
-  final List<FieldPreset> presets;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.tune),
-      tooltip: AppLocalizations.of(context).suggestedValues,
-      onPressed: () => _openSheet(context),
-    );
-  }
-
-  Future<void> _openSheet(BuildContext context) async {
-    final formState = FormBuilder.of(context);
-    final selected = await showModalBottomSheet<FieldPreset>(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (context) => _PresetSheet(title: title, presets: presets),
-    );
-    if (selected != null) {
-      formState?.patchValue({fieldName: selected.value});
-    }
-  }
+/// Opens a sheet of [presets] and returns the one the user picked.
+Future<FieldPreset?> showPresetSheet(
+  BuildContext context, {
+  required String title,
+  required List<FieldPreset> presets,
+}) {
+  return showModalBottomSheet<FieldPreset>(
+    context: context,
+    showDragHandle: true,
+    isScrollControlled: true,
+    builder: (context) => _PresetSheet(title: title, presets: presets),
+  );
 }
 
 class _PresetSheet extends StatelessWidget {
