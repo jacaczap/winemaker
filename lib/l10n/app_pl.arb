@@ -98,13 +98,25 @@
   "noRealizationsMessage": "Naciśnij „Nowa realizacja”, aby zacząć robić wino.",
 
   "recipeFallbackTitle": "Przepis",
-  "descriptionFallbackTitle": "Opis",
   "rename": "Zmień nazwę",
 
   "allTasksComplete": "Wszystkie zadania ukończone",
   "progress": "Postęp",
   "semanticsRecipeProgress": "Postęp przepisu",
   "semanticsTasksCompleted": "Ukończono {completed} z {total} zadań",
+
+  "addNote": "Dodaj notatkę",
+  "noteLabel": "Notatka",
+  "noteHint": "Użyte drożdże, obserwacje, cokolwiek warto zapamiętać…",
+  "saveNote": "Zapisz notatkę",
+
+  "durationDays": "{days, plural, one{{days} dzień} few{{days} dni} many{{days} dni} other{{days} dnia}}",
+  "durationHours": "{hours, plural, one{{hours} godzina} few{{hours} godziny} many{{hours} godzin} other{{hours} godziny}}",
+  "durationMinutes": "{minutes, plural, one{{minutes} minuta} few{{minutes} minuty} many{{minutes} minut} other{{minutes} minuty}}",
+  "durationLessThanMinute": "mniej niż minuta",
+  "completedOn": "Ukończono {date}",
+  "completedOnTook": "Ukończono {date} - trwało {duration}",
+  "waitedActualVsPlanned": "Czekano {actual} (planowano {planned})",
 
   "statusCompletedTapToView": "Ukończono - dotknij, aby zobaczyć",
   "statusTapToStart": "Dotknij, aby rozpocząć",
@@ -114,8 +126,22 @@
 
   "realizationCompletedTitle": "Realizacja ukończona",
   "realizationCompletedMessage": "Ukończono wszystkie zadania w tej realizacji.",
-  "stayHere": "Zostań tutaj",
+  "showSummary": "Pokaż podsumowanie",
   "backToList": "Wróć do listy",
+
+  "summaryTitle": "Podsumowanie",
+  "editRealization": "Edytuj realizację",
+  "summaryEmpty": "Nic jeszcze nie zapisano.",
+  "journalStarted": "Rozpoczęto {date}",
+  "journalFinished": "Zakończono {date}",
+  "journalTook": "Trwało {duration}",
+  "journalMust": "Moszcz",
+  "journalTarget": "Cel",
+  "journalCalculated": "Wyliczono",
+  "journalSweetness": "Słodkość",
+  "journalVolume": "Objętość",
+  "journalAcidity": "Kwasowość",
+  "journalAlcohol": "Alkohol",
 
   "renameRealizationTitle": "Zmień nazwę realizacji",
   "nameLabel": "Nazwa",

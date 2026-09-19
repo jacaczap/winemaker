@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:winemaker/app/router.dart';
+import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/recipe_realization.dart';
+import 'package:winemaker/features/realization/domain/task_state.dart';
+import 'package:winemaker/features/realization/domain/task_timing.dart';
 import 'package:winemaker/features/realization/presentation/progress.dart';
 import 'package:winemaker/features/realization/presentation/realization_completed_dialog.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
 import 'package:winemaker/features/realization/presentation/rename_realization_dialog.dart';
 import 'package:winemaker/features/realization/presentation/task_row.dart';
+import 'package:winemaker/features/realization/presentation/task_timing_summary.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/features/recipe/domain/task_type.dart';
@@ -54,8 +58,8 @@ class RecipeViewWrapper extends ConsumerWidget {
   }
 
   Future<void> _completeCurrentTask(BuildContext context, WidgetRef ref) async {
-    final notifier = ref
-        .read(recipeRealizationControllerProvider(realizationId).notifier);
+    final notifier =
+        ref.read(recipeRealizationControllerProvider(realizationId).notifier);
     final wasCompleted = ref
             .read(recipeRealizationControllerProvider(realizationId))
             .value
@@ -69,8 +73,17 @@ class RecipeViewWrapper extends ConsumerWidget {
             ?.completed ??
         false;
     if (wasCompleted || !nowCompleted) return;
-    final goToList = await showRealizationCompletedDialog(context);
-    if (goToList && context.mounted) context.goNamed(AppRoute.home);
+    final action = await showRealizationCompletedDialog(context);
+    if (action == null || !context.mounted) return;
+    switch (action) {
+      case RealizationCompletedAction.backToList:
+        context.goNamed(AppRoute.home);
+      case RealizationCompletedAction.showSummary:
+        context.pushReplacementNamed(
+          AppRoute.realizationSummary,
+          pathParameters: {AppRoute.realizationIdParam: '$realizationId'},
+        );
+    }
   }
 
   Future<void> _rename(
@@ -89,7 +102,7 @@ class RecipeViewWrapper extends ConsumerWidget {
   }
 }
 
-class _RecipeBody extends StatefulWidget {
+class _RecipeBody extends ConsumerStatefulWidget {
   const _RecipeBody({
     required this.realizationId,
     required this.realization,
@@ -103,10 +116,10 @@ class _RecipeBody extends StatefulWidget {
   final ValueChanged<int> onTaskRedo;
 
   @override
-  State<_RecipeBody> createState() => _RecipeBodyState();
+  ConsumerState<_RecipeBody> createState() => _RecipeBodyState();
 }
 
-class _RecipeBodyState extends State<_RecipeBody> {
+class _RecipeBodyState extends ConsumerState<_RecipeBody> {
   final _currentTaskKey = GlobalKey();
 
   @override
@@ -135,6 +148,8 @@ class _RecipeBodyState extends State<_RecipeBody> {
     final tasks = widget.realization.recipe.getRecipe().tasks;
     final currentTaskIndex = widget.realization.currentTask;
     final l10n = AppLocalizations.of(context);
+    final states =
+        ref.watch(taskStatesProvider(widget.realizationId)).value ?? const {};
 
     return Column(
       children: [
@@ -146,8 +161,13 @@ class _RecipeBodyState extends State<_RecipeBody> {
           child: ListView.builder(
             padding: const EdgeInsets.only(top: 4, bottom: 24),
             itemCount: tasks.length,
-            itemBuilder: (context, index) =>
-                _buildTaskTile(l10n, tasks[index], index, currentTaskIndex),
+            itemBuilder: (context, index) => _buildTaskTile(
+              l10n,
+              tasks[index],
+              index,
+              currentTaskIndex,
+              states,
+            ),
           ),
         ),
       ],
@@ -159,6 +179,7 @@ class _RecipeBodyState extends State<_RecipeBody> {
     Task task,
     int index,
     int currentTaskIndex,
+    Map<RecipeTaskId, TaskStateRecord> states,
   ) {
     final TaskStatus status;
     if (currentTaskIndex > index) {
@@ -169,6 +190,12 @@ class _RecipeBodyState extends State<_RecipeBody> {
       status = TaskStatus.pending;
     }
     final isCompleted = status == TaskStatus.completed;
+    final timing = taskTimingOf(
+      tasks: widget.realization.recipe.getRecipe().tasks,
+      states: states,
+      taskId: task.id,
+      realizationStart: widget.realization.startTime,
+    );
     return TaskTile(
       key: status == TaskStatus.current ? _currentTaskKey : null,
       label: task.id.displayName(l10n),
@@ -179,6 +206,10 @@ class _RecipeBodyState extends State<_RecipeBody> {
       onCompleted: widget.onTaskComplete,
       onRedo: () => widget.onTaskRedo(index),
       routeExtra: _routeExtra(l10n, task, index, readOnly: isCompleted),
+      completionLabel: timing.completedAt == null
+          ? null
+          : formatCompletion(l10n, timing, withTime: false),
+      hasNote: states[task.id]?.notes?.isNotEmpty ?? false,
     );
   }
 
@@ -193,6 +224,7 @@ class _RecipeBodyState extends State<_RecipeBody> {
       case TaskType.description:
         return DescriptionScreenArgs(
           title: task.id.displayName(l10n),
+          taskId: task.id,
           markdown: task.id.description(l10n) ?? '',
           readOnly: readOnly,
         );

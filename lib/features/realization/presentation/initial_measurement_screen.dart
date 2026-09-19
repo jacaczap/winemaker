@@ -12,6 +12,7 @@ import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/initial_measurement_payload.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/features/realization/presentation/task_footer.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
@@ -120,6 +121,11 @@ class _InitialMeasurementScreenState
               presets: FieldPresets.measuredSweetness(l10n),
             ),
             const SizedBox(height: 24),
+            TaskFooter(
+              realizationId: widget.realizationId,
+              taskId: widget.taskId,
+            ),
+            const SizedBox(height: 16),
             if (widget.readOnly)
               RedoFromHereButton(
                 onPressed: () => context.pop(TaskScreenResult.redo),

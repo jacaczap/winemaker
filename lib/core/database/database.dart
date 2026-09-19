@@ -46,7 +46,7 @@ class MyDatabase extends _$MyDatabase {
   MyDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -72,6 +72,10 @@ class MyDatabase extends _$MyDatabase {
           }
           if (from < 7) {
             await _rekeyTaskStateByTaskId(m, hasLegacyRows: from >= 3);
+          }
+          if (from >= 7 && from < 8) {
+            await m.addColumn(taskStateEntity, taskStateEntity.notes);
+            await m.addColumn(taskStateEntity, taskStateEntity.completedAt);
           }
         },
       );

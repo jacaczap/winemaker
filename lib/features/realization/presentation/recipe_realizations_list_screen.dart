@@ -159,7 +159,7 @@ class _RealizationTile extends ConsumerWidget {
           subtitle: Text('$progress  -  $startedOn'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.pushNamed(
-            AppRoute.recipe,
+            completed ? AppRoute.realizationSummary : AppRoute.recipe,
             pathParameters: {
               AppRoute.realizationIdParam: '${realization.id}',
             },

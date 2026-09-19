@@ -17,6 +17,8 @@ class TaskTile extends StatelessWidget {
     required this.onCompleted,
     required this.onRedo,
     this.routeExtra,
+    this.completionLabel,
+    this.hasNote = false,
   });
 
   final String label;
@@ -27,6 +29,11 @@ class TaskTile extends StatelessWidget {
   final Future<void> Function() onCompleted;
   final VoidCallback onRedo;
   final Object? routeExtra;
+
+  /// When and how long the task took, shown instead of the generic completed
+  /// status. Null when the task is unfinished or predates timestamps.
+  final String? completionLabel;
+  final bool hasNote;
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +78,8 @@ class TaskTile extends StatelessWidget {
                         label,
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: foreground,
-                          decoration: isCompleted
-                              ? TextDecoration.lineThrough
-                              : null,
+                          decoration:
+                              isCompleted ? TextDecoration.lineThrough : null,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -86,6 +92,14 @@ class TaskTile extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (hasNote) ...[
+                  Icon(
+                    Icons.sticky_note_2_outlined,
+                    size: 18,
+                    color: foreground.withValues(alpha: 0.8),
+                  ),
+                  const SizedBox(width: 12),
+                ],
                 _Trailing(status: status, foreground: foreground),
               ],
             ),
@@ -98,7 +112,7 @@ class TaskTile extends StatelessWidget {
   String _statusLabel(AppLocalizations l10n) {
     switch (status) {
       case TaskStatus.completed:
-        return l10n.statusCompletedTapToView;
+        return completionLabel ?? l10n.statusCompletedTapToView;
       case TaskStatus.current:
         return l10n.statusTapToStart;
       case TaskStatus.pending:

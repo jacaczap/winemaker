@@ -300,9 +300,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recipeFallbackTitle => 'Recipe';
 
   @override
-  String get descriptionFallbackTitle => 'Description';
-
-  @override
   String get rename => 'Rename';
 
   @override
@@ -317,6 +314,70 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String semanticsTasksCompleted(int completed, int total) {
     return '$completed of $total tasks completed';
+  }
+
+  @override
+  String get addNote => 'Add note';
+
+  @override
+  String get noteLabel => 'Note';
+
+  @override
+  String get noteHint =>
+      'Yeast used, observations, anything worth remembering…';
+
+  @override
+  String get saveNote => 'Save note';
+
+  @override
+  String durationDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '$days day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String durationHours(int hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours hours',
+      one: '$hours hour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes',
+      one: '$minutes minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get durationLessThanMinute => 'less than a minute';
+
+  @override
+  String completedOn(String date) {
+    return 'Completed $date';
+  }
+
+  @override
+  String completedOnTook(String date, String duration) {
+    return 'Completed $date - took $duration';
+  }
+
+  @override
+  String waitedActualVsPlanned(String actual, String planned) {
+    return 'Waited $actual (planned $planned)';
   }
 
   @override
@@ -344,10 +405,55 @@ class AppLocalizationsEn extends AppLocalizations {
       'You have completed every task in this realization.';
 
   @override
-  String get stayHere => 'Stay here';
+  String get showSummary => 'Show summary';
 
   @override
   String get backToList => 'Back to list';
+
+  @override
+  String get summaryTitle => 'Summary';
+
+  @override
+  String get editRealization => 'Edit realization';
+
+  @override
+  String get summaryEmpty => 'Nothing recorded yet.';
+
+  @override
+  String journalStarted(String date) {
+    return 'Started $date';
+  }
+
+  @override
+  String journalFinished(String date) {
+    return 'Finished $date';
+  }
+
+  @override
+  String journalTook(String duration) {
+    return 'Took $duration';
+  }
+
+  @override
+  String get journalMust => 'Must';
+
+  @override
+  String get journalTarget => 'Target';
+
+  @override
+  String get journalCalculated => 'Calculated';
+
+  @override
+  String get journalSweetness => 'Sweetness';
+
+  @override
+  String get journalVolume => 'Volume';
+
+  @override
+  String get journalAcidity => 'Acidity';
+
+  @override
+  String get journalAlcohol => 'Alcohol';
 
   @override
   String get renameRealizationTitle => 'Rename realization';

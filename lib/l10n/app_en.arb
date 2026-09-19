@@ -130,7 +130,6 @@
   "noRealizationsMessage": "Tap \"New realization\" to start making wine.",
 
   "recipeFallbackTitle": "Recipe",
-  "descriptionFallbackTitle": "Description",
   "rename": "Rename",
 
   "allTasksComplete": "All tasks complete",
@@ -141,6 +140,51 @@
     "placeholders": {
       "completed": { "type": "int" },
       "total": { "type": "int" }
+    }
+  },
+
+  "addNote": "Add note",
+  "noteLabel": "Note",
+  "noteHint": "Yeast used, observations, anything worth remembering…",
+  "saveNote": "Save note",
+
+  "durationDays": "{days, plural, one{{days} day} other{{days} days}}",
+  "@durationDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "durationHours": "{hours, plural, one{{hours} hour} other{{hours} hours}}",
+  "@durationHours": {
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
+  },
+  "durationMinutes": "{minutes, plural, one{{minutes} minute} other{{minutes} minutes}}",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "durationLessThanMinute": "less than a minute",
+  "completedOn": "Completed {date}",
+  "@completedOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "completedOnTook": "Completed {date} - took {duration}",
+  "@completedOnTook": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "duration": { "type": "String" }
+    }
+  },
+  "waitedActualVsPlanned": "Waited {actual} (planned {planned})",
+  "@waitedActualVsPlanned": {
+    "placeholders": {
+      "actual": { "type": "String" },
+      "planned": { "type": "String" }
     }
   },
 
@@ -157,8 +201,37 @@
 
   "realizationCompletedTitle": "Realization completed",
   "realizationCompletedMessage": "You have completed every task in this realization.",
-  "stayHere": "Stay here",
+  "showSummary": "Show summary",
   "backToList": "Back to list",
+
+  "summaryTitle": "Summary",
+  "editRealization": "Edit realization",
+  "summaryEmpty": "Nothing recorded yet.",
+  "journalStarted": "Started {date}",
+  "@journalStarted": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "journalFinished": "Finished {date}",
+  "@journalFinished": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "journalTook": "Took {duration}",
+  "@journalTook": {
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "journalMust": "Must",
+  "journalTarget": "Target",
+  "journalCalculated": "Calculated",
+  "journalSweetness": "Sweetness",
+  "journalVolume": "Volume",
+  "journalAcidity": "Acidity",
+  "journalAlcohol": "Alcohol",
 
   "renameRealizationTitle": "Rename realization",
   "nameLabel": "Name",

@@ -31,10 +31,19 @@ class TaskStateRecord {
     required this.taskId,
     required this.status,
     required this.payloadJson,
+    this.notes,
+    this.completedAt,
   });
 
   final int realizationId;
   final RecipeTaskId taskId;
   final TaskState status;
   final Map<String, dynamic>? payloadJson;
+
+  /// Free-text note the user attached to this occurrence, if any.
+  final String? notes;
+
+  /// When the task was marked done. Null while pending, and on realizations
+  /// that predate timestamp tracking.
+  final DateTime? completedAt;
 }

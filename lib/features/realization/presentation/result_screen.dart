@@ -5,6 +5,7 @@ import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/result_payload.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/features/realization/presentation/task_footer.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
@@ -109,6 +110,11 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             label: l10n.mistakesLabel,
             hint: l10n.mistakesHint,
             enabled: !widget.readOnly,
+          ),
+          const SizedBox(height: 24),
+          TaskFooter(
+            realizationId: widget.realizationId,
+            taskId: widget.taskId,
           ),
           const SizedBox(height: 24),
           if (widget.readOnly)

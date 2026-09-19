@@ -374,9 +374,20 @@ class $TaskStateEntityTable extends TaskStateEntity
   late final GeneratedColumn<String> payload = GeneratedColumn<String>(
       'payload', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _completedAtMeta =
+      const VerificationMeta('completedAt');
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+      'completed_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [realizationId, taskId, status, payload];
+      [realizationId, taskId, status, payload, notes, completedAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -400,6 +411,16 @@ class $TaskStateEntityTable extends TaskStateEntity
       context.handle(_payloadMeta,
           payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta));
     }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+          _completedAtMeta,
+          completedAt.isAcceptableOrUnknown(
+              data['completed_at']!, _completedAtMeta));
+    }
     return context;
   }
 
@@ -419,6 +440,10 @@ class $TaskStateEntityTable extends TaskStateEntity
           .read(DriftSqlType.string, data['${effectivePrefix}status'])!),
       payload: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}payload']),
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      completedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}completed_at']),
     );
   }
 
@@ -439,11 +464,15 @@ class TaskStateEntityData extends DataClass
   final RecipeTaskId taskId;
   final TaskState status;
   final String? payload;
+  final String? notes;
+  final DateTime? completedAt;
   const TaskStateEntityData(
       {required this.realizationId,
       required this.taskId,
       required this.status,
-      this.payload});
+      this.payload,
+      this.notes,
+      this.completedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -459,6 +488,12 @@ class TaskStateEntityData extends DataClass
     if (!nullToAbsent || payload != null) {
       map['payload'] = Variable<String>(payload);
     }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<DateTime>(completedAt);
+    }
     return map;
   }
 
@@ -470,6 +505,11 @@ class TaskStateEntityData extends DataClass
       payload: payload == null && nullToAbsent
           ? const Value.absent()
           : Value(payload),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
     );
   }
 
@@ -483,6 +523,8 @@ class TaskStateEntityData extends DataClass
       status: $TaskStateEntityTable.$converterstatus
           .fromJson(serializer.fromJson<String>(json['status'])),
       payload: serializer.fromJson<String?>(json['payload']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
     );
   }
   @override
@@ -495,6 +537,8 @@ class TaskStateEntityData extends DataClass
       'status': serializer.toJson<String>(
           $TaskStateEntityTable.$converterstatus.toJson(status)),
       'payload': serializer.toJson<String?>(payload),
+      'notes': serializer.toJson<String?>(notes),
+      'completedAt': serializer.toJson<DateTime?>(completedAt),
     };
   }
 
@@ -502,12 +546,16 @@ class TaskStateEntityData extends DataClass
           {int? realizationId,
           RecipeTaskId? taskId,
           TaskState? status,
-          Value<String?> payload = const Value.absent()}) =>
+          Value<String?> payload = const Value.absent(),
+          Value<String?> notes = const Value.absent(),
+          Value<DateTime?> completedAt = const Value.absent()}) =>
       TaskStateEntityData(
         realizationId: realizationId ?? this.realizationId,
         taskId: taskId ?? this.taskId,
         status: status ?? this.status,
         payload: payload.present ? payload.value : this.payload,
+        notes: notes.present ? notes.value : this.notes,
+        completedAt: completedAt.present ? completedAt.value : this.completedAt,
       );
   TaskStateEntityData copyWithCompanion(TaskStateEntityCompanion data) {
     return TaskStateEntityData(
@@ -517,6 +565,9 @@ class TaskStateEntityData extends DataClass
       taskId: data.taskId.present ? data.taskId.value : this.taskId,
       status: data.status.present ? data.status.value : this.status,
       payload: data.payload.present ? data.payload.value : this.payload,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      completedAt:
+          data.completedAt.present ? data.completedAt.value : this.completedAt,
     );
   }
 
@@ -526,13 +577,16 @@ class TaskStateEntityData extends DataClass
           ..write('realizationId: $realizationId, ')
           ..write('taskId: $taskId, ')
           ..write('status: $status, ')
-          ..write('payload: $payload')
+          ..write('payload: $payload, ')
+          ..write('notes: $notes, ')
+          ..write('completedAt: $completedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(realizationId, taskId, status, payload);
+  int get hashCode =>
+      Object.hash(realizationId, taskId, status, payload, notes, completedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -540,7 +594,9 @@ class TaskStateEntityData extends DataClass
           other.realizationId == this.realizationId &&
           other.taskId == this.taskId &&
           other.status == this.status &&
-          other.payload == this.payload);
+          other.payload == this.payload &&
+          other.notes == this.notes &&
+          other.completedAt == this.completedAt);
 }
 
 class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
@@ -548,12 +604,16 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
   final Value<RecipeTaskId> taskId;
   final Value<TaskState> status;
   final Value<String?> payload;
+  final Value<String?> notes;
+  final Value<DateTime?> completedAt;
   final Value<int> rowid;
   const TaskStateEntityCompanion({
     this.realizationId = const Value.absent(),
     this.taskId = const Value.absent(),
     this.status = const Value.absent(),
     this.payload = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.completedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TaskStateEntityCompanion.insert({
@@ -561,6 +621,8 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
     required RecipeTaskId taskId,
     required TaskState status,
     this.payload = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.completedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : realizationId = Value(realizationId),
         taskId = Value(taskId),
@@ -570,6 +632,8 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
     Expression<String>? taskId,
     Expression<String>? status,
     Expression<String>? payload,
+    Expression<String>? notes,
+    Expression<DateTime>? completedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -577,6 +641,8 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
       if (taskId != null) 'task_id': taskId,
       if (status != null) 'status': status,
       if (payload != null) 'payload': payload,
+      if (notes != null) 'notes': notes,
+      if (completedAt != null) 'completed_at': completedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -586,12 +652,16 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
       Value<RecipeTaskId>? taskId,
       Value<TaskState>? status,
       Value<String?>? payload,
+      Value<String?>? notes,
+      Value<DateTime?>? completedAt,
       Value<int>? rowid}) {
     return TaskStateEntityCompanion(
       realizationId: realizationId ?? this.realizationId,
       taskId: taskId ?? this.taskId,
       status: status ?? this.status,
       payload: payload ?? this.payload,
+      notes: notes ?? this.notes,
+      completedAt: completedAt ?? this.completedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -613,6 +683,12 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
     if (payload.present) {
       map['payload'] = Variable<String>(payload.value);
     }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -626,6 +702,8 @@ class TaskStateEntityCompanion extends UpdateCompanion<TaskStateEntityData> {
           ..write('taskId: $taskId, ')
           ..write('status: $status, ')
           ..write('payload: $payload, ')
+          ..write('notes: $notes, ')
+          ..write('completedAt: $completedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -847,6 +925,8 @@ typedef $$TaskStateEntityTableCreateCompanionBuilder = TaskStateEntityCompanion
   required RecipeTaskId taskId,
   required TaskState status,
   Value<String?> payload,
+  Value<String?> notes,
+  Value<DateTime?> completedAt,
   Value<int> rowid,
 });
 typedef $$TaskStateEntityTableUpdateCompanionBuilder = TaskStateEntityCompanion
@@ -855,6 +935,8 @@ typedef $$TaskStateEntityTableUpdateCompanionBuilder = TaskStateEntityCompanion
   Value<RecipeTaskId> taskId,
   Value<TaskState> status,
   Value<String?> payload,
+  Value<String?> notes,
+  Value<DateTime?> completedAt,
   Value<int> rowid,
 });
 
@@ -882,6 +964,12 @@ class $$TaskStateEntityTableFilterComposer
 
   ColumnFilters<String> get payload => $composableBuilder(
       column: $table.payload, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+      column: $table.completedAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$TaskStateEntityTableOrderingComposer
@@ -905,6 +993,12 @@ class $$TaskStateEntityTableOrderingComposer
 
   ColumnOrderings<String> get payload => $composableBuilder(
       column: $table.payload, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+      column: $table.completedAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$TaskStateEntityTableAnnotationComposer
@@ -927,6 +1021,12 @@ class $$TaskStateEntityTableAnnotationComposer
 
   GeneratedColumn<String> get payload =>
       $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+      column: $table.completedAt, builder: (column) => column);
 }
 
 class $$TaskStateEntityTableTableManager extends RootTableManager<
@@ -960,6 +1060,8 @@ class $$TaskStateEntityTableTableManager extends RootTableManager<
             Value<RecipeTaskId> taskId = const Value.absent(),
             Value<TaskState> status = const Value.absent(),
             Value<String?> payload = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
+            Value<DateTime?> completedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TaskStateEntityCompanion(
@@ -967,6 +1069,8 @@ class $$TaskStateEntityTableTableManager extends RootTableManager<
             taskId: taskId,
             status: status,
             payload: payload,
+            notes: notes,
+            completedAt: completedAt,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -974,6 +1078,8 @@ class $$TaskStateEntityTableTableManager extends RootTableManager<
             required RecipeTaskId taskId,
             required TaskState status,
             Value<String?> payload = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
+            Value<DateTime?> completedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TaskStateEntityCompanion.insert(
@@ -981,6 +1087,8 @@ class $$TaskStateEntityTableTableManager extends RootTableManager<
             taskId: taskId,
             status: status,
             payload: payload,
+            notes: notes,
+            completedAt: completedAt,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

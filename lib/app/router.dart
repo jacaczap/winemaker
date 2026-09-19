@@ -6,13 +6,13 @@ import 'package:winemaker/features/realization/presentation/description_screen.d
 import 'package:winemaker/features/realization/presentation/initial_measurement_screen.dart';
 import 'package:winemaker/features/realization/presentation/result_screen.dart';
 import 'package:winemaker/features/realization/presentation/calculations_screen.dart';
+import 'package:winemaker/features/realization/presentation/realization_summary_screen.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realizations_list_screen.dart';
 import 'package:winemaker/features/realization/presentation/time_notification_screen.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/features/recipe/presentation/recipe_detail_screen.dart';
 import 'package:winemaker/features/recipe/presentation/recipes_screen.dart';
-import 'package:winemaker/l10n/app_localizations.dart';
 
 class AppRoute {
   static const realizationIdParam = 'realizationId';
@@ -23,6 +23,7 @@ class AppRoute {
   static const recipes = 'recipes';
   static const recipeDetail = 'recipeDetail';
   static const recipe = 'recipe';
+  static const realizationSummary = 'realizationSummary';
   static const description = 'description';
   static const initialMeasurement = 'initialMeasurement';
   static const calculations = 'calculations';
@@ -34,11 +35,13 @@ class AppRoute {
 class DescriptionScreenArgs {
   const DescriptionScreenArgs({
     required this.title,
+    required this.taskId,
     required this.markdown,
     this.readOnly = false,
   });
 
   final String title;
+  final RecipeTaskId taskId;
   final String markdown;
   final bool readOnly;
 }
@@ -166,15 +169,22 @@ final GoRouter appRouter = GoRouter(
           RecipeViewWrapper(realizationId: _realizationId(state)),
       routes: [
         GoRoute(
+          path: 'summary',
+          name: AppRoute.realizationSummary,
+          builder: (context, state) =>
+              RealizationSummaryScreen(realizationId: _realizationId(state)),
+        ),
+        GoRoute(
           path: 'description',
           name: AppRoute.description,
           builder: (context, state) {
-            final args = state.extra as DescriptionScreenArgs?;
+            final args = state.extra as DescriptionScreenArgs;
             return DescriptionScreen(
-              title: args?.title ??
-                  AppLocalizations.of(context).descriptionFallbackTitle,
-              markdown: args?.markdown ?? '',
-              readOnly: args?.readOnly ?? false,
+              realizationId: _realizationId(state),
+              taskId: args.taskId,
+              title: args.title,
+              markdown: args.markdown,
+              readOnly: args.readOnly,
             );
           },
         ),

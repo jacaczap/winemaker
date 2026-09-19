@@ -15,6 +15,7 @@ import 'package:winemaker/features/realization/domain/adding_ingredients_payload
 import 'package:winemaker/features/realization/domain/calculations_payload.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/features/realization/presentation/task_footer.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
@@ -83,7 +84,8 @@ class _AddingIngredientsScreenState
       final json = (await repository.get(
         widget.realizationId,
         calculationsTaskId,
-      ))?.payloadJson;
+      ))
+          ?.payloadJson;
       if (json != null) total = CalculationsPayload.fromJson(json).ingredients;
     }
 
@@ -253,6 +255,11 @@ class _AddingIngredientsScreenState
                     : null,
               ),
             SizedBox(height: endsWithCheckbox ? 24 : 12),
+            TaskFooter(
+              realizationId: widget.realizationId,
+              taskId: widget.taskId,
+            ),
+            const SizedBox(height: 16),
             if (readOnly)
               RedoFromHereButton(
                 onPressed: () => context.pop(TaskScreenResult.redo),

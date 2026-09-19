@@ -11,6 +11,10 @@ class TaskStateEntity extends Table {
 
   TextColumn get payload => text().nullable()();
 
+  TextColumn get notes => text().nullable()();
+
+  DateTimeColumn get completedAt => dateTime().nullable()();
+
   @override
   Set<Column> get primaryKey => {realizationId, taskId};
 }

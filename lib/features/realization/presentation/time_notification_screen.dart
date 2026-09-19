@@ -5,10 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:winemaker/core/notifications/notification_service.dart';
+import 'package:winemaker/core/utils/duration_format.dart';
 import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
+import 'package:winemaker/features/realization/domain/task_timing.dart';
 import 'package:winemaker/features/realization/domain/time_notification_payload.dart';
+import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
 import 'package:winemaker/features/realization/presentation/redo_from_here_button.dart';
+import 'package:winemaker/features/realization/presentation/task_footer.dart';
+import 'package:winemaker/features/recipe/domain/recipes.dart';
 import 'package:winemaker/features/recipe/domain/task.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
@@ -135,12 +140,28 @@ class _TimeNotificationScreenState
     );
   }
 
+  /// How long the wait really lasted, once the task is done.
+  Duration? get _waited {
+    if (!widget.readOnly) return null;
+    final realization = ref
+        .watch(recipeRealizationControllerProvider(widget.realizationId))
+        .value;
+    final states = ref.watch(taskStatesProvider(widget.realizationId)).value;
+    if (realization == null || states == null) return null;
+    return taskTimingOf(
+      tasks: realization.recipe.getRecipe().tasks,
+      states: states,
+      taskId: widget.taskId,
+      realizationStart: realization.startTime,
+    ).duration;
+  }
+
   Widget _buildBody(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheduledFor = _scheduledFor;
-    final remaining =
-        scheduledFor?.difference(DateTime.now()) ?? Duration.zero;
+    final remaining = scheduledFor?.difference(DateTime.now()) ?? Duration.zero;
     final ready = remaining <= Duration.zero;
+    final waited = _waited;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -153,12 +174,20 @@ class _TimeNotificationScreenState
             ),
             const SizedBox(height: 24),
           ],
-          _CountdownCard(
-            ready: ready,
-            remaining: remaining,
-            scheduledFor: scheduledFor,
-          ),
+          if (waited != null)
+            _WaitedCard(waited: waited, planned: widget.delay)
+          else
+            _CountdownCard(
+              ready: ready,
+              remaining: remaining,
+              scheduledFor: scheduledFor,
+            ),
           const SizedBox(height: 24),
+          TaskFooter(
+            realizationId: widget.realizationId,
+            taskId: widget.taskId,
+          ),
+          const SizedBox(height: 16),
           if (widget.readOnly)
             RedoFromHereButton(
               onPressed: () => context.pop(TaskScreenResult.redo),
@@ -178,6 +207,43 @@ class _TimeNotificationScreenState
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// How long the finished wait actually took, next to the planned length.
+class _WaitedCard extends StatelessWidget {
+  const _WaitedCard({required this.waited, required this.planned});
+
+  final Duration waited;
+  final Duration planned;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Icon(
+              Icons.hourglass_bottom_outlined,
+              size: 40,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.waitedActualVsPlanned(
+                formatElapsed(l10n, waited),
+                formatElapsed(l10n, planned),
+              ),
+              style: theme.textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -205,7 +271,9 @@ class _CountdownCard extends StatelessWidget {
         child: Column(
           children: [
             Icon(
-              ready ? Icons.notifications_active_outlined : Icons.timer_outlined,
+              ready
+                  ? Icons.notifications_active_outlined
+                  : Icons.timer_outlined,
               size: 40,
               color: colors.primary,
             ),

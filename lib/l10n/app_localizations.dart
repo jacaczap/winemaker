@@ -608,12 +608,6 @@ abstract class AppLocalizations {
   /// **'Recipe'**
   String get recipeFallbackTitle;
 
-  /// No description provided for @descriptionFallbackTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Description'**
-  String get descriptionFallbackTitle;
-
   /// No description provided for @rename.
   ///
   /// In en, this message translates to:
@@ -643,6 +637,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{completed} of {total} tasks completed'**
   String semanticsTasksCompleted(int completed, int total);
+
+  /// No description provided for @addNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add note'**
+  String get addNote;
+
+  /// No description provided for @noteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get noteLabel;
+
+  /// No description provided for @noteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Yeast used, observations, anything worth remembering…'**
+  String get noteHint;
+
+  /// No description provided for @saveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Save note'**
+  String get saveNote;
+
+  /// No description provided for @durationDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, one{{days} day} other{{days} days}}'**
+  String durationDays(int days);
+
+  /// No description provided for @durationHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours, plural, one{{hours} hour} other{{hours} hours}}'**
+  String durationHours(int hours);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, one{{minutes} minute} other{{minutes} minutes}}'**
+  String durationMinutes(int minutes);
+
+  /// No description provided for @durationLessThanMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'less than a minute'**
+  String get durationLessThanMinute;
+
+  /// No description provided for @completedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed {date}'**
+  String completedOn(String date);
+
+  /// No description provided for @completedOnTook.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed {date} - took {duration}'**
+  String completedOnTook(String date, String duration);
+
+  /// No description provided for @waitedActualVsPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Waited {actual} (planned {planned})'**
+  String waitedActualVsPlanned(String actual, String planned);
 
   /// No description provided for @statusCompletedTapToView.
   ///
@@ -686,17 +746,95 @@ abstract class AppLocalizations {
   /// **'You have completed every task in this realization.'**
   String get realizationCompletedMessage;
 
-  /// No description provided for @stayHere.
+  /// No description provided for @showSummary.
   ///
   /// In en, this message translates to:
-  /// **'Stay here'**
-  String get stayHere;
+  /// **'Show summary'**
+  String get showSummary;
 
   /// No description provided for @backToList.
   ///
   /// In en, this message translates to:
   /// **'Back to list'**
   String get backToList;
+
+  /// No description provided for @summaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get summaryTitle;
+
+  /// No description provided for @editRealization.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit realization'**
+  String get editRealization;
+
+  /// No description provided for @summaryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing recorded yet.'**
+  String get summaryEmpty;
+
+  /// No description provided for @journalStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Started {date}'**
+  String journalStarted(String date);
+
+  /// No description provided for @journalFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished {date}'**
+  String journalFinished(String date);
+
+  /// No description provided for @journalTook.
+  ///
+  /// In en, this message translates to:
+  /// **'Took {duration}'**
+  String journalTook(String duration);
+
+  /// No description provided for @journalMust.
+  ///
+  /// In en, this message translates to:
+  /// **'Must'**
+  String get journalMust;
+
+  /// No description provided for @journalTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get journalTarget;
+
+  /// No description provided for @journalCalculated.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculated'**
+  String get journalCalculated;
+
+  /// No description provided for @journalSweetness.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweetness'**
+  String get journalSweetness;
+
+  /// No description provided for @journalVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get journalVolume;
+
+  /// No description provided for @journalAcidity.
+  ///
+  /// In en, this message translates to:
+  /// **'Acidity'**
+  String get journalAcidity;
+
+  /// No description provided for @journalAlcohol.
+  ///
+  /// In en, this message translates to:
+  /// **'Alcohol'**
+  String get journalAlcohol;
 
   /// No description provided for @renameRealizationTitle.
   ///

@@ -303,9 +303,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get recipeFallbackTitle => 'Przepis';
 
   @override
-  String get descriptionFallbackTitle => 'Opis';
-
-  @override
   String get rename => 'Zmień nazwę';
 
   @override
@@ -320,6 +317,76 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String semanticsTasksCompleted(int completed, int total) {
     return 'Ukończono $completed z $total zadań';
+  }
+
+  @override
+  String get addNote => 'Dodaj notatkę';
+
+  @override
+  String get noteLabel => 'Notatka';
+
+  @override
+  String get noteHint =>
+      'Użyte drożdże, obserwacje, cokolwiek warto zapamiętać…';
+
+  @override
+  String get saveNote => 'Zapisz notatkę';
+
+  @override
+  String durationDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days dnia',
+      many: '$days dni',
+      few: '$days dni',
+      one: '$days dzień',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String durationHours(int hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours godziny',
+      many: '$hours godzin',
+      few: '$hours godziny',
+      one: '$hours godzina',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minuty',
+      many: '$minutes minut',
+      few: '$minutes minuty',
+      one: '$minutes minuta',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get durationLessThanMinute => 'mniej niż minuta';
+
+  @override
+  String completedOn(String date) {
+    return 'Ukończono $date';
+  }
+
+  @override
+  String completedOnTook(String date, String duration) {
+    return 'Ukończono $date - trwało $duration';
+  }
+
+  @override
+  String waitedActualVsPlanned(String actual, String planned) {
+    return 'Czekano $actual (planowano $planned)';
   }
 
   @override
@@ -347,10 +414,55 @@ class AppLocalizationsPl extends AppLocalizations {
       'Ukończono wszystkie zadania w tej realizacji.';
 
   @override
-  String get stayHere => 'Zostań tutaj';
+  String get showSummary => 'Pokaż podsumowanie';
 
   @override
   String get backToList => 'Wróć do listy';
+
+  @override
+  String get summaryTitle => 'Podsumowanie';
+
+  @override
+  String get editRealization => 'Edytuj realizację';
+
+  @override
+  String get summaryEmpty => 'Nic jeszcze nie zapisano.';
+
+  @override
+  String journalStarted(String date) {
+    return 'Rozpoczęto $date';
+  }
+
+  @override
+  String journalFinished(String date) {
+    return 'Zakończono $date';
+  }
+
+  @override
+  String journalTook(String duration) {
+    return 'Trwało $duration';
+  }
+
+  @override
+  String get journalMust => 'Moszcz';
+
+  @override
+  String get journalTarget => 'Cel';
+
+  @override
+  String get journalCalculated => 'Wyliczono';
+
+  @override
+  String get journalSweetness => 'Słodkość';
+
+  @override
+  String get journalVolume => 'Objętość';
+
+  @override
+  String get journalAcidity => 'Kwasowość';
+
+  @override
+  String get journalAlcohol => 'Alkohol';
 
   @override
   String get renameRealizationTitle => 'Zmień nazwę realizacji';

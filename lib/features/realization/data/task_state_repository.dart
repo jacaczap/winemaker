@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:winemaker/core/database/database.dart';
 import 'package:winemaker/features/realization/domain/task_state.dart';
@@ -34,19 +35,41 @@ class TaskStateRepository {
           .watchForRealization(realizationId)
           .map((rs) => rs.map((r) => r.toDomain()).toList(growable: false));
 
+  /// Marks the task done and stamps [completedAt], overwriting an earlier
+  /// stamp when the task is redone. Any note on the row is kept.
   Future<void> markCompleted(
     int realizationId,
     RecipeTaskId taskId, {
     TaskPayload? payload,
+    DateTime? completedAt,
   }) =>
-      _upsert(realizationId, taskId, TaskState.completed, payload);
+      _upsert(
+        realizationId,
+        taskId,
+        TaskState.completed,
+        payload,
+        completedAt ?? DateTime.now(),
+      );
 
   Future<void> savePending(
     int realizationId,
     RecipeTaskId taskId, {
     TaskPayload? payload,
   }) =>
-      _upsert(realizationId, taskId, TaskState.pending, payload);
+      _upsert(realizationId, taskId, TaskState.pending, payload, null);
+
+  /// Saves the free-text note without touching status, payload or the
+  /// completion time, so notes can be added to completed tasks later.
+  Future<void> saveNotes(
+    int realizationId,
+    RecipeTaskId taskId,
+    String? notes,
+  ) =>
+      _database.taskStateDao.upsertNotes(
+        realizationId,
+        taskId,
+        notes == null || notes.isEmpty ? null : notes,
+      );
 
   /// Discards the stored data of [taskIds].
   ///
@@ -63,18 +86,31 @@ class TaskStateRepository {
     RecipeTaskId taskId,
     TaskState status,
     TaskPayload? payload,
+    DateTime? completedAt,
   ) =>
-      _database.taskStateDao.upsert(TaskStateEntityData(
-        realizationId: realizationId,
-        taskId: taskId,
-        status: status,
-        payload: payload == null ? null : jsonEncode(payload.toJson()),
+      _database.taskStateDao.upsert(TaskStateEntityCompanion(
+        realizationId: Value(realizationId),
+        taskId: Value(taskId),
+        status: Value(status),
+        payload: Value(payload == null ? null : jsonEncode(payload.toJson())),
+        completedAt: Value(completedAt),
       ));
 }
 
 @riverpod
 TaskStateRepository taskStateRepository(Ref ref) =>
     TaskStateRepository(ref.watch(databaseProvider));
+
+/// Live per-task rows of one realization, keyed by task id.
+@riverpod
+Stream<Map<RecipeTaskId, TaskStateRecord>> taskStates(
+  Ref ref,
+  int realizationId,
+) =>
+    ref
+        .watch(taskStateRepositoryProvider)
+        .watchForRealization(realizationId)
+        .map((rows) => {for (final row in rows) row.taskId: row});
 
 extension _TaskStateEntityDataExtension on TaskStateEntityData {
   TaskStateRecord toDomain() => TaskStateRecord(
@@ -84,5 +120,7 @@ extension _TaskStateEntityDataExtension on TaskStateEntityData {
         payloadJson: payload == null
             ? null
             : jsonDecode(payload!) as Map<String, dynamic>,
+        notes: notes,
+        completedAt: completedAt,
       );
 }

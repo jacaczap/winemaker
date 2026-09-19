@@ -106,6 +106,76 @@ void main() {
     expect(await repository.listForRealization(2), hasLength(1));
   });
 
+  test('markCompleted stamps the completion time', () async {
+    await repository.markCompleted(
+      1,
+      RecipeTaskId.prepareFruit,
+      completedAt: DateTime(2026, 3, 12, 18, 30),
+    );
+
+    final record = await repository.get(1, RecipeTaskId.prepareFruit);
+    expect(record!.completedAt, equals(DateTime(2026, 3, 12, 18, 30)));
+  });
+
+  test('redoing a task overwrites its completion time', () async {
+    await repository.markCompleted(
+      1,
+      RecipeTaskId.prepareFruit,
+      completedAt: DateTime(2026, 3, 12),
+    );
+    await repository.markCompleted(
+      1,
+      RecipeTaskId.prepareFruit,
+      completedAt: DateTime(2026, 4, 1),
+    );
+
+    final record = await repository.get(1, RecipeTaskId.prepareFruit);
+    expect(record!.completedAt, equals(DateTime(2026, 4, 1)));
+  });
+
+  test('a note can be added to a task that has no row yet', () async {
+    await repository.saveNotes(1, RecipeTaskId.prepareFruit, 'used Regent');
+
+    final record = await repository.get(1, RecipeTaskId.prepareFruit);
+    expect(record!.notes, equals('used Regent'));
+    expect(record.status, equals(TaskState.pending));
+  });
+
+  test('a note on a completed task leaves the rest of the row alone', () async {
+    await repository.markCompleted(
+      1,
+      RecipeTaskId.result,
+      payload: const ResultPayload(results: 'clean', mistakes: ''),
+      completedAt: DateTime(2026, 3, 12),
+    );
+
+    await repository.saveNotes(1, RecipeTaskId.result, 'bottled in green');
+
+    final record = await repository.get(1, RecipeTaskId.result);
+    expect(record!.notes, equals('bottled in green'));
+    expect(record.status, equals(TaskState.completed));
+    expect(record.completedAt, equals(DateTime(2026, 3, 12)));
+    expect(ResultPayload.fromJson(record.payloadJson!).results, 'clean');
+  });
+
+  test('completing a task keeps a note written earlier', () async {
+    await repository.saveNotes(1, RecipeTaskId.prepareFruit, 'used Regent');
+
+    await repository.markCompleted(1, RecipeTaskId.prepareFruit);
+
+    final record = await repository.get(1, RecipeTaskId.prepareFruit);
+    expect(record!.notes, equals('used Regent'));
+  });
+
+  test('an emptied note is stored as nothing', () async {
+    await repository.saveNotes(1, RecipeTaskId.prepareFruit, 'oops');
+
+    await repository.saveNotes(1, RecipeTaskId.prepareFruit, '');
+
+    final record = await repository.get(1, RecipeTaskId.prepareFruit);
+    expect(record!.notes, isNull);
+  });
+
   test('watchForRealization emits the current rows', () async {
     await repository.markCompleted(1, RecipeTaskId.prepareFruit);
 
