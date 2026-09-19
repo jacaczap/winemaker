@@ -89,6 +89,14 @@ class RecipeRealizationsController extends _$RecipeRealizationsController {
   Future<void> rename(int id, String name) =>
       ref.read(recipeRealizationRepositoryProvider).updateName(id, name);
 
-  Future<void> delete(int id) =>
-      ref.read(recipeRealizationRepositoryProvider).delete(id);
+  /// Deletes a realization, its task data and any reminders it scheduled.
+  Future<void> delete(RecipeRealization realization) async {
+    final notifications = ref.read(notificationServiceProvider);
+    for (final task in realization.recipe.getRecipe().tasks) {
+      if (task.type == TaskType.timeNotification) {
+        await notifications.cancel(realization.id, task.id.name);
+      }
+    }
+    await ref.read(recipeRealizationRepositoryProvider).delete(realization.id);
+  }
 }

@@ -8,6 +8,7 @@ import 'package:winemaker/core/notifications/notification_service.dart';
 import 'package:winemaker/core/utils/duration_format.dart';
 import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/task_screen_result.dart';
+import 'package:winemaker/features/realization/domain/task_state.dart';
 import 'package:winemaker/features/realization/domain/task_timing.dart';
 import 'package:winemaker/features/realization/domain/time_notification_payload.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
@@ -21,7 +22,9 @@ import 'package:winemaker/l10n/app_localizations.dart';
 ///
 /// The reminder is scheduled the first time the task is opened and reused on
 /// later visits. The user can postpone it or complete the wait early as an
-/// override. Completing or reverting cancels the pending reminder.
+/// override. Completing or reverting cancels the pending reminder. Reopening a
+/// wait the user jumped back to starts a fresh one: its stored deadline
+/// belongs to the finished attempt.
 class TimeNotificationScreen extends ConsumerStatefulWidget {
   const TimeNotificationScreen({
     super.key,
@@ -76,7 +79,8 @@ class _TimeNotificationScreenState
         .get(widget.realizationId, widget.taskId);
     if (!mounted) return;
     final json = record?.payloadJson;
-    if (json != null) {
+    final redone = !widget.readOnly && record?.status == TaskState.completed;
+    if (json != null && !redone) {
       setState(() {
         _scheduledFor = TimeNotificationPayload.fromJson(json).scheduledFor;
         _loading = false;

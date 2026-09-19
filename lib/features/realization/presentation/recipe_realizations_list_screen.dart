@@ -148,9 +148,7 @@ class _RealizationTile extends ConsumerWidget {
       direction: DismissDirection.endToStart,
       background: _deleteBackground(colors),
       confirmDismiss: (_) => _confirmDelete(context),
-      onDismissed: (_) => ref
-          .read(recipeRealizationsControllerProvider.notifier)
-          .delete(realization.id),
+      onDismissed: (_) => _delete(ref),
       child: Card(
         clipBehavior: Clip.antiAlias,
         child: ListTile(
@@ -165,14 +163,16 @@ class _RealizationTile extends ConsumerWidget {
           ),
           title: Text(realization.displayName(l10n)),
           subtitle: Text('$progress  -  $startedOn'),
-          trailing: const Icon(Icons.chevron_right),
+          trailing: _RealizationMenu(
+            onRename: () => _rename(context, ref),
+            onDelete: () => _confirmAndDelete(context, ref),
+          ),
           onTap: () => context.pushNamed(
             completed ? AppRoute.realizationSummary : AppRoute.recipe,
             pathParameters: {
               AppRoute.realizationIdParam: '${realization.id}',
             },
           ),
-          onLongPress: () => _rename(context, ref),
         ),
       ),
     );
@@ -220,6 +220,57 @@ class _RealizationTile extends ConsumerWidget {
     );
     return confirmed ?? false;
   }
+
+  Future<void> _confirmAndDelete(BuildContext context, WidgetRef ref) async {
+    if (!await _confirmDelete(context)) return;
+    await _delete(ref);
+  }
+
+  Future<void> _delete(WidgetRef ref) => ref
+      .read(recipeRealizationsControllerProvider.notifier)
+      .delete(realization);
+}
+
+class _RealizationMenu extends StatelessWidget {
+  const _RealizationMenu({required this.onRename, required this.onDelete});
+
+  final VoidCallback onRename;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return PopupMenuButton<VoidCallback>(
+      icon: const Icon(Icons.more_vert),
+      onSelected: (action) => action(),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: onRename,
+          child: _MenuRow(icon: Icons.edit_outlined, label: l10n.rename),
+        ),
+        PopupMenuItem(
+          value: onDelete,
+          child: _MenuRow(icon: Icons.delete_outline, label: l10n.delete),
+        ),
+      ],
+    );
+  }
+}
+
+class _MenuRow extends StatelessWidget {
+  const _MenuRow({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: [
+          Icon(icon, size: 20),
+          const SizedBox(width: 12),
+          Text(label),
+        ],
+      );
 }
 
 class _EmptyState extends StatelessWidget {
