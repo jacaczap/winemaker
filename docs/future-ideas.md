@@ -18,4 +18,3 @@ Backlog of ideas to consider later. Not scheduled, not detailed yet.
 - [ ] **Auto scroll** - Auto scroll to the completed step or just to previous view. 
   Right now in recipe view you always land on top
 - [ ] **Delete realization** - enable deleting realization
-- [ ] **Name realization first** - creating new realization opens rename window

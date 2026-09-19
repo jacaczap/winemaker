@@ -233,7 +233,7 @@
   "journalAcidity": "Acidity",
   "journalAlcohol": "Alcohol",
 
-  "renameRealizationTitle": "Rename realization",
+  "realizationNameTitle": "Realization name",
   "nameLabel": "Name",
 
   "addedThisStep": "Added this step",

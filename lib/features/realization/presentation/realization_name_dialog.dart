@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
-/// Shows a dialog to rename a realization.
+/// Shows a dialog to name a realization, when creating it or later.
 ///
-/// [currentName] is the text the field starts with (the current display name).
-/// Returns the trimmed new name, or `null` if the user cancelled or left it
-/// unchanged/empty.
-Future<String?> showRenameRealizationDialog(
+/// [currentName] is the text the field starts with. Returns the trimmed name,
+/// falling back to [currentName] if the user cleared it, or `null` if the user
+/// cancelled.
+Future<String?> showRealizationNameDialog(
   BuildContext context, {
   required String currentName,
 }) {
   return showDialog<String>(
     context: context,
-    builder: (context) => _RenameRealizationDialog(currentName: currentName),
+    builder: (context) => _RealizationNameDialog(currentName: currentName),
   );
 }
 
-class _RenameRealizationDialog extends StatefulWidget {
-  const _RenameRealizationDialog({required this.currentName});
+class _RealizationNameDialog extends StatefulWidget {
+  const _RealizationNameDialog({required this.currentName});
 
   final String currentName;
 
   @override
-  State<_RenameRealizationDialog> createState() =>
-      _RenameRealizationDialogState();
+  State<_RealizationNameDialog> createState() => _RealizationNameDialogState();
 }
 
-class _RenameRealizationDialogState extends State<_RenameRealizationDialog> {
+class _RealizationNameDialogState extends State<_RealizationNameDialog> {
   late final TextEditingController _controller =
       TextEditingController(text: widget.currentName);
 
@@ -38,18 +37,14 @@ class _RenameRealizationDialogState extends State<_RenameRealizationDialog> {
 
   void _submit() {
     final name = _controller.text.trim();
-    if (name.isEmpty || name == widget.currentName.trim()) {
-      Navigator.of(context).pop();
-      return;
-    }
-    Navigator.of(context).pop(name);
+    Navigator.of(context).pop(name.isEmpty ? widget.currentName.trim() : name);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: Text(l10n.renameRealizationTitle),
+      title: Text(l10n.realizationNameTitle),
       content: TextField(
         controller: _controller,
         autofocus: true,

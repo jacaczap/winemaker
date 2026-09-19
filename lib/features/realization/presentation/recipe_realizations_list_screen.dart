@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:winemaker/app/router.dart';
 import 'package:winemaker/features/realization/domain/recipe_realization.dart';
+import 'package:winemaker/features/realization/presentation/realization_name_dialog.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
-import 'package:winemaker/features/realization/presentation/rename_realization_dialog.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
@@ -57,9 +57,17 @@ class RecipeRealizationsListScreen extends ConsumerWidget {
   Future<void> _startNewRealization(BuildContext context, WidgetRef ref) async {
     final recipe = await _pickRecipe(context);
     if (recipe == null || !context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final month = DateFormat('LLLL y', l10n.localeName).format(DateTime.now());
+    final name = await showRealizationNameDialog(
+      context,
+      currentName: '${recipe.displayName(l10n)} $month',
+    );
+    if (name == null || !context.mounted) return;
     final id =
         await ref.read(recipeRealizationsControllerProvider.notifier).create(
               recipe,
+              name: name,
             );
     if (!context.mounted) return;
     context.pushNamed(
@@ -171,7 +179,7 @@ class _RealizationTile extends ConsumerWidget {
   }
 
   Future<void> _rename(BuildContext context, WidgetRef ref) async {
-    final name = await showRenameRealizationDialog(
+    final name = await showRealizationNameDialog(
       context,
       currentName: realization.displayName(AppLocalizations.of(context)),
     );

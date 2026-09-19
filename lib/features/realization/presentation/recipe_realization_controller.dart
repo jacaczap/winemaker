@@ -83,8 +83,8 @@ class RecipeRealizationsController extends _$RecipeRealizationsController {
   Stream<List<RecipeRealization>> build() =>
       ref.watch(recipeRealizationRepositoryProvider).watchAll();
 
-  Future<int> create(AvailableRecipes recipe) =>
-      ref.read(recipeRealizationRepositoryProvider).create(recipe);
+  Future<int> create(AvailableRecipes recipe, {String? name}) =>
+      ref.read(recipeRealizationRepositoryProvider).create(recipe, name: name);
 
   Future<void> rename(int id, String name) =>
       ref.read(recipeRealizationRepositoryProvider).updateName(id, name);

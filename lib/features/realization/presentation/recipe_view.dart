@@ -9,7 +9,7 @@ import 'package:winemaker/features/realization/domain/task_timing.dart';
 import 'package:winemaker/features/realization/presentation/progress.dart';
 import 'package:winemaker/features/realization/presentation/realization_completed_dialog.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
-import 'package:winemaker/features/realization/presentation/rename_realization_dialog.dart';
+import 'package:winemaker/features/realization/presentation/realization_name_dialog.dart';
 import 'package:winemaker/features/realization/presentation/task_row.dart';
 import 'package:winemaker/features/realization/presentation/task_timing_summary.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
@@ -91,7 +91,7 @@ class RecipeViewWrapper extends ConsumerWidget {
     WidgetRef ref,
     RecipeRealization realization,
   ) async {
-    final name = await showRenameRealizationDialog(
+    final name = await showRealizationNameDialog(
       context,
       currentName: realization.displayName(AppLocalizations.of(context)),
     );

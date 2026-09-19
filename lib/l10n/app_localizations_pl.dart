@@ -465,7 +465,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get journalAlcohol => 'Alkohol';
 
   @override
-  String get renameRealizationTitle => 'Zmień nazwę realizacji';
+  String get realizationNameTitle => 'Nazwa realizacji';
 
   @override
   String get nameLabel => 'Nazwa';

@@ -836,11 +836,11 @@ abstract class AppLocalizations {
   /// **'Alcohol'**
   String get journalAlcohol;
 
-  /// No description provided for @renameRealizationTitle.
+  /// No description provided for @realizationNameTitle.
   ///
   /// In en, this message translates to:
-  /// **'Rename realization'**
-  String get renameRealizationTitle;
+  /// **'Realization name'**
+  String get realizationNameTitle;
 
   /// No description provided for @nameLabel.
   ///

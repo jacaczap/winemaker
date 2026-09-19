@@ -22,13 +22,14 @@ class RecipeRealizationRepository {
       .then((data) => data == null ? null : _toDomain(data));
 
   /// Creates a new realization for [recipe] and returns its id.
-  Future<int> create(AvailableRecipes recipe) async {
+  Future<int> create(AvailableRecipes recipe, {String? name}) async {
     final id = await _nextId();
     await _database.recipeRealizationDao.addRecipeRealization(
       RecipeRealizationEntityData(
         id: id,
         currentTask: 0,
         recipe: recipe,
+        name: name,
         startTime: DateTime.now(),
         completed: false,
       ),

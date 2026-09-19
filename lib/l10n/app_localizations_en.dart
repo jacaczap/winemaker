@@ -456,7 +456,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalAlcohol => 'Alcohol';
 
   @override
-  String get renameRealizationTitle => 'Rename realization';
+  String get realizationNameTitle => 'Realization name';
 
   @override
   String get nameLabel => 'Name';
