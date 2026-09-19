@@ -14,6 +14,3 @@ Backlog of ideas to consider later. Not scheduled, not detailed yet.
   clearly distinct from in-progress (more than just a tick).
 
 - [ ] **Github actions** - add some CI steps to run tests and build the app in the CI
-
-- [ ] **Auto scroll** - Auto scroll to the completed step or just to previous view. 
-  Right now in recipe view you always land on top

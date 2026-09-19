@@ -120,7 +120,25 @@ class _RecipeBody extends ConsumerStatefulWidget {
 }
 
 class _RecipeBodyState extends ConsumerState<_RecipeBody> {
+  /// Tiles are uniform, so a constant is enough to land near the current task
+  /// while its tile is still outside the list's build window.
+  static const _estimatedTileExtent = 92.0;
+  static const _maxScrollAttempts = 3;
+
   final _currentTaskKey = GlobalKey();
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollToCurrentTask(animate: false);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(_RecipeBody oldWidget) {
@@ -130,17 +148,30 @@ class _RecipeBodyState extends ConsumerState<_RecipeBody> {
     }
   }
 
-  void _scrollToCurrentTask() {
+  void _scrollToCurrentTask({bool animate = true, int attempt = 0}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final context = _currentTaskKey.currentContext;
-      if (context == null) return;
+      if (!mounted) return;
+      final tileContext = _currentTaskKey.currentContext;
+      if (tileContext == null) {
+        if (attempt >= _maxScrollAttempts) return;
+        _jumpNearCurrentTask();
+        _scrollToCurrentTask(animate: animate, attempt: attempt + 1);
+        return;
+      }
       Scrollable.ensureVisible(
-        context,
+        tileContext,
         alignment: 0.5,
-        duration: const Duration(milliseconds: 400),
+        duration: animate ? const Duration(milliseconds: 400) : Duration.zero,
         curve: Curves.easeInOut,
       );
     });
+  }
+
+  void _jumpNearCurrentTask() {
+    if (!_scrollController.hasClients) return;
+    final maxOffset = _scrollController.position.maxScrollExtent;
+    final target = widget.realization.currentTask * _estimatedTileExtent;
+    _scrollController.jumpTo(target.clamp(0.0, maxOffset));
   }
 
   @override
@@ -159,6 +190,7 @@ class _RecipeBodyState extends ConsumerState<_RecipeBody> {
         ),
         Expanded(
           child: ListView.builder(
+            controller: _scrollController,
             padding: const EdgeInsets.only(top: 4, bottom: 24),
             itemCount: tasks.length,
             itemBuilder: (context, index) => _buildTaskTile(
