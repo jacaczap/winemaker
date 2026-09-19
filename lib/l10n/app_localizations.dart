@@ -656,12 +656,6 @@ abstract class AppLocalizations {
   /// **'Yeast used, observations, anything worth remembering…'**
   String get noteHint;
 
-  /// No description provided for @saveNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Save note'**
-  String get saveNote;
-
   /// No description provided for @durationDays.
   ///
   /// In en, this message translates to:
@@ -697,6 +691,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Completed {date} - took {duration}'**
   String completedOnTook(String date, String duration);
+
+  /// No description provided for @waitFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait finished'**
+  String get waitFinished;
 
   /// No description provided for @waitedActualVsPlanned.
   ///

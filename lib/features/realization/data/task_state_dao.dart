@@ -32,6 +32,23 @@ class TaskStateDao extends DatabaseAccessor<MyDatabase>
   Future<void> upsert(TaskStateEntityCompanion row) =>
       into(taskStateEntity).insertOnConflictUpdate(row);
 
+  /// Marks the task unfinished again, keeping its note and (unless
+  /// [clearPayload]) whatever the user entered, so it can be re-edited.
+  Future<void> reopen(
+    int realizationId,
+    RecipeTaskId taskId, {
+    required bool clearPayload,
+  }) =>
+      (update(taskStateEntity)
+            ..where((t) =>
+                t.realizationId.equals(realizationId) &
+                t.taskId.equalsValue(taskId)))
+          .write(TaskStateEntityCompanion(
+        status: const Value(TaskState.pending),
+        completedAt: const Value(null),
+        payload: clearPayload ? const Value(null) : const Value.absent(),
+      ));
+
   /// Writes only the note, so it can be added to a completed task without
   /// disturbing its status, payload or completion time.
   Future<void> upsertNotes(

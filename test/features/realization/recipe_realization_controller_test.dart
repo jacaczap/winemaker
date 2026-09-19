@@ -5,6 +5,8 @@ import 'package:winemaker/core/notifications/notification_service.dart';
 import 'package:winemaker/features/realization/data/recipe_realization_repository.dart';
 import 'package:winemaker/features/realization/data/task_state_repository.dart';
 import 'package:winemaker/features/realization/domain/result_payload.dart';
+import 'package:winemaker/features/realization/domain/task_state.dart';
+import 'package:winemaker/features/realization/domain/time_notification_payload.dart';
 import 'package:winemaker/features/realization/presentation/recipe_realization_controller.dart';
 import 'package:winemaker/features/recipe/domain/recipes.dart';
 import 'package:winemaker/features/recipe/domain/task_type.dart';
@@ -128,6 +130,55 @@ void main() {
       notifications.cancelled.map((c) => c.$2),
       containsAll(cancelledWaits),
     );
+  });
+
+  test('jumpToTask reopens the target, keeping its data and note', () async {
+    final tasks = redWineRecipe.tasks;
+    final id = await seedRealization(
+      currentTask: redWineRecipe.tasks.length,
+      completed: true,
+    );
+    final taskStates = container.read(taskStateRepositoryProvider);
+    await taskStates.markCompleted(
+      id,
+      tasks[lastTaskIndex].id,
+      payload: const ResultPayload(results: 'great', mistakes: 'none'),
+    );
+    await taskStates.saveNotes(id, tasks[lastTaskIndex].id, 'tasted it warm');
+    await container.read(recipeRealizationControllerProvider(id).future);
+
+    await container
+        .read(recipeRealizationControllerProvider(id).notifier)
+        .jumpToTask(lastTaskIndex);
+
+    final target = await taskStates.get(id, tasks[lastTaskIndex].id);
+    expect(target!.status, equals(TaskState.pending));
+    expect(target.completedAt, isNull);
+    expect(ResultPayload.fromJson(target.payloadJson!).results, equals('great'));
+    expect(target.notes, equals('tasted it warm'));
+  });
+
+  test('jumpToTask reopens a wait without its finished deadline', () async {
+    const waitIndex = 3;
+    final waitTask = redWineRecipe.tasks[waitIndex];
+    final id = await seedRealization(currentTask: waitIndex + 1);
+    final taskStates = container.read(taskStateRepositoryProvider);
+    await taskStates.markCompleted(
+      id,
+      waitTask.id,
+      payload: TimeNotificationPayload(scheduledFor: DateTime(2024)),
+    );
+    await taskStates.saveNotes(id, waitTask.id, 'cap sank on day five');
+    await container.read(recipeRealizationControllerProvider(id).future);
+
+    await container
+        .read(recipeRealizationControllerProvider(id).notifier)
+        .jumpToTask(waitIndex);
+
+    final target = await taskStates.get(id, waitTask.id);
+    expect(target!.status, equals(TaskState.pending));
+    expect(target.payloadJson, isNull);
+    expect(target.notes, equals('cap sank on day five'));
   });
 
   test('jumpToTask ignores forward jumps', () async {

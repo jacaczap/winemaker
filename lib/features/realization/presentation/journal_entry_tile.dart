@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:winemaker/core/utils/number_format.dart';
 import 'package:winemaker/features/realization/domain/adding_ingredients_payload.dart';
 import 'package:winemaker/features/realization/domain/calculations_payload.dart';
 import 'package:winemaker/features/realization/domain/initial_measurement_payload.dart';
@@ -99,16 +100,16 @@ List<String> journalValueLines(AppLocalizations l10n, JournalEntry entry) {
   switch (entry.task.type) {
     case TaskType.initialMeasurement:
       final payload = InitialMeasurementPayload.fromJson(json);
-      return ['${l10n.journalSweetness} ${_number(payload.sweetness.value)} Blg'];
+      return ['${l10n.journalSweetness} ${formatAmount(payload.sweetness.value)} Blg'];
     case TaskType.calculations:
       return _calculationLines(l10n, CalculationsPayload.fromJson(json));
     case TaskType.addingIngredients:
       final added = AddingIngredientsPayload.fromJson(json).added;
       final parts = [
         if (added.sugar.value > 0)
-          '${l10n.ingredientSugar} ${_number(added.sugar.value)} kg',
+          '${l10n.ingredientSugar} ${formatAmount(added.sugar.value)} kg',
         if (added.water.value > 0)
-          '${l10n.ingredientWater} ${_number(added.water.value)} l',
+          '${l10n.ingredientWater} ${formatAmount(added.water.value)} l',
         if (added.yeast) l10n.ingredientYeast,
         if (added.nutrients) l10n.ingredientNutrients,
       ];
@@ -135,18 +136,15 @@ List<String> _calculationLines(
   final desired = payload.desiredWine;
   final ingredients = payload.ingredients;
   return [
-    '${l10n.journalMust}: ${l10n.journalVolume} ${_number(must.volume.value)} l'
-        '  ·  ${l10n.journalSweetness} ${_number(must.sugar.value)} Blg'
-        '  ·  ${l10n.journalAcidity} ${_number(must.acidity.value)} g/l',
+    '${l10n.journalMust}: ${l10n.journalVolume} ${formatAmount(must.volume.value)} l'
+        '  ·  ${l10n.journalSweetness} ${formatAmount(must.sugar.value)} Blg'
+        '  ·  ${l10n.journalAcidity} ${formatAmount(must.acidity.value)} g/l',
     '${l10n.journalTarget}: ${l10n.journalAlcohol} '
-        '${_number(desired.alcohol.value)} %'
-        '  ·  ${l10n.journalSweetness} ${_number(desired.sugar.value)} g/l'
-        '  ·  ${l10n.journalAcidity} ${_number(desired.acidity.value)} g/l',
+        '${formatAmount(desired.alcohol.value)} %'
+        '  ·  ${l10n.journalSweetness} ${formatAmount(desired.sugar.value)} g/l'
+        '  ·  ${l10n.journalAcidity} ${formatAmount(desired.acidity.value)} g/l',
     '${l10n.journalCalculated}: ${l10n.ingredientSugar} '
-        '${_number(ingredients.sugar.value)} kg'
-        '  ·  ${l10n.ingredientWater} ${_number(ingredients.water.value)} l',
+        '${formatAmount(ingredients.sugar.value)} kg'
+        '  ·  ${l10n.ingredientWater} ${formatAmount(ingredients.water.value)} l',
   ];
 }
-
-String _number(double value) =>
-    value == value.roundToDouble() ? value.toStringAsFixed(0) : '$value';

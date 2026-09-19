@@ -71,6 +71,20 @@ class TaskStateRepository {
         notes == null || notes.isEmpty ? null : notes,
       );
 
+  /// Marks the task unfinished again without losing what the user entered.
+  ///
+  /// Use when the user jumps back to it: the payload and note stay for
+  /// re-editing, but the task no longer counts (or reads) as completed. Set
+  /// [clearPayload] for tasks whose payload describes the finished attempt
+  /// rather than user input, such as a wait's deadline.
+  Future<void> reopen(
+    int realizationId,
+    RecipeTaskId taskId, {
+    bool clearPayload = false,
+  }) =>
+      _database.taskStateDao
+          .reopen(realizationId, taskId, clearPayload: clearPayload);
+
   /// Discards the stored data of [taskIds].
   ///
   /// Use when the user jumps back: the caller passes every task that comes

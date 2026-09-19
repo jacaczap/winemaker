@@ -108,14 +108,13 @@
   "addNote": "Dodaj notatkę",
   "noteLabel": "Notatka",
   "noteHint": "Użyte drożdże, obserwacje, cokolwiek warto zapamiętać…",
-  "saveNote": "Zapisz notatkę",
-
   "durationDays": "{days, plural, one{{days} dzień} few{{days} dni} many{{days} dni} other{{days} dnia}}",
   "durationHours": "{hours, plural, one{{hours} godzina} few{{hours} godziny} many{{hours} godzin} other{{hours} godziny}}",
   "durationMinutes": "{minutes, plural, one{{minutes} minuta} few{{minutes} minuty} many{{minutes} minut} other{{minutes} minuty}}",
   "durationLessThanMinute": "mniej niż minuta",
   "completedOn": "Ukończono {date}",
   "completedOnTook": "Ukończono {date} - trwało {duration}",
+  "waitFinished": "Oczekiwanie zakończone",
   "waitedActualVsPlanned": "Czekano {actual} (planowano {planned})",
 
   "statusCompletedTapToView": "Ukończono - dotknij, aby zobaczyć",

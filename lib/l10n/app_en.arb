@@ -146,7 +146,6 @@
   "addNote": "Add note",
   "noteLabel": "Note",
   "noteHint": "Yeast used, observations, anything worth remembering…",
-  "saveNote": "Save note",
 
   "durationDays": "{days, plural, one{{days} day} other{{days} days}}",
   "@durationDays": {
@@ -180,6 +179,7 @@
       "duration": { "type": "String" }
     }
   },
+  "waitFinished": "Wait finished",
   "waitedActualVsPlanned": "Waited {actual} (planned {planned})",
   "@waitedActualVsPlanned": {
     "placeholders": {

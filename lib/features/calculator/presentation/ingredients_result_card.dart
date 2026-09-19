@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:winemaker/core/utils/number_format.dart';
 import 'package:winemaker/features/calculator/domain/ingredients.dart';
 import 'package:winemaker/l10n/app_localizations.dart';
 
@@ -23,12 +24,12 @@ class IngredientsResultCard extends StatelessWidget {
             _IngredientRow(
               icon: Icons.scale_outlined,
               label: l10n.ingredientSugar,
-              value: '${ingredients.sugar.value} kg',
+              value: '${formatAmount(ingredients.sugar.value)} kg',
             ),
             _IngredientRow(
               icon: Icons.water_drop_outlined,
               label: l10n.ingredientWater,
-              value: '${ingredients.water.value} l',
+              value: '${formatAmount(ingredients.water.value)} l',
             ),
             _IngredientRow(
               icon: Icons.science_outlined,

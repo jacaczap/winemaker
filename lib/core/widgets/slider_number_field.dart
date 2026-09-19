@@ -67,6 +67,14 @@ class _SliderNumberFieldState extends State<SliderNumberField> {
   }
 
   @override
+  void didUpdateWidget(SliderNumberField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue) {
+      _controller.text = widget.initialValue ?? '';
+    }
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();

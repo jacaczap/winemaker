@@ -60,10 +60,6 @@ class _TimeNotificationScreenState
   @override
   void initState() {
     super.initState();
-    _ticker = Timer.periodic(
-      const Duration(seconds: 1),
-      (_) => setState(() {}),
-    );
     _init();
   }
 
@@ -85,14 +81,32 @@ class _TimeNotificationScreenState
         _scheduledFor = TimeNotificationPayload.fromJson(json).scheduledFor;
         _loading = false;
       });
-      return;
-    }
-    if (widget.readOnly) {
+    } else if (widget.readOnly) {
       setState(() => _loading = false);
-      return;
+    } else {
+      await _reschedule(DateTime.now().add(widget.delay));
+      if (!mounted) return;
+      setState(() => _loading = false);
     }
-    await _reschedule(DateTime.now().add(widget.delay));
-    if (mounted) setState(() => _loading = false);
+    if (!widget.readOnly) _startTicker();
+  }
+
+  /// Ticks the countdown once a second and stops as soon as the deadline is
+  /// behind us: a finished wait has nothing left to count.
+  void _startTicker() {
+    _ticker?.cancel();
+    _ticker = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      final scheduledFor = _scheduledFor;
+      if (scheduledFor == null || !scheduledFor.isAfter(DateTime.now())) {
+        timer.cancel();
+        _ticker = null;
+      }
+      setState(() {});
+    });
   }
 
   Future<void> _reschedule(DateTime scheduledFor) async {
@@ -115,7 +129,9 @@ class _TimeNotificationScreenState
     final base = _scheduledFor ?? DateTime.now();
     setState(() => _busy = true);
     await _reschedule(base.add(widget.postpone));
-    if (mounted) setState(() => _busy = false);
+    if (!mounted) return;
+    setState(() => _busy = false);
+    _startTicker();
   }
 
   Future<void> _complete() async {
@@ -144,9 +160,9 @@ class _TimeNotificationScreenState
     );
   }
 
-  /// How long the wait really lasted, once the task is done.
+  /// How long the wait really lasted, or null when the realization predates
+  /// timestamp tracking and the length cannot be worked out.
   Duration? get _waited {
-    if (!widget.readOnly) return null;
     final realization = ref
         .watch(recipeRealizationControllerProvider(widget.realizationId))
         .value;
@@ -165,7 +181,6 @@ class _TimeNotificationScreenState
     final scheduledFor = _scheduledFor;
     final remaining = scheduledFor?.difference(DateTime.now()) ?? Duration.zero;
     final ready = remaining <= Duration.zero;
-    final waited = _waited;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -178,8 +193,8 @@ class _TimeNotificationScreenState
             ),
             const SizedBox(height: 24),
           ],
-          if (waited != null)
-            _WaitedCard(waited: waited, planned: widget.delay)
+          if (widget.readOnly)
+            _WaitedCard(waited: _waited, planned: widget.delay)
           else
             _CountdownCard(
               ready: ready,
@@ -217,10 +232,13 @@ class _TimeNotificationScreenState
 }
 
 /// How long the finished wait actually took, next to the planned length.
+///
+/// [waited] is null on realizations that predate timestamp tracking, where
+/// only the fact that the wait is over is known.
 class _WaitedCard extends StatelessWidget {
   const _WaitedCard({required this.waited, required this.planned});
 
-  final Duration waited;
+  final Duration? waited;
   final Duration planned;
 
   @override
@@ -239,10 +257,12 @@ class _WaitedCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              l10n.waitedActualVsPlanned(
-                formatElapsed(l10n, waited),
-                formatElapsed(l10n, planned),
-              ),
+              waited == null
+                  ? l10n.waitFinished
+                  : l10n.waitedActualVsPlanned(
+                      formatElapsed(l10n, waited!),
+                      formatElapsed(l10n, planned),
+                    ),
               style: theme.textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),

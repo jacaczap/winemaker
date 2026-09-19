@@ -330,9 +330,6 @@ class AppLocalizationsPl extends AppLocalizations {
       'Użyte drożdże, obserwacje, cokolwiek warto zapamiętać…';
 
   @override
-  String get saveNote => 'Zapisz notatkę';
-
-  @override
   String durationDays(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,
@@ -383,6 +380,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String completedOnTook(String date, String duration) {
     return 'Ukończono $date - trwało $duration';
   }
+
+  @override
+  String get waitFinished => 'Oczekiwanie zakończone';
 
   @override
   String waitedActualVsPlanned(String actual, String planned) {

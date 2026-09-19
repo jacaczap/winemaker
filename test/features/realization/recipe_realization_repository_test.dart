@@ -100,6 +100,19 @@ void main() {
     expect(await repository.byId(id), isNull);
     expect(await TaskStateRepository(db).listForRealization(id), isEmpty);
   });
+
+  test('a realization reusing a deleted id starts with no task state',
+      () async {
+    final taskStates = TaskStateRepository(db);
+    final deleted = await repository.create(AvailableRecipes.redWine);
+    await taskStates.markCompleted(deleted, RecipeTaskId.prepareFruit);
+
+    await repository.delete(deleted);
+    final reused = await repository.create(AvailableRecipes.redWine);
+
+    expect(reused, equals(deleted));
+    expect(await taskStates.listForRealization(reused), isEmpty);
+  });
 }
 
 DateTime _at(String iso) => DateTime.parse(iso);

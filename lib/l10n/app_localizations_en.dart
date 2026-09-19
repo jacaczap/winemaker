@@ -327,9 +327,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Yeast used, observations, anything worth remembering…';
 
   @override
-  String get saveNote => 'Save note';
-
-  @override
   String durationDays(int days) {
     String _temp0 = intl.Intl.pluralLogic(
       days,
@@ -374,6 +371,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String completedOnTook(String date, String duration) {
     return 'Completed $date - took $duration';
   }
+
+  @override
+  String get waitFinished => 'Wait finished';
 
   @override
   String waitedActualVsPlanned(String actual, String planned) {

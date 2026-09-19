@@ -8,6 +8,11 @@ import 'package:winemaker/features/realization/domain/recipe_realization.dart';
 
 part 'recipe_realization_controller.g.dart';
 
+/// Controller of one realization.
+///
+/// Its mutations never publish an `AsyncValue.loading()` in between: that
+/// would drop the current value and blink the realization view back to a
+/// spinner and a placeholder title on every completed step.
 @riverpod
 class RecipeRealizationController extends _$RecipeRealizationController {
   @override
@@ -27,7 +32,6 @@ class RecipeRealizationController extends _$RecipeRealizationController {
     final next = current.currentTask + 1;
     if (next > totalTasks) return;
     final completed = next >= totalTasks;
-    state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await ref
           .read(recipeRealizationRepositoryProvider)
@@ -48,20 +52,27 @@ class RecipeRealizationController extends _$RecipeRealizationController {
 
   /// Jumps back to an earlier task and discards everything after it.
   ///
-  /// The target becomes the current task again; data of all later occurrences
-  /// is deleted and any pending `timeNotification` reminders among them are
-  /// cancelled. Jumping forward or to the current task is a no-op.
+  /// The target becomes the current task again: it is reopened, keeping what
+  /// the user entered so it can be re-edited, while data of all later
+  /// occurrences is deleted and any pending `timeNotification` reminders among
+  /// them are cancelled. A wait is reopened empty, because its stored deadline
+  /// belongs to the attempt that just ended. Jumping forward or to the current
+  /// task is a no-op.
   Future<void> jumpToTask(int targetIndex) async {
     final current = state.value;
     if (current == null) return;
     if (targetIndex < 0 || targetIndex >= current.currentTask) return;
-    final laterTasks =
-        current.recipe.getRecipe().tasks.sublist(targetIndex + 1);
-    state = const AsyncValue.loading();
+    final tasks = current.recipe.getRecipe().tasks;
+    final laterTasks = tasks.sublist(targetIndex + 1);
     state = await AsyncValue.guard(() async {
-      await ref
-          .read(taskStateRepositoryProvider)
-          .discard(id, laterTasks.map((t) => t.id));
+      final taskStates = ref.read(taskStateRepositoryProvider);
+      final target = tasks[targetIndex];
+      await taskStates.reopen(
+        id,
+        target.id,
+        clearPayload: target.type == TaskType.timeNotification,
+      );
+      await taskStates.discard(id, laterTasks.map((t) => t.id));
       final notifications = ref.read(notificationServiceProvider);
       for (final task in laterTasks) {
         if (task.type == TaskType.timeNotification) {

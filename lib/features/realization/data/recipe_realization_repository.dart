@@ -59,10 +59,14 @@ class RecipeRealizationRepository {
       );
 
   /// Deletes a realization and all of its per-task state.
-  Future<void> delete(int id) async {
-    await _database.taskStateDao.deleteAllFor(id);
-    await _database.recipeRealizationDao.deleteRecipeRealization(id);
-  }
+  ///
+  /// Both go in one transaction: ids are handed out as `max(id) + 1`, so a
+  /// half-finished delete would let the next realization adopt the leftover
+  /// task rows.
+  Future<void> delete(int id) => _database.transaction(() async {
+        await _database.taskStateDao.deleteAllFor(id);
+        await _database.recipeRealizationDao.deleteRecipeRealization(id);
+      });
 
   Future<int> _nextId() async {
     final all =

@@ -44,10 +44,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'plums from the garden');
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Save note'));
-    await tester.pumpAndSettle();
-    expect(find.text('Save note'), findsNothing);
 
+    // No separate save button: completing the step must keep the note.
     await tester.tap(find.text('Mark as done'));
     await tester.pumpAndSettle();
 

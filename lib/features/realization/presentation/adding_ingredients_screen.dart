@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:winemaker/core/models/litres.dart';
 import 'package:winemaker/core/models/sugar.dart';
 import 'package:winemaker/core/utils/math_utils.dart';
+import 'package:winemaker/core/utils/number_format.dart';
 import 'package:winemaker/core/utils/user_input_utils.dart';
 import 'package:winemaker/core/widgets/form_builder.dart';
 import 'package:winemaker/features/calculator/domain/ingredients.dart';
@@ -315,13 +316,13 @@ class _RemainingCard extends StatelessWidget {
               _RemainingRow(
                 icon: Icons.scale_outlined,
                 label: l10n.ingredientSugar,
-                value: '${remaining.sugar} kg',
+                value: '${formatAmount(remaining.sugar)} kg',
               ),
             if (visible.contains(IngredientKind.water))
               _RemainingRow(
                 icon: Icons.water_drop_outlined,
                 label: l10n.ingredientWater,
-                value: '${remaining.water} l',
+                value: '${formatAmount(remaining.water)} l',
               ),
             if (visible.contains(IngredientKind.yeast))
               _RemainingRow(

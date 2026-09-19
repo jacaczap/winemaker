@@ -6,9 +6,11 @@ import 'package:winemaker/l10n/app_localizations.dart';
 
 /// Free-text note attached to one task occurrence.
 ///
-/// Collapsed until tapped, and auto-expanded when a note already exists. Saves
-/// on its own button so a note can be added to an already completed task
-/// without redoing it or changing its completion time.
+/// Collapsed until tapped, and auto-expanded when a note already exists. The
+/// note is written whenever the field loses focus and again when the screen
+/// goes away, so it survives whichever button the user reaches for. Writing it
+/// on its own leaves the task's status, payload and completion time alone, so
+/// a note can be added to an already completed task without redoing it.
 class TaskNotesField extends ConsumerStatefulWidget {
   const TaskNotesField({
     super.key,
@@ -25,28 +27,33 @@ class TaskNotesField extends ConsumerStatefulWidget {
 
 class _TaskNotesFieldState extends ConsumerState<TaskNotesField> {
   final _controller = TextEditingController();
+  final _focusNode = FocusNode();
 
+  late final TaskStateRepository _repository;
   String _saved = '';
   bool _expanded = false;
-  bool _saving = false;
+  bool _autofocus = false;
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(() => setState(() {}));
+    _repository = ref.read(taskStateRepositoryProvider);
+    _focusNode.addListener(_onFocusChanged);
     _load();
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChanged);
+    _flush();
+    _focusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
 
   Future<void> _load() async {
-    final record = await ref
-        .read(taskStateRepositoryProvider)
-        .get(widget.realizationId, widget.taskId);
+    final record =
+        await _repository.get(widget.realizationId, widget.taskId);
     if (!mounted) return;
     final notes = record?.notes ?? '';
     setState(() {
@@ -56,17 +63,19 @@ class _TaskNotesFieldState extends ConsumerState<TaskNotesField> {
     });
   }
 
-  Future<void> _save() async {
+  void _onFocusChanged() {
+    if (!_focusNode.hasFocus) _flush();
+  }
+
+  /// Writes the note if it changed since the last write.
+  ///
+  /// Deliberately not awaited: [dispose] cannot wait, and the write has to
+  /// outlive the screen the user just left.
+  void _flush() {
     final notes = _controller.text.trim();
-    setState(() => _saving = true);
-    await ref
-        .read(taskStateRepositoryProvider)
-        .saveNotes(widget.realizationId, widget.taskId, notes);
-    if (!mounted) return;
-    setState(() {
-      _saved = notes;
-      _saving = false;
-    });
+    if (notes == _saved) return;
+    _saved = notes;
+    _repository.saveNotes(widget.realizationId, widget.taskId, notes);
   }
 
   @override
@@ -76,39 +85,29 @@ class _TaskNotesFieldState extends ConsumerState<TaskNotesField> {
       return Align(
         alignment: Alignment.centerLeft,
         child: TextButton.icon(
-          onPressed: () => setState(() => _expanded = true),
+          onPressed: () => setState(() {
+            _expanded = true;
+            _autofocus = true;
+          }),
           icon: const Icon(Icons.note_add_outlined),
           label: Text(l10n.addNote),
         ),
       );
     }
-    final changed = _controller.text.trim() != _saved;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        TextField(
-          controller: _controller,
-          textCapitalization: TextCapitalization.sentences,
-          keyboardType: TextInputType.multiline,
-          minLines: 2,
-          maxLines: 6,
-          decoration: InputDecoration(
-            labelText: l10n.noteLabel,
-            hintText: l10n.noteHint,
-            alignLabelWithHint: true,
-            border: const OutlineInputBorder(),
-          ),
-        ),
-        if (changed)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: TextButton.icon(
-              onPressed: _saving ? null : _save,
-              icon: const Icon(Icons.save_outlined),
-              label: Text(l10n.saveNote),
-            ),
-          ),
-      ],
+    return TextField(
+      controller: _controller,
+      focusNode: _focusNode,
+      autofocus: _autofocus,
+      textCapitalization: TextCapitalization.sentences,
+      keyboardType: TextInputType.multiline,
+      minLines: 2,
+      maxLines: 6,
+      decoration: InputDecoration(
+        labelText: l10n.noteLabel,
+        hintText: l10n.noteHint,
+        alignLabelWithHint: true,
+        border: const OutlineInputBorder(),
+      ),
     );
   }
 }

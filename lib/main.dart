@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -11,11 +13,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting();
   final container = ProviderContainer();
-  final notifications = container.read(notificationServiceProvider);
-  await notifications.init();
-  notifications.onTaskTap =
-      (target) => openTaskFromNotification(container, target);
-  final launchTarget = await notifications.launchTask();
+  final launchTarget = await _setUpNotifications(container);
   runApp(
     UncontrolledProviderScope(container: container, child: const MyApp()),
   );
@@ -23,6 +21,30 @@ Future<void> main() async {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => openTaskFromNotification(container, launchTarget),
     );
+  }
+}
+
+/// Wires up reminders and reports the one that launched the app, if any.
+///
+/// Reminders are a convenience, not a prerequisite: if the plugin fails the
+/// app still has to start, so the failure is logged and swallowed rather than
+/// left to take down `main`.
+Future<ReminderTarget?> _setUpNotifications(ProviderContainer container) async {
+  final notifications = container.read(notificationServiceProvider);
+  try {
+    await notifications.init();
+    notifications.onTaskTap =
+        (target) => openTaskFromNotification(container, target);
+    return await notifications.launchTask();
+  } catch (error, stackTrace) {
+    developer.log(
+      'Notifications unavailable, continuing without reminders',
+      name: 'winemaker.notifications',
+      level: 1000,
+      error: error,
+      stackTrace: stackTrace,
+    );
+    return null;
   }
 }
 
