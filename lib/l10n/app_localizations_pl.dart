@@ -167,21 +167,21 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get taskPrepareFruitDescription =>
-      '- Zbierz owoce i włóż je do pojemnika do fermentacji wstępnej.\n- Rozgnieć je, aby uwolnić sok.\n- Zmierz słodycz soku. Zapiszesz ją w następnym kroku. Objętość i kwasowość zmierzysz później, po odciśnięciu.';
+      '- Zbierz owoce i włóż je do pojemnika do fermentacji wstępnej.\n- Rozgnieć je, aby uwolnić sok.\n- Zmierz zawartość cukru w soku. Zapiszesz ją w następnym kroku. Objętość i kwasowość zmierzysz później, po odciśnięciu.';
 
   @override
-  String get taskInitialSweetnessName => 'Początkowa słodycz';
+  String get taskInitialSweetnessName => 'Początkowy cukier';
 
   @override
   String get taskInitialSweetnessDescription =>
-      'Zapisz słodycz soku przed rozpoczęciem fermentacji. To jedyny pomiar, którego nie da się powtórzyć: gdy pojawi się alkohol, areometr przestaje poprawnie wskazywać cukier.';
+      'Zapisz zawartość cukru w soku przed rozpoczęciem fermentacji. To jedyny pomiar, którego nie da się powtórzyć: gdy pojawi się alkohol, areometr przestaje poprawnie wskazywać cukier.';
 
   @override
   String get taskCalculationsName => 'Obliczenia';
 
   @override
   String get taskCalculationsDescription =>
-      'Wpisz objętość i kwasowość zmierzone po odciśnięciu. Słodycz jest przeniesiona z pomiaru wykonanego przed fermentacją.';
+      'Wpisz objętość i kwasowość zmierzone po odciśnięciu. Cukier jest przeniesiony z pomiaru wykonanego przed fermentacją.';
 
   @override
   String get taskAddIngredientsName => 'Dodaj drożdże i pożywkę';
@@ -216,7 +216,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get taskWaitSugarDropDescription =>
-      'Poczekaj, aż poziom cukru wyraźnie spadnie, zanim dodasz kolejną porcję cukru. Orientacyjnie zakończ ten krok, gdy zmierzona słodycz spadnie do około 2-5 Blg.';
+      'Poczekaj, aż poziom cukru wyraźnie spadnie, zanim dodasz kolejną porcję cukru. Orientacyjnie zakończ ten krok, gdy zmierzony cukier spadnie do około 2-5 Blg.';
 
   @override
   String get taskAddRemainingSugarName => 'Dodaj pozostały cukier';
@@ -453,7 +453,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get journalCalculated => 'Wyliczono';
 
   @override
-  String get journalSweetness => 'Słodkość';
+  String get journalSugar => 'Cukier';
+
+  @override
+  String get journalSweetness => 'Słodycz';
 
   @override
   String get journalVolume => 'Objętość';
@@ -585,15 +588,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get presetFortified => 'Wzmacniane';
 
   @override
-  String get presetWhiteGrape => 'Białe winogrono';
-
-  @override
-  String get presetRedGrape => 'Czerwone winogrono';
-
-  @override
-  String get presetCoolClimateMust => 'Moszcz z chłodnego klimatu';
-
-  @override
   String get presetApple => 'Jabłko';
 
   @override
@@ -627,8 +621,5 @@ class AppLocalizationsPl extends AppLocalizations {
   String get presetGrape => 'Winogrono';
 
   @override
-  String get presetEgJohanniter => 'np. Johanniter 7–9';
-
-  @override
-  String get presetEgRegent => 'np. Regent 6–7';
+  String get presetDogRose => 'Dzika róża';
 }

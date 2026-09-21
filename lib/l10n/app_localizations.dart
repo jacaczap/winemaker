@@ -377,19 +377,19 @@ abstract class AppLocalizations {
   /// No description provided for @taskPrepareFruitDescription.
   ///
   /// In en, this message translates to:
-  /// **'- Collect the fruit and put it in the primary fermentation bucket.\n- Crush it to release the juice.\n- Measure the sweetness of the juice. You will record it in the next step. The volume and the acidity are measured later, after pressing.'**
+  /// **'- Collect the fruit and put it in the primary fermentation bucket.\n- Crush it to release the juice.\n- Measure the sugar content of the juice. You will record it in the next step. The volume and the acidity are measured later, after pressing.'**
   String get taskPrepareFruitDescription;
 
   /// No description provided for @taskInitialSweetnessName.
   ///
   /// In en, this message translates to:
-  /// **'Initial sweetness'**
+  /// **'Initial sugar'**
   String get taskInitialSweetnessName;
 
   /// No description provided for @taskInitialSweetnessDescription.
   ///
   /// In en, this message translates to:
-  /// **'Record the sweetness of the juice before fermentation starts. This is the one measurement that cannot be retaken: once alcohol is present, a hydrometer no longer reads sugar correctly.'**
+  /// **'Record the sugar content of the juice before fermentation starts. This is the one measurement that cannot be retaken: once alcohol is present, a hydrometer no longer reads sugar correctly.'**
   String get taskInitialSweetnessDescription;
 
   /// No description provided for @taskCalculationsName.
@@ -401,7 +401,7 @@ abstract class AppLocalizations {
   /// No description provided for @taskCalculationsDescription.
   ///
   /// In en, this message translates to:
-  /// **'Enter the volume and the acidity you measured after pressing. The sweetness is carried over from the reading taken before fermentation.'**
+  /// **'Enter the volume and the acidity you measured after pressing. The sugar is carried over from the reading taken before fermentation.'**
   String get taskCalculationsDescription;
 
   /// No description provided for @taskAddIngredientsName.
@@ -461,7 +461,7 @@ abstract class AppLocalizations {
   /// No description provided for @taskWaitSugarDropDescription.
   ///
   /// In en, this message translates to:
-  /// **'Wait until the sugar level drops noticeably before adding the next sugar portion. As a guide, complete this step once the measured sweetness falls to about 2-5 Blg.'**
+  /// **'Wait until the sugar level drops noticeably before adding the next sugar portion. As a guide, complete this step once the measured sugar falls to about 2-5 Blg.'**
   String get taskWaitSugarDropDescription;
 
   /// No description provided for @taskAddRemainingSugarName.
@@ -812,6 +812,12 @@ abstract class AppLocalizations {
   /// **'Calculated'**
   String get journalCalculated;
 
+  /// No description provided for @journalSugar.
+  ///
+  /// In en, this message translates to:
+  /// **'Sugar'**
+  String get journalSugar;
+
   /// No description provided for @journalSweetness.
   ///
   /// In en, this message translates to:
@@ -1040,24 +1046,6 @@ abstract class AppLocalizations {
   /// **'Fortified'**
   String get presetFortified;
 
-  /// No description provided for @presetWhiteGrape.
-  ///
-  /// In en, this message translates to:
-  /// **'White grape'**
-  String get presetWhiteGrape;
-
-  /// No description provided for @presetRedGrape.
-  ///
-  /// In en, this message translates to:
-  /// **'Red grape'**
-  String get presetRedGrape;
-
-  /// No description provided for @presetCoolClimateMust.
-  ///
-  /// In en, this message translates to:
-  /// **'Cool-climate must'**
-  String get presetCoolClimateMust;
-
   /// No description provided for @presetApple.
   ///
   /// In en, this message translates to:
@@ -1124,17 +1112,11 @@ abstract class AppLocalizations {
   /// **'Grape'**
   String get presetGrape;
 
-  /// No description provided for @presetEgJohanniter.
+  /// No description provided for @presetDogRose.
   ///
   /// In en, this message translates to:
-  /// **'e.g. Johanniter 7–9'**
-  String get presetEgJohanniter;
-
-  /// No description provided for @presetEgRegent.
-  ///
-  /// In en, this message translates to:
-  /// **'e.g. Regent 6–7'**
-  String get presetEgRegent;
+  /// **'Dog rose'**
+  String get presetDogRose;
 }
 
 class _AppLocalizationsDelegate

@@ -10,6 +10,7 @@ class FieldRange {
     required this.max,
     required this.step,
     this.ticks = const [],
+    this.typical,
   });
 
   final double min;
@@ -18,6 +19,9 @@ class FieldRange {
 
   /// Positions marked on the slider track.
   final List<double> ticks;
+
+  /// Span highlighted on the track as the usual, safe choice.
+  final ({double min, double max})? typical;
 
   bool contains(double value) => value >= min && value <= max;
 }
@@ -39,7 +43,11 @@ class FieldRanges {
       FieldRange(min: 0, max: 80, step: 1, ticks: [15, 30, 60]);
 
   static const desiredAcidity =
-      FieldRange(min: 4, max: 12, step: 0.5, ticks: [6, 8]);
+      FieldRange(min: 4, max: 12, step: 0.5, typical: (min: 6, max: 8));
+
+  /// Middle of [desiredAcidity]'s typical band, the value a fresh form starts
+  /// on so the user only has to move it when they want something unusual.
+  static const defaultDesiredAcidity = '7';
 
   static const mustSweetness = FieldRange(min: 2, max: 26, step: 0.5);
 

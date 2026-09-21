@@ -192,6 +192,10 @@ class _AddingIngredientsScreenState
     final readOnly = widget.readOnly;
     final endsWithCheckbox = _visible.contains(IngredientKind.yeast) ||
         _visible.contains(IngredientKind.nutrients);
+    // Yeast and nutrients are a yes/no, so a count of what is left to add
+    // would only repeat the checkboxes below.
+    final hasAmounts = _visible.contains(IngredientKind.sugar) ||
+        _visible.contains(IngredientKind.water);
     return FormBuilder(
       key: _formKey,
       child: SingleChildScrollView(
@@ -206,8 +210,10 @@ class _AddingIngredientsScreenState
               ),
               const SizedBox(height: 24),
             ],
-            _RemainingCard(remaining: _remaining, visible: _visible),
-            const SizedBox(height: 24),
+            if (hasAmounts) ...[
+              _RemainingCard(remaining: _remaining, visible: _visible),
+              const SizedBox(height: 24),
+            ],
             Text(
               l10n.addedThisStep,
               style: Theme.of(context).textTheme.titleLarge,

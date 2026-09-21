@@ -165,21 +165,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskPrepareFruitDescription =>
-      '- Collect the fruit and put it in the primary fermentation bucket.\n- Crush it to release the juice.\n- Measure the sweetness of the juice. You will record it in the next step. The volume and the acidity are measured later, after pressing.';
+      '- Collect the fruit and put it in the primary fermentation bucket.\n- Crush it to release the juice.\n- Measure the sugar content of the juice. You will record it in the next step. The volume and the acidity are measured later, after pressing.';
 
   @override
-  String get taskInitialSweetnessName => 'Initial sweetness';
+  String get taskInitialSweetnessName => 'Initial sugar';
 
   @override
   String get taskInitialSweetnessDescription =>
-      'Record the sweetness of the juice before fermentation starts. This is the one measurement that cannot be retaken: once alcohol is present, a hydrometer no longer reads sugar correctly.';
+      'Record the sugar content of the juice before fermentation starts. This is the one measurement that cannot be retaken: once alcohol is present, a hydrometer no longer reads sugar correctly.';
 
   @override
   String get taskCalculationsName => 'Calculations';
 
   @override
   String get taskCalculationsDescription =>
-      'Enter the volume and the acidity you measured after pressing. The sweetness is carried over from the reading taken before fermentation.';
+      'Enter the volume and the acidity you measured after pressing. The sugar is carried over from the reading taken before fermentation.';
 
   @override
   String get taskAddIngredientsName => 'Add yeast and nutrient';
@@ -214,7 +214,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskWaitSugarDropDescription =>
-      'Wait until the sugar level drops noticeably before adding the next sugar portion. As a guide, complete this step once the measured sweetness falls to about 2-5 Blg.';
+      'Wait until the sugar level drops noticeably before adding the next sugar portion. As a guide, complete this step once the measured sugar falls to about 2-5 Blg.';
 
   @override
   String get taskAddRemainingSugarName => 'Add remaining sugar';
@@ -444,6 +444,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalCalculated => 'Calculated';
 
   @override
+  String get journalSugar => 'Sugar';
+
+  @override
   String get journalSweetness => 'Sweetness';
 
   @override
@@ -575,15 +578,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get presetFortified => 'Fortified';
 
   @override
-  String get presetWhiteGrape => 'White grape';
-
-  @override
-  String get presetRedGrape => 'Red grape';
-
-  @override
-  String get presetCoolClimateMust => 'Cool-climate must';
-
-  @override
   String get presetApple => 'Apple';
 
   @override
@@ -617,8 +611,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get presetGrape => 'Grape';
 
   @override
-  String get presetEgJohanniter => 'e.g. Johanniter 7–9';
-
-  @override
-  String get presetEgRegent => 'e.g. Regent 6–7';
+  String get presetDogRose => 'Dog rose';
 }

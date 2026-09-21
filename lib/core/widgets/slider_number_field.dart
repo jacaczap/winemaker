@@ -154,7 +154,7 @@ class _SliderNumberFieldState extends State<SliderNumberField> {
                 tooltip: l10n.suggestedValues,
                 onPressed: () => _pickPreset(context, field),
               ),
-            SizedBox(width: 84, child: _buildValueBox(field)),
+            SizedBox(width: 108, child: _buildValueBox(field)),
           ],
         ),
         _buildSlider(field, value),
@@ -190,7 +190,7 @@ class _SliderNumberFieldState extends State<SliderNumberField> {
 
   Widget _buildSlider(FormFieldState<String> field, double? value) {
     final divisions = math.max(1, ((_max - _min) / widget.range.step).round());
-    return Slider(
+    final slider = Slider(
       value: (value ?? _min).clamp(_min, _max),
       min: _min,
       max: _max,
@@ -198,6 +198,33 @@ class _SliderNumberFieldState extends State<SliderNumberField> {
       label: _format((value ?? _min).clamp(_min, _max)),
       onChanged:
           widget.enabled ? (picked) => _setValue(field, _format(picked)) : null,
+    );
+    final band = _typicalBand();
+    if (band == null) return slider;
+    return Stack(alignment: Alignment.center, children: [band, slider]);
+  }
+
+  /// Shading behind the track marking the typical stretch of the range.
+  Widget? _typicalBand() {
+    final typical = widget.range.typical;
+    if (typical == null) return null;
+    final start = ((typical.min - _min) / (_max - _min)).clamp(0.0, 1.0);
+    final end = ((typical.max - _min) / (_max - _min)).clamp(0.0, 1.0);
+    if (end <= start) return null;
+    return Padding(
+      // Matches the thumb radius so the band lines up with the track.
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: SizedBox(
+        height: 14,
+        width: double.infinity,
+        child: CustomPaint(
+          painter: _BandPainter(
+            start: start,
+            end: end,
+            color: _typicalBandColor(Theme.of(context).brightness),
+          ),
+        ),
+      ),
     );
   }
 
@@ -282,6 +309,40 @@ String _format(double value) {
       : rounded.toString();
 }
 
+Color _typicalBandColor(Brightness brightness) =>     brightness == Brightness.dark
+    ? Colors.green.shade900
+    : Colors.green.shade200;
+
+class _BandPainter extends CustomPainter {
+  const _BandPainter({
+    required this.start,
+    required this.end,
+    required this.color,
+  });
+
+  final double start;
+  final double end;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRRect(
+      RRect.fromLTRBR(
+        start * size.width,
+        0,
+        end * size.width,
+        size.height,
+        Radius.circular(size.height / 2),
+      ),
+      Paint()..color = color,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_BandPainter old) =>
+      old.start != start || old.end != end || old.color != color;
+}
+
 /// Thin marks under a slider track at notable positions.
 class _TickMarks extends StatelessWidget {
   const _TickMarks({
@@ -305,6 +366,7 @@ class _TickMarks extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: SizedBox(
         height: 6,
+        width: double.infinity,
         child: CustomPaint(
           painter: _TickPainter(
             fractions: [

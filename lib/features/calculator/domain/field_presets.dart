@@ -14,17 +14,33 @@ class FieldPresets {
 
   static List<FieldPreset> measuredAcidity(AppLocalizations l10n) => [
         FieldPreset(
-            label: l10n.presetWhiteGrape,
-            value: '7.4',
-            description: l10n.presetEgJohanniter),
+            label: l10n.presetApple, value: '6', description: '4–8 g/l'),
         FieldPreset(
-            label: l10n.presetRedGrape,
-            value: '6.3',
-            description: l10n.presetEgRegent),
+            label: l10n.presetGrape, value: '7', description: '6–9 g/l'),
         FieldPreset(
-            label: l10n.presetCoolClimateMust,
-            value: '7',
-            description: '5.5–9 g/l'),
+            label: l10n.presetStrawberry, value: '9', description: '7–11 g/l'),
+        FieldPreset(
+            label: l10n.presetPlum, value: '10', description: '8–12 g/l'),
+        FieldPreset(
+            label: l10n.presetSourCherry,
+            value: '14',
+            description: '10–18 g/l'),
+        FieldPreset(
+            label: l10n.presetGooseberry,
+            value: '15',
+            description: '12–18 g/l'),
+        FieldPreset(
+            label: l10n.presetRaspberry, value: '17', description: '14–20 g/l'),
+        FieldPreset(
+            label: l10n.presetDogRose, value: '20', description: '15–25 g/l'),
+        FieldPreset(
+            label: l10n.presetRedcurrant,
+            value: '22',
+            description: '18–25 g/l'),
+        FieldPreset(
+            label: l10n.presetBlackcurrant,
+            value: '30',
+            description: '25–35 g/l'),
       ];
 
   static List<FieldPreset> measuredSweetness(AppLocalizations l10n) => [

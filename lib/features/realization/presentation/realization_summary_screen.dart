@@ -30,18 +30,14 @@ class RealizationSummaryScreen extends ConsumerWidget {
     final data = realization.value;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(data?.displayName(l10n) ?? l10n.summaryTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_note_outlined),
-            tooltip: l10n.editRealization,
-            onPressed: () => context.pushNamed(
-              AppRoute.recipe,
-              pathParameters: {AppRoute.realizationIdParam: '$realizationId'},
-            ),
-          ),
-        ],
+      appBar: AppBar(title: Text(data?.displayName(l10n) ?? l10n.summaryTitle)),
+      floatingActionButton: FloatingActionButton(
+        tooltip: l10n.editRealization,
+        onPressed: () => context.pushNamed(
+          AppRoute.recipe,
+          pathParameters: {AppRoute.realizationIdParam: '$realizationId'},
+        ),
+        child: const Icon(Icons.edit),
       ),
       body: realization.when(
         data: (realization) => states.when(
@@ -82,7 +78,7 @@ class _Journal extends StatelessWidget {
     }
     return SafeArea(
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 88),
         children: [
           _Header(realization: realization, days: days),
           for (final day in days) ..._daySection(day, first: day == days.first),
