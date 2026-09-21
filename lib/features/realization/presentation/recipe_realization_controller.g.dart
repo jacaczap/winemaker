@@ -8,13 +8,28 @@ part of 'recipe_realization_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Controller of one realization.
+///
+/// Its mutations never publish an `AsyncValue.loading()` in between: that
+/// would drop the current value and blink the realization view back to a
+/// spinner and a placeholder title on every completed step.
 
 @ProviderFor(RecipeRealizationController)
 final recipeRealizationControllerProvider =
     RecipeRealizationControllerFamily._();
 
+/// Controller of one realization.
+///
+/// Its mutations never publish an `AsyncValue.loading()` in between: that
+/// would drop the current value and blink the realization view back to a
+/// spinner and a placeholder title on every completed step.
 final class RecipeRealizationControllerProvider extends $AsyncNotifierProvider<
     RecipeRealizationController, RecipeRealization> {
+  /// Controller of one realization.
+  ///
+  /// Its mutations never publish an `AsyncValue.loading()` in between: that
+  /// would drop the current value and blink the realization view back to a
+  /// spinner and a placeholder title on every completed step.
   RecipeRealizationControllerProvider._(
       {required RecipeRealizationControllerFamily super.from,
       required int super.argument})
@@ -53,7 +68,13 @@ final class RecipeRealizationControllerProvider extends $AsyncNotifierProvider<
 }
 
 String _$recipeRealizationControllerHash() =>
-    r'7c002c0cdacdd56145d0784ecb3079b70017bdd2';
+    r'239eca0037cb3ff74bd7605be42d0a79efddbc35';
+
+/// Controller of one realization.
+///
+/// Its mutations never publish an `AsyncValue.loading()` in between: that
+/// would drop the current value and blink the realization view back to a
+/// spinner and a placeholder title on every completed step.
 
 final class RecipeRealizationControllerFamily extends $Family
     with
@@ -72,6 +93,12 @@ final class RecipeRealizationControllerFamily extends $Family
           isAutoDispose: true,
         );
 
+  /// Controller of one realization.
+  ///
+  /// Its mutations never publish an `AsyncValue.loading()` in between: that
+  /// would drop the current value and blink the realization view back to a
+  /// spinner and a placeholder title on every completed step.
+
   RecipeRealizationControllerProvider call(
     int id,
   ) =>
@@ -80,6 +107,12 @@ final class RecipeRealizationControllerFamily extends $Family
   @override
   String toString() => r'recipeRealizationControllerProvider';
 }
+
+/// Controller of one realization.
+///
+/// Its mutations never publish an `AsyncValue.loading()` in between: that
+/// would drop the current value and blink the realization view back to a
+/// spinner and a placeholder title on every completed step.
 
 abstract class _$RecipeRealizationController
     extends $AsyncNotifier<RecipeRealization> {
@@ -138,7 +171,7 @@ final class RecipeRealizationsControllerProvider
 }
 
 String _$recipeRealizationsControllerHash() =>
-    r'ba1c8d176f8b689bc0bc90ae1876e572c64376df';
+    r'f3b15a18eb5688cbaa301dcaa7b9c3a01cf1bd9c';
 
 /// Home-list controller: streams all realizations and owns create/delete.
 
